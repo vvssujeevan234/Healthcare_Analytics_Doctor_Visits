@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Healthcare Analytics | Portfolio
+    </title>
+
+    <!-- =====================================================
+         GOOGLE FONT
+    ====================================================== -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- =====================================================
+         CHART.JS
+    ====================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <!-- =====================================================
+         PORTFOLIO CSS
+    ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="../css/portfolio.css"
+    >
+
+</head>
+
+
+<body class="portfolio-page">
+
+
+    <!-- =====================================================
+         BACKGROUND
+    ====================================================== -->
+
+    <div class="page-background">
+
+        <img
+            src="../assets/images/portfolio-bg.png"
+            class="page-background-image"
+            alt=""
+        >
+
+        <div class="page-background-overlay"></div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="site-header">
+
+        <div class="header-inner">
+
+
+            <!-- BRAND -->
+
+            <a
+                href="../index.html"
+                class="brand"
+            >
+
+                <img
+                    src="../assets/images/logo.png"
+                    class="brand-logo"
+                    alt="Healthcare Analytics"
+                >
+
+                <div class="brand-copy">
+
+                    <span class="brand-small">
+                        DATA INTELLIGENCE
+                    </span>
+
+                    <strong>
+                        Healthcare Analytics
+                    </strong>
+
+                </div>
+
+            </a>
+
+
+
+            <!-- DESKTOP NAVIGATION -->
+
+            <nav class="main-navigation">
+
+                <a href="../index.html">
+                    Home
+                </a>
+
+                <a href="dashboard.html">
+                    Dashboard
+                </a>
+
+                <a href="data-understanding.html">
+                    Data
+                </a>
+
+                <a href="preprocessing.html">
+                    Preprocessing
+                </a>
+
+                <a href="analysis.html">
+                    Analysis
+                </a>
+
+                <a href="insights.html">
+                    Insights
+                </a>
+
+                <a href="about.html">
+                    About
+                </a>
+
+                <a
+                    href="portfolio.html"
+                    class="active"
+                >
+                    Portfolio
+                </a>
+
+            </nav>
+
+
+
+            <!-- MOBILE MENU -->
+
+            <button
+                class="menu-toggle"
+                id="menuToggle"
+                aria-label="Open navigation"
+            >
+
+                <span></span>
+                <span></span>
+                <span></span>
+
+            </button>
+
+        </div>
+
+
+
+        <!-- MOBILE NAV -->
+
+        <nav
+            class="mobile-navigation"
+            id="mobileNavigation"
+        >
+
+            <a href="../index.html">
+                Home
+            </a>
+
+            <a href="dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="data-understanding.html">
+                Data Understanding
+            </a>
+
+            <a href="preprocessing.html">
+                Preprocessing
+            </a>
+
+            <a href="analysis.html">
+                Analysis
+            </a>
+
+            <a href="insights.html">
+                Insights
+            </a>
+
+            <a href="about.html">
+                About
+            </a>
+
+            <a
+                href="portfolio.html"
+                class="active"
+            >
+                Portfolio
+            </a>
+
+        </nav>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main>
+
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section class="portfolio-hero">
+
+            <div class="hero-container">
+
+
+                <div class="hero-label">
+
+                    <span class="label-line"></span>
+
+                    HEALTHCARE DATA PORTFOLIO
+
+                </div>
+
+
+                <h1>
+
+                    Healthcare Analytics
+
+                    <span>
+                        Interactive Portfolio
+                    </span>
+
+                </h1>
+
+
+                <p class="hero-description">
+
+                    Explore the complete healthcare doctor visits
+                    dataset through an interactive Power BI-inspired
+                    analytics experience. Patient demographics,
+                    healthcare utilization, categorical distributions,
+                    numerical patterns and relationships are presented
+                    through dynamic visualizations.
+
+                </p>
+
+
+                <div class="hero-actions">
+
+                    <button
+                        class="primary-button"
+                        id="loadDatasetButton"
+                    >
+
+                        <span>
+                            ↻
+                        </span>
+
+                        REFRESH DATA
+
+                    </button>
+
+
+                    <a
+                        href="dashboard.html"
+                        class="secondary-button"
+                    >
+
+                        OPEN DASHBOARD
+
+                        <span>
+                            →
+                        </span>
+
+                    </a>
+
+                </div>
+
+
+                <!-- DATA STATUS -->
+
+                <div class="data-status">
+
+                    <span
+                        class="status-dot"
+                        id="statusDot"
+                    ></span>
+
+                    <span id="statusText">
+                        Loading healthcare dataset...
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             POWER BI STYLE DASHBOARD
+        ================================================== -->
+
+        <section class="portfolio-dashboard">
+
+            <div class="content-container">
+
+
+                <!-- =========================================
+                     DASHBOARD HEADER
+                ========================================== -->
+
+                <div class="dashboard-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            PORTFOLIO DASHBOARD
+                        </span>
+
+                        <h2>
+                            Doctor Visits Data Explorer
+                        </h2>
+
+                    </div>
+
+
+                    <div class="dashboard-controls">
+
+                        <button
+                            class="control-button active"
+                            data-view="overview"
+                        >
+                            Overview
+                        </button>
+
+                        <button
+                            class="control-button"
+                            data-view="demographics"
+                        >
+                            Demographics
+                        </button>
+
+                        <button
+                            class="control-button"
+                            data-view="patterns"
+                        >
+                            Patterns
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =========================================
+                     KPI CARDS
+                ========================================== -->
+
+                <div class="kpi-grid">
+
+
+                    <div class="kpi-card">
+
+                        <div class="kpi-icon">
+                            👥
+                        </div>
+
+                        <div>
+
+                            <span class="kpi-label">
+                                TOTAL RECORDS
+                            </span>
+
+                            <strong id="totalRecords">
+                                —
+                            </strong>
+
+                            <small>
+                                Dataset observations
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="kpi-card">
+
+                        <div class="kpi-icon">
+                            🩺
+                        </div>
+
+                        <div>
+
+                            <span class="kpi-label">
+                                UNIQUE PATIENTS
+                            </span>
+
+                            <strong id="uniquePatients">
+                                —
+                            </strong>
+
+                            <small>
+                                Detected patient identifiers
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="kpi-card">
+
+                        <div class="kpi-icon">
+                            📊
+                        </div>
+
+                        <div>
+
+                            <span class="kpi-label">
+                                VARIABLES
+                            </span>
+
+                            <strong id="totalColumns">
+                                —
+                            </strong>
+
+                            <small>
+                                Dataset columns
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="kpi-card">
+
+                        <div class="kpi-icon">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <span class="kpi-label">
+                                DATA COMPLETENESS
+                            </span>
+
+                            <strong id="completeness">
+                                —
+                            </strong>
+
+                            <small>
+                                Non-missing values
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =========================================
+                     FILTER BAR
+                ========================================== -->
+
+                <div class="filter-panel">
+
+                    <div class="filter-title">
+
+                        <span>
+                            FILTER DATA
+                        </span>
+
+                        <button
+                            id="resetFilters"
+                            class="reset-button"
+                        >
+                            Reset
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        class="dynamic-filters"
+                        id="dynamicFilters"
+                    >
+
+                        <div class="filter-loading">
+                            Loading filters...
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =========================================
+                     CHART GRID
+                ========================================== -->
+
+                <div class="chart-grid">
+
+
+                    <!-- CHART 1 -->
+
+                    <article class="chart-card chart-large">
+
+                        <div class="chart-header">
+
+                            <div>
+
+                                <span>
+                                    DISTRIBUTION
+                                </span>
+
+                                <h3>
+                                    Primary Categorical Breakdown
+                                </h3>
+
+                            </div>
+
+                            <span class="chart-badge">
+                                BAR
+                            </span>
+
+                        </div>
+
+                        <div class="chart-container">
+
+                            <canvas
+                                id="mainCategoryChart"
+                            ></canvas>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- CHART 2 -->
+
+                    <article class="chart-card">
+
+                        <div class="chart-header">
+
+                            <div>
+
+                                <span>
+                                    COMPOSITION
+                                </span>
+
+                                <h3>
+                                    Category Share
+                                </h3>
+
+                            </div>
+
+                            <span class="chart-badge">
+                                DONUT
+                            </span>
+
+                        </div>
+
+                        <div class="chart-container">
+
+                            <canvas
+                                id="categoryDonutChart"
+                            ></canvas>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- CHART 3 -->
+
+                    <article class="chart-card">
+
+                        <div class="chart-header">
+
+                            <div>
+
+                                <span>
+                                    NUMERICAL ANALYSIS
+                                </span>
+
+                                <h3>
+                                    Numeric Distribution
+                                </h3>
+
+                            </div>
+
+                            <span class="chart-badge">
+                                HISTOGRAM
+                            </span>
+
+                        </div>
+
+                        <div class="chart-container">
+
+                            <canvas
+                                id="numericHistogram"
+                            ></canvas>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- CHART 4 -->
+
+                    <article class="chart-card chart-large">
+
+                        <div class="chart-header">
+
+                            <div>
+
+                                <span>
+                                    RELATIONSHIP
+                                </span>
+
+                                <h3>
+                                    Numerical Relationship
+                                </h3>
+
+                            </div>
+
+                            <span class="chart-badge">
+                                SCATTER
+                            </span>
+
+                        </div>
+
+                        <div class="chart-container">
+
+                            <canvas
+                                id="scatterChart"
+                            ></canvas>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- CHART 5 -->
+
+                    <article class="chart-card">
+
+                        <div class="chart-header">
+
+                            <div>
+
+                                <span>
+                                    PATTERN ANALYSIS
+                                </span>
+
+                                <h3>
+                                    Numeric Comparison
+                                </h3>
+
+                            </div>
+
+                            <span class="chart-badge">
+                                LINE
+                            </span>
+
+                        </div>
+
+                        <div class="chart-container">
+
+                            <canvas
+                                id="lineChart"
+                            ></canvas>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- CHART 6 -->
+
+                    <article class="chart-card">
+
+                        <div class="chart-header">
+
+                            <div>
+
+                                <span>
+                                    DATA QUALITY
+                                </span>
+
+                                <h3>
+                                    Missing Values
+                                </h3>
+
+                            </div>
+
+                            <span class="chart-badge">
+                                QUALITY
+                            </span>
+
+                        </div>
+
+                        <div class="chart-container">
+
+                            <canvas
+                                id="missingChart"
+                            ></canvas>
+
+                        </div>
+
+                    </article>
+
+
+                </div>
+
+
+
+                <!-- =========================================
+                     COLUMN PROFILE
+                ========================================== -->
+
+                <section class="profile-section">
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <span class="section-kicker">
+                                DATA PROFILE
+                            </span>
+
+                            <h2>
+                                Dataset Structure
+                            </h2>
+
+                        </div>
+
+                        <p>
+                            Automatically generated profile of the
+                            healthcare dataset variables.
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="column-profile"
+                        id="columnProfile"
+                    >
+
+                        <div class="profile-loading">
+                            Building dataset profile...
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================
+                     DATA TABLE
+                ========================================== -->
+
+                <section class="table-section">
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <span class="section-kicker">
+                                RAW DATA PREVIEW
+                            </span>
+
+                            <h2>
+                                Dataset Records
+                            </h2>
+
+                        </div>
+
+                        <p>
+                            Preview the records loaded from the
+                            healthcare doctor visits CSV file.
+                        </p>
+
+                    </div>
+
+
+                    <div class="table-wrapper">
+
+                        <table id="dataTable">
+
+                            <thead>
+                                <tr id="tableHead"></tr>
+                            </thead>
+
+                            <tbody id="tableBody"></tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <div class="pagination">
+
+                        <button
+                            id="previousPage"
+                            class="page-button"
+                        >
+                            ← Previous
+                        </button>
+
+                        <span id="pageInfo">
+                            Page 1
+                        </span>
+
+                        <button
+                            id="nextPage"
+                            class="page-button"
+                        >
+                            Next →
+                        </button>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================
+                     PROJECT DOCUMENTATION
+                ========================================== -->
+
+                <section class="documentation-section">
+
+                    <div class="documentation-card">
+
+                        <div>
+
+                            <span class="section-kicker">
+                                PROJECT EVIDENCE
+                            </span>
+
+                            <h2>
+                                Analysis Documentation
+                            </h2>
+
+                            <p>
+                                Use the project screenshots to document
+                                the dashboard, Jupyter Notebook analysis,
+                                charts and final analytical results.
+                            </p>
+
+                        </div>
+
+
+                        <div class="documentation-links">
+
+                            <a
+                                href="../../Healthcare_Analytics_Doctor_Visits.ipynb"
+                                class="doc-link"
+                            >
+                                <span>
+                                    📓
+                                </span>
+
+                                <div>
+
+                                    <strong>
+                                        Jupyter Notebook
+                                    </strong>
+
+                                    <small>
+                                        Exploratory analysis
+                                    </small>
+
+                                </div>
+
+                            </a>
+
+
+                            <a
+                                href="../../README.md"
+                                class="doc-link"
+                            >
+                                <span>
+                                    📄
+                                </span>
+
+                                <div>
+
+                                    <strong>
+                                        Project README
+                                    </strong>
+
+                                    <small>
+                                        Project documentation
+                                    </small>
+
+                                </div>
+
+                            </a>
+
+
+                            <a
+                                href="../../docs/RESULTS.md"
+                                class="doc-link"
+                            >
+                                <span>
+                                    📈
+                                </span>
+
+                                <div>
+
+                                    <strong>
+                                        Analysis Results
+                                    </strong>
+
+                                    <small>
+                                        Findings and conclusions
+                                    </small>
+
+                                </div>
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         AI ROBOT
+    ====================================================== -->
+
+    <div id="healthcare-ai-widget">
+
+
+        <button
+            class="ai-robot-button"
+            id="aiRobotButton"
+            aria-label="Open AI assistant"
+        >
+
+            <img
+                src="../assets/images/ai-robot.png"
+                alt="AI Assistant"
+            >
+
+            <span class="ai-robot-badge">
+                AI
+            </span>
+
+        </button>
+
+
+
+        <div
+            class="ai-chat-window"
+            id="aiChatWindow"
+        >
+
+
+            <div class="ai-chat-header">
+
+                <div class="ai-header-left">
+
+                    <div class="ai-header-icon">
+                        AI
+                    </div>
+
+                    <div class="ai-header-info">
+
+                        <h3>
+                            Healthcare AI Assistant
+                        </h3>
+
+                        <span>
+
+                            <i class="ai-online-dot"></i>
+
+                            Analytics Assistant
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="ai-close-button"
+                    id="aiCloseButton"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+
+            <div
+                class="ai-chat-body"
+                id="aiChatBody"
+            >
+
+                <div class="ai-message">
+
+                    <div class="ai-avatar-small">
+                        AI
+                    </div>
+
+                    <div class="ai-message-content">
+
+                        <p>
+                            Hello! I can help you understand this
+                            healthcare doctor visits dataset.
+                        </p>
+
+                        <p>
+                            Ask about records, variables, categories,
+                            distributions or data quality.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ai-quick-section">
+
+                    <h4>
+                        QUICK QUESTIONS
+                    </h4>
+
+                    <button class="ai-question">
+                        How many records are available?
+                    </button>
+
+                    <button class="ai-question">
+                        Which variables are in the dataset?
+                    </button>
+
+                    <button class="ai-question">
+                        What are the main categories?
+                    </button>
+
+                    <button class="ai-question">
+                        Are there missing values?
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="ai-chat-input-area">
+
+                <input
+                    type="text"
+                    id="aiInput"
+                    placeholder="Ask about the dataset..."
+                >
+
+                <button
+                    class="ai-send-button"
+                    id="aiSendButton"
+                >
+                    →
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script src="../js/portfolio.js"></script>
+
+</body>
+
+</html>

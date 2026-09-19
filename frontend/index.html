@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Healthcare Analytics for Doctor Visits
+    </title>
+
+    <meta
+        name="description"
+        content="Healthcare Analytics for Doctor Visits - Data Analysis Project"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/responsive.css"
+    >
+
+</head>
+
+
+<body>
+
+<!-- =====================================================
+     BACKGROUND VIDEO
+===================================================== -->
+
+<div class="video-background">
+
+    <video
+        id="heroVideo"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+    >
+
+        <source
+            src="assets/videos/healthcare-background.mp4"
+            type="video/mp4"
+        >
+
+        Your browser does not support video.
+
+    </video>
+
+</div>
+
+
+<!-- =====================================================
+     DARK OVERLAY
+===================================================== -->
+
+<div class="video-overlay"></div>
+
+
+<!-- =====================================================
+     NAVIGATION
+===================================================== -->
+
+<header class="navbar">
+
+    <a
+        href="index.html"
+        class="brand"
+    >
+
+        <img
+            src="assets/images/logo.png"
+            alt="Healthcare Analytics Logo"
+            class="brand-logo"
+        >
+
+        <div class="brand-text">
+
+            <span>
+                Healthcare
+            </span>
+
+            <strong>
+                Analytics
+            </strong>
+
+        </div>
+
+    </a>
+
+
+    <nav class="navigation">
+
+        <a
+            href="index.html"
+            class="active"
+        >
+            Home
+        </a>
+
+        <a href="pages/dashboard.html">
+            Dashboard
+        </a>
+
+        <a href="pages/data-understanding.html">
+            Data
+        </a>
+
+        <a href="pages/analysis.html">
+            Analysis
+        </a>
+
+        <a href="pages/insights.html">
+            Insights
+        </a>
+
+        <a href="pages/portfolio.html">
+            Portfolio
+        </a>
+
+    </nav>
+
+
+    <a
+        href="pages/about.html"
+        class="about-link"
+    >
+        About
+    </a>
+
+</header>
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<main class="hero">
+
+    <div class="hero-content">
+
+        <div class="eyebrow">
+
+            <span class="eyebrow-line"></span>
+
+            <span>
+                Healthcare Data Intelligence
+            </span>
+
+        </div>
+
+
+        <h1>
+
+            Healthcare Analytics
+
+            <span>
+                for Doctor Visits
+            </span>
+
+        </h1>
+
+
+        <p class="hero-description">
+
+            Explore healthcare data through statistical analysis,
+            interactive visualizations and meaningful insights into
+            doctor visit patterns, patient characteristics and
+            healthcare utilization.
+
+        </p>
+
+
+        <div class="hero-buttons">
+
+            <a
+                href="pages/dashboard.html"
+                class="primary-button"
+            >
+
+                Explore Dashboard
+
+                <span>
+                    →
+                </span>
+
+            </a>
+
+
+            <a
+                href="pages/analysis.html"
+                class="secondary-button"
+            >
+
+                View Analysis
+
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             STATISTICS
+        ================================================= -->
+
+        <div class="hero-stats">
+
+            <div class="stat">
+
+                <strong id="patientCount">
+                    0
+                </strong>
+
+                <span>
+                    Healthcare Records
+                </span>
+
+            </div>
+
+
+            <div class="stat">
+
+                <strong id="visitCount">
+                    0
+                </strong>
+
+                <span>
+                    Recorded Visits
+                </span>
+
+            </div>
+
+
+            <div class="stat">
+
+                <strong id="averageVisits">
+                    0.00
+                </strong>
+
+                <span>
+                    Average Visits
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<!-- =====================================================
+     AI ANALYTICS ASSISTANT
+===================================================== -->
+
+<div class="ai-assistant">
+
+
+    <!-- CHAT WINDOW -->
+
+    <div
+        class="ai-chat"
+        id="aiChat"
+    >
+
+
+        <!-- CHAT HEADER -->
+
+        <div class="ai-chat-header">
+
+            <div class="ai-chat-title">
+
+                <div class="ai-chat-status"></div>
+
+                <div>
+
+                    <strong>
+                        AI Analytics Assistant
+                    </strong>
+
+                    <span>
+                        Healthcare Project Assistant
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="ai-close"
+                id="aiClose"
+                type="button"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <!-- CHAT BODY -->
+
+        <div
+            class="ai-chat-body"
+            id="aiChatBody"
+        >
+
+
+            <div class="ai-message bot">
+
+                <div class="message-icon">
+                    AI
+                </div>
+
+
+                <div class="message-content">
+
+                    <p>
+                        Hello! I'm your Healthcare Analytics Assistant.
+                    </p>
+
+                    <p>
+                        Ask me about the dataset, analysis,
+                        visualizations or project insights.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="suggested-title">
+                Try asking
+            </div>
+
+
+            <div class="suggested-questions">
+
+                <button
+                    class="question-btn"
+                    data-question="What is this project about?"
+                >
+                    What is this project about?
+                </button>
+
+
+                <button
+                    class="question-btn"
+                    data-question="What does the dataset contain?"
+                >
+                    What does the dataset contain?
+                </button>
+
+
+                <button
+                    class="question-btn"
+                    data-question="What libraries are used?"
+                >
+                    What libraries are used?
+                </button>
+
+
+                <button
+                    class="question-btn"
+                    data-question="Explain gender analysis"
+                >
+                    Explain gender analysis
+                </button>
+
+
+                <button
+                    class="question-btn"
+                    data-question="Explain age versus doctor visits"
+                >
+                    Explain age vs visits
+                </button>
+
+
+                <button
+                    class="question-btn"
+                    data-question="Explain the illness analysis"
+                >
+                    Explain illness analysis
+                </button>
+
+
+                <button
+                    class="question-btn"
+                    data-question="Explain the correlation heatmap"
+                >
+                    Explain correlation heatmap
+                </button>
+
+
+                <button
+                    class="question-btn"
+                    data-question="What is the project conclusion?"
+                >
+                    Project conclusion
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- INPUT -->
+
+        <div class="ai-chat-input">
+
+            <input
+                type="text"
+                id="aiQuestion"
+                placeholder="Ask about the project..."
+                autocomplete="off"
+            >
+
+
+            <button
+                type="button"
+                id="aiSend"
+                aria-label="Send question"
+            >
+
+                ➤
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- CLICKABLE ROBOT -->
+
+    <button
+        class="ai-robot-button"
+        id="aiRobot"
+        type="button"
+        aria-label="Open AI Analytics Assistant"
+    >
+
+        <span class="robot-notification">
+            AI
+        </span>
+
+
+        <img
+            src="assets/images/ai-robot.png"
+            alt="AI Analytics Assistant"
+            class="ai-robot"
+        >
+
+    </button>
+
+</div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script src="js/app.js"></script>
+
+</body>
+
+</html>

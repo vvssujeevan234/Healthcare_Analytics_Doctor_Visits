@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Power Dashboard | Healthcare Analytics
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="../css/dashboard.css"
+    >
+
+</head>
+
+
+<body class="dashboard-page">
+
+
+    <!-- =====================================================
+         BACKGROUND
+    ====================================================== -->
+
+    <div class="dashboard-background"></div>
+
+    <div class="dashboard-overlay"></div>
+
+
+    <!-- =====================================================
+         APPLICATION
+    ====================================================== -->
+
+    <div class="dashboard-app">
+
+
+        <!-- =================================================
+             NAVBAR
+        ================================================== -->
+
+        <header class="dashboard-navbar">
+
+            <a
+                href="../index.html"
+                class="dashboard-brand"
+            >
+
+                <img
+                    src="../assets/images/logo.png"
+                    class="dashboard-logo"
+                    alt="Healthcare Analytics"
+                >
+
+                <div class="dashboard-brand-text">
+
+                    <span>
+                        HEALTHCARE
+                    </span>
+
+                    <strong>
+                        Analytics
+                    </strong>
+
+                </div>
+
+            </a>
+
+
+            <nav class="dashboard-navigation">
+
+                <a href="../index.html">
+                    Home
+                </a>
+
+                <a
+                    href="dashboard.html"
+                    class="active"
+                >
+                    Dashboard
+                </a>
+
+                <a href="data-understanding.html">
+                    Data
+                </a>
+
+                <a href="preprocessing.html">
+                    Preprocessing
+                </a>
+
+                <a href="analysis.html">
+                    Analysis
+                </a>
+
+                <a href="insights.html">
+                    Insights
+                </a>
+
+                <a href="about.html">
+                    About
+                </a>
+
+            </nav>
+
+
+            <div class="dashboard-status">
+
+                <span
+                    class="status-dot"
+                    id="statusDot"
+                ></span>
+
+                <span id="connectionStatus">
+                    Connecting...
+                </span>
+
+            </div>
+
+
+            <button
+                id="dashboardMenuToggle"
+                class="dashboard-menu-toggle"
+            >
+                ☰
+            </button>
+
+        </header>
+
+
+        <!-- =================================================
+             MOBILE NAVIGATION
+        ================================================== -->
+
+        <nav
+            id="dashboardMobileNavigation"
+            class="dashboard-mobile-navigation"
+        >
+
+            <a href="../index.html">
+                Home
+            </a>
+
+            <a
+                href="dashboard.html"
+                class="active"
+            >
+                Dashboard
+            </a>
+
+            <a href="data-understanding.html">
+                Data
+            </a>
+
+            <a href="preprocessing.html">
+                Preprocessing
+            </a>
+
+            <a href="analysis.html">
+                Analysis
+            </a>
+
+            <a href="insights.html">
+                Insights
+            </a>
+
+            <a href="about.html">
+                About
+            </a>
+
+        </nav>
+
+
+
+        <!-- =================================================
+             MAIN
+        ================================================== -->
+
+        <main class="dashboard-main">
+
+
+            <!-- =================================================
+                 HEADER
+            ================================================== -->
+
+            <section class="dashboard-title-section">
+
+                <div>
+
+                    <span class="section-kicker">
+                        POWER BI STYLE ANALYTICS
+                    </span>
+
+                    <h1>
+                        Healthcare Doctor Visits
+                    </h1>
+
+                    <p>
+                        Interactive exploration of the
+                        healthcare_doctor_visits.csv dataset.
+                    </p>
+
+                </div>
+
+
+                <div class="dataset-live">
+
+                    <span
+                        class="dataset-status-dot"
+                        id="datasetStatusDot"
+                    ></span>
+
+                    <span id="datasetStatus">
+                        Loading dataset...
+                    </span>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 FILTER BAR
+            ================================================== -->
+
+            <section class="filter-panel">
+
+                <div class="filter-panel-header">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            FILTERS
+                        </span>
+
+                        <h2>
+                            Interactive Dashboard Filters
+                        </h2>
+
+                    </div>
+
+
+                    <div class="filter-actions">
+
+                        <button
+                            id="applyFilters"
+                            class="filter-button primary"
+                        >
+                            Apply Filters
+                        </button>
+
+                        <button
+                            id="resetFilters"
+                            class="filter-button secondary"
+                        >
+                            Reset
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="filter-grid">
+
+
+                    <!-- GENDER -->
+
+                    <div class="filter-control">
+
+                        <label for="genderFilter">
+                            Gender
+                        </label>
+
+                        <select id="genderFilter">
+
+                            <option value="all">
+                                All
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- AGE GROUP -->
+
+                    <div class="filter-control">
+
+                        <label for="ageGroupFilter">
+                            Age Group
+                        </label>
+
+                        <select id="ageGroupFilter">
+
+                            <option value="all">
+                                All
+                            </option>
+
+                            <option value="0-17">
+                                0–17
+                            </option>
+
+                            <option value="18-29">
+                                18–29
+                            </option>
+
+                            <option value="30-44">
+                                30–44
+                            </option>
+
+                            <option value="45-59">
+                                45–59
+                            </option>
+
+                            <option value="60+">
+                                60+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- ILLNESS -->
+
+                    <div class="filter-control">
+
+                        <label for="illnessFilter">
+                            Illness
+                        </label>
+
+                        <select id="illnessFilter">
+
+                            <option value="all">
+                                All
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- HEALTH -->
+
+                    <div class="filter-control">
+
+                        <label for="healthFilter">
+                            Health
+                        </label>
+
+                        <select id="healthFilter">
+
+                            <option value="all">
+                                All
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- CHRONIC -->
+
+                    <div class="filter-control">
+
+                        <label for="chronicFilter">
+                            Chronic Conditions
+                        </label>
+
+                        <select id="chronicFilter">
+
+                            <option value="all">
+                                All
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- PRIVATE -->
+
+                    <div class="filter-control">
+
+                        <label for="privateFilter">
+                            Private
+                        </label>
+
+                        <select id="privateFilter">
+
+                            <option value="all">
+                                All
+                            </option>
+
+                            <option value="0">
+                                No
+                            </option>
+
+                            <option value="1">
+                                Yes
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- FREE POOR -->
+
+                    <div class="filter-control">
+
+                        <label for="freepoorFilter">
+                            Free Poor
+                        </label>
+
+                        <select id="freepoorFilter">
+
+                            <option value="all">
+                                All
+                            </option>
+
+                            <option value="0">
+                                No
+                            </option>
+
+                            <option value="1">
+                                Yes
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- FREE REPAT -->
+
+                    <div class="filter-control">
+
+                        <label for="freerepatFilter">
+                            Free Repat
+                        </label>
+
+                        <select id="freerepatFilter">
+
+                            <option value="all">
+                                All
+                            </option>
+
+                            <option value="0">
+                                No
+                            </option>
+
+                            <option value="1">
+                                Yes
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- MIN VISITS -->
+
+                    <div class="filter-control">
+
+                        <label for="minVisitsFilter">
+                            Minimum Visits
+                        </label>
+
+                        <input
+                            id="minVisitsFilter"
+                            type="number"
+                            min="0"
+                            placeholder="Minimum"
+                        >
+
+                    </div>
+
+
+                    <!-- MAX VISITS -->
+
+                    <div class="filter-control">
+
+                        <label for="maxVisitsFilter">
+                            Maximum Visits
+                        </label>
+
+                        <input
+                            id="maxVisitsFilter"
+                            type="number"
+                            min="0"
+                            placeholder="Maximum"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="activeFilters"
+                    class="active-filters"
+                >
+                    No filters applied
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 KPI CARDS
+            ================================================== -->
+
+            <section class="statistics-section">
+
+                <div class="statistics-grid">
+
+
+                    <article class="stat-card">
+
+                        <div class="stat-icon">
+                            👥
+                        </div>
+
+                        <div class="stat-content">
+
+                            <span>
+                                Filtered Records
+                            </span>
+
+                            <strong id="totalPatients">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <div class="stat-icon">
+                            🩺
+                        </div>
+
+                        <div class="stat-content">
+
+                            <span>
+                                Total Visits
+                            </span>
+
+                            <strong id="totalVisits">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <div class="stat-icon">
+                            📊
+                        </div>
+
+                        <div class="stat-content">
+
+                            <span>
+                                Average Visits
+                            </span>
+
+                            <strong id="averageVisits">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <div class="stat-icon">
+                            🎂
+                        </div>
+
+                        <div class="stat-content">
+
+                            <span>
+                                Average Age
+                            </span>
+
+                            <strong id="averageAge">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 CHARTS
+            ================================================== -->
+
+            <section class="visualization-section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            DATA VISUALIZATION
+                        </span>
+
+                        <h2>
+                            Dataset Analysis
+                        </h2>
+
+                    </div>
+
+                    <span
+                        class="section-description"
+                        id="chartStatus"
+                    >
+                        Loading charts...
+                    </span>
+
+                </div>
+
+
+                <div class="dashboard-chart-grid">
+
+
+                    <!-- 1 -->
+
+                    <article class="dashboard-chart-card">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <span class="card-kicker">
+                                    DEMOGRAPHICS
+                                </span>
+
+                                <h3>
+                                    Distribution of Gender
+                                </h3>
+
+                            </div>
+
+                            <span class="card-badge">
+                                DONUT
+                            </span>
+
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="genderChart"></canvas>
+                        </div>
+
+                    </article>
+
+
+                    <!-- 2 -->
+
+                    <article class="dashboard-chart-card">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <span class="card-kicker">
+                                    AGE
+                                </span>
+
+                                <h3>
+                                    Distribution of Age
+                                </h3>
+
+                            </div>
+
+                            <span class="card-badge">
+                                HISTOGRAM
+                            </span>
+
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="ageChart"></canvas>
+                        </div>
+
+                    </article>
+
+
+                    <!-- 3 -->
+
+                    <article class="dashboard-chart-card">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <span class="card-kicker">
+                                    VISITS
+                                </span>
+
+                                <h3>
+                                    Distribution of Doctor Visits
+                                </h3>
+
+                            </div>
+
+                            <span class="card-badge">
+                                COUNT
+                            </span>
+
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="visitsDistributionChart"></canvas>
+                        </div>
+
+                    </article>
+
+
+                    <!-- 4 -->
+
+                    <article class="dashboard-chart-card">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <span class="card-kicker">
+                                    GENDER
+                                </span>
+
+                                <h3>
+                                    Average Doctor Visits by Gender
+                                </h3>
+
+                            </div>
+
+                            <span class="card-badge">
+                                MEAN
+                            </span>
+
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="genderAverageChart"></canvas>
+                        </div>
+
+                    </article>
+
+
+                    <!-- 5 -->
+
+                    <article class="dashboard-chart-card">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <span class="card-kicker">
+                                    ILLNESS
+                                </span>
+
+                                <h3>
+                                    Illness vs Average Visits
+                                </h3>
+
+                            </div>
+
+                            <span class="card-badge">
+                                LINE
+                            </span>
+
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="illnessVisitsChart"></canvas>
+                        </div>
+
+                    </article>
+
+
+                    <!-- 6 -->
+
+                    <article class="dashboard-chart-card">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <span class="card-kicker">
+                                    ILLNESS
+                                </span>
+
+                                <h3>
+                                    Distribution of Illness
+                                </h3>
+
+                            </div>
+
+                            <span class="card-badge">
+                                COUNT
+                            </span>
+
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="illnessDistributionChart"></canvas>
+                        </div>
+
+                    </article>
+
+
+                    <!-- 7 -->
+
+                    <article class="dashboard-chart-card dashboard-chart-wide">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <span class="card-kicker">
+                                    RELATIONSHIP
+                                </span>
+
+                                <h3>
+                                    Age vs Doctor Visits
+                                </h3>
+
+                            </div>
+
+                            <span class="card-badge">
+                                SCATTER
+                            </span>
+
+                        </div>
+
+                        <div class="chart-container chart-large">
+                            <canvas id="ageVisitsChart"></canvas>
+                        </div>
+
+                    </article>
+
+
+                    <!-- 8 -->
+
+                    <article class="dashboard-chart-card">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <span class="card-kicker">
+                                    AGE GROUP
+                                </span>
+
+                                <h3>
+                                    Average Visits by Age Group
+                                </h3>
+
+                            </div>
+
+                            <span class="card-badge">
+                                BAR
+                            </span>
+
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="ageGroupChart"></canvas>
+                        </div>
+
+                    </article>
+
+
+                    <!-- 9 -->
+
+                    <article class="dashboard-chart-card">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <span class="card-kicker">
+                                    CHRONIC
+                                </span>
+
+                                <h3>
+                                    Chronic Conditions vs Visits
+                                </h3>
+
+                            </div>
+
+                            <span class="card-badge">
+                                BAR
+                            </span>
+
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="chronicChart"></canvas>
+                        </div>
+
+                    </article>
+
+
+                    <!-- 10 -->
+
+                    <article class="dashboard-chart-card">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <span class="card-kicker">
+                                    HEALTH
+                                </span>
+
+                                <h3>
+                                    Average Visits by Health
+                                </h3>
+
+                            </div>
+
+                            <span class="card-badge">
+                                BAR
+                            </span>
+
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="healthChart"></canvas>
+                        </div>
+
+                    </article>
+
+
+                    <!-- 11 -->
+
+                    <article class="dashboard-chart-card dashboard-chart-wide">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <span class="card-kicker">
+                                    CORRELATION
+                                </span>
+
+                                <h3>
+                                    Healthcare Variable Correlation
+                                </h3>
+
+                            </div>
+
+                            <span class="card-badge">
+                                MATRIX
+                            </span>
+
+                        </div>
+
+                        <div
+                            id="correlationMatrix"
+                            class="correlation-container"
+                        ></div>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 INSIGHT
+            ================================================== -->
+
+            <section class="insight-section">
+
+                <div class="insight-card">
+
+                    <div class="insight-icon">
+                        ✦
+                    </div>
+
+                    <div>
+
+                        <span class="card-kicker">
+                            AUTOMATED INSIGHT
+                        </span>
+
+                        <h3 id="dashboardInsightTitle">
+                            Dataset Summary
+                        </h3>
+
+                        <p id="dashboardInsight">
+                            Loading...
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 DATA TABLE
+            ================================================== -->
+
+            <section class="table-section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            DATA PREVIEW
+                        </span>
+
+                        <h2>
+                            Recent Records
+                        </h2>
+
+                    </div>
+
+                    <span
+                        id="recordCount"
+                        class="section-description"
+                    >
+                        Loading...
+                    </span>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table id="dataTable">
+
+                        <thead>
+
+                            <tr id="tableHeader"></tr>
+
+                        </thead>
+
+                        <tbody id="tableBody"></tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 FOOTER
+            ================================================== -->
+
+            <footer class="dashboard-footer">
+
+                <strong>
+                    Healthcare Analytics
+                </strong>
+
+                <span>
+                    Doctor Visits Analysis
+                </span>
+
+                <span>
+                    healthcare_doctor_visits.csv
+                </span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         AI ROBOT
+    ====================================================== -->
+
+    <div
+        id="healthcare-ai-widget"
+        class="healthcare-ai-widget"
+    >
+
+        <button
+            id="aiRobotButton"
+            class="ai-robot-button"
+            type="button"
+        >
+
+            <img
+                src="../assets/images/ai-robot.png"
+                alt="Healthcare AI"
+            >
+
+            <span class="ai-robot-badge">
+                AI
+            </span>
+
+        </button>
+
+
+        <div
+            id="aiChatWindow"
+            class="ai-chat-window"
+        >
+
+            <div class="ai-chat-header">
+
+                <div>
+
+                    <strong>
+                        Healthcare AI
+                    </strong>
+
+                    <span>
+                        Dataset Assistant
+                    </span>
+
+                </div>
+
+
+                <button
+                    id="aiCloseButton"
+                    class="ai-close-button"
+                    type="button"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div
+                id="aiChatBody"
+                class="ai-chat-body"
+            >
+
+                <div class="ai-message ai-message-bot">
+
+                    <p>
+                        Hello! I can answer questions about
+                        the currently filtered dataset.
+                    </p>
+
+                </div>
+
+
+                <div class="ai-quick-section">
+
+                    <button
+                        class="ai-question"
+                        data-question="How many records are in the dataset?"
+                    >
+                        How many records?
+                    </button>
+
+                    <button
+                        class="ai-question"
+                        data-question="What is the average age?"
+                    >
+                        Average age?
+                    </button>
+
+                    <button
+                        class="ai-question"
+                        data-question="What is the average number of visits?"
+                    >
+                        Average visits?
+                    </button>
+
+                    <button
+                        class="ai-question"
+                        data-question="Which gender has more records?"
+                    >
+                        Which gender has more records?
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <form
+                id="aiChatForm"
+                class="ai-chat-input-area"
+            >
+
+                <input
+                    id="aiChatInput"
+                    type="text"
+                    placeholder="Ask about your data..."
+                    autocomplete="off"
+                >
+
+                <button
+                    type="submit"
+                    class="ai-send-button"
+                >
+                    ➤
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         CHART.JS
+    ====================================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"
+    ></script>
+
+
+    <!-- =====================================================
+         DASHBOARD JS
+    ====================================================== -->
+
+    <script src="../js/dashboard.js"></script>
+
+</body>
+
+</html>

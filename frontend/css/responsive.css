@@ -1,0 +1,416 @@
+/* =========================================================
+   GLOBAL RESPONSIVE DESIGN
+   Healthcare Analytics
+   ========================================================= */
+
+
+/* =========================================================
+   LARGE TABLETS / SMALL LAPTOPS
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+    .dashboard-content {
+        width: 94%;
+    }
+
+
+    .kpi-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    .quick-navigation {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    .dashboard-panels {
+        grid-template-columns:
+            1fr;
+    }
+}
+
+
+/* =========================================================
+   TABLETS
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    /* HEADER */
+
+    .main-header {
+        height: auto;
+
+        min-height: 80px;
+
+        padding:
+            15px 25px;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 15px;
+    }
+
+
+    .main-navigation {
+        width: 100%;
+
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 8px;
+    }
+
+
+    .main-navigation a {
+        padding: 7px 9px;
+
+        font-size: 10px;
+    }
+
+
+    /* DASHBOARD */
+
+    .dashboard-main {
+        min-height: calc(100vh - 130px);
+    }
+
+
+    .dashboard-content {
+        padding:
+            55px 0 70px;
+    }
+
+
+    .page-heading h1 {
+        font-size:
+            clamp(44px, 8vw, 68px);
+    }
+
+
+    .page-heading p {
+        font-size: 14px;
+    }
+
+
+    .kpi-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 15px;
+    }
+
+
+    .dashboard-panel {
+        padding: 25px;
+    }
+
+
+    .quick-navigation {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    /* AI */
+
+    .chat-window {
+        width: 380px;
+        height: 540px;
+
+        right: 18px;
+        bottom: 115px;
+    }
+
+
+    .ai-assistant {
+        right: 15px;
+        bottom: 15px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    /* HEADER */
+
+    .main-header {
+        padding:
+            13px 18px;
+
+        gap: 12px;
+    }
+
+
+    .logo-section {
+        width: 100%;
+    }
+
+
+    .site-logo {
+        width: 42px;
+        height: 42px;
+    }
+
+
+    .brand-text h2 {
+        font-size: 16px;
+    }
+
+
+    .brand-text span {
+        font-size: 9px;
+    }
+
+
+    .main-navigation {
+        width: 100%;
+
+        overflow-x: auto;
+
+        flex-wrap: nowrap;
+
+        padding-bottom: 5px;
+
+        scrollbar-width: none;
+    }
+
+
+    .main-navigation::-webkit-scrollbar {
+        display: none;
+    }
+
+
+    .main-navigation a {
+        flex-shrink: 0;
+
+        white-space: nowrap;
+
+        font-size: 9px;
+    }
+
+
+    /* MAIN */
+
+    .dashboard-main {
+        min-height: 100vh;
+
+        background-position:
+            center center;
+    }
+
+
+    .dashboard-content {
+        width: calc(100% - 30px);
+
+        padding:
+            45px 0 90px;
+    }
+
+
+    /* HEADING */
+
+    .page-heading {
+        margin-bottom: 30px;
+    }
+
+
+    .section-label {
+        font-size: 9px;
+
+        letter-spacing: 2px;
+    }
+
+
+    .page-heading h1 {
+        font-size: 45px;
+
+        letter-spacing: -2px;
+    }
+
+
+    .page-heading p {
+        margin-top: 20px;
+
+        font-size: 13px;
+
+        line-height: 1.7;
+    }
+
+
+    /* KPI */
+
+    .kpi-grid {
+        grid-template-columns: 1fr;
+
+        gap: 12px;
+    }
+
+
+    .kpi-card {
+        min-height: 105px;
+
+        padding: 17px;
+
+        border-radius: 17px;
+    }
+
+
+    .kpi-icon {
+        width: 50px;
+        height: 50px;
+
+        font-size: 22px;
+    }
+
+
+    .kpi-content strong {
+        font-size: 26px;
+    }
+
+
+    /* PANELS */
+
+    .dashboard-panels {
+        grid-template-columns: 1fr;
+
+        gap: 15px;
+    }
+
+
+    .dashboard-panel {
+        padding: 22px;
+
+        border-radius: 18px;
+    }
+
+
+    .dashboard-panel h2 {
+        font-size: 22px;
+    }
+
+
+    .dashboard-panel p {
+        font-size: 13px;
+    }
+
+
+    /* FLOW */
+
+    .flow-item {
+        padding: 12px;
+    }
+
+
+    /* QUICK NAVIGATION */
+
+    .quick-navigation {
+        grid-template-columns: 1fr;
+
+        gap: 10px;
+    }
+
+
+    .quick-navigation a {
+        min-height: 70px;
+    }
+
+
+    /* AI ROBOT */
+
+    .ai-assistant {
+        right: 10px;
+        bottom: 10px;
+    }
+
+
+    .robot-button {
+        width: 75px;
+        height: 75px;
+    }
+
+
+    .robot-status {
+        width: 15px;
+        height: 15px;
+
+        top: 2px;
+        right: 2px;
+    }
+
+
+    /* CHAT */
+
+    .chat-window {
+        position: fixed;
+
+        right: 10px;
+        bottom: 90px;
+
+        width:
+            calc(100vw - 20px);
+
+        height:
+            min(520px, calc(100vh - 120px));
+
+        border-radius: 18px;
+    }
+
+
+    .chat-suggestions {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .page-heading h1 {
+        font-size: 39px;
+    }
+
+
+    .kpi-card {
+        gap: 12px;
+    }
+
+
+    .kpi-icon {
+        width: 44px;
+        height: 44px;
+
+        font-size: 19px;
+    }
+
+
+    .kpi-content span {
+        font-size: 10px;
+    }
+
+
+    .kpi-content strong {
+        font-size: 23px;
+    }
+
+
+    .robot-button {
+        width: 65px;
+        height: 65px;
+    }
+}

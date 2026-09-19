@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Healthcare Analytics | Insights</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="../css/insights.css">
+</head>
+
+<body>
+
+<div class="insights-page">
+
+    <!-- =====================================================
+         BACKGROUND
+         ===================================================== -->
+
+    <div class="page-background">
+
+        <img
+            src="../assets/images/insights-bg.png"
+            alt=""
+            class="page-background-image"
+        >
+
+        <div class="page-background-overlay"></div>
+
+    </div>
+
+
+    <!-- =====================================================
+         HEADER / NAVBAR
+         ===================================================== -->
+
+    <header class="site-header">
+
+        <div class="header-inner">
+
+            <a href="../index.html" class="brand">
+
+                <img
+                    src="../assets/images/logo.png"
+                    alt="Healthcare Analytics"
+                    class="brand-logo"
+                >
+
+                <div class="brand-copy">
+
+                    <span class="brand-small">
+                        DATA INTELLIGENCE
+                    </span>
+
+                    <strong>
+                        Healthcare Analytics
+                    </strong>
+
+                </div>
+
+            </a>
+
+
+            <!-- DESKTOP NAVIGATION -->
+
+            <nav class="main-navigation">
+
+                <a href="../index.html">
+                    Home
+                </a>
+
+                <a href="dashboard.html">
+                    Dashboard
+                </a>
+
+                <a href="data-understanding.html">
+                    Data Understanding
+                </a>
+
+                <a href="preprocessing.html">
+                    Preprocessing
+                </a>
+
+                <a href="analysis.html">
+                    Analysis
+                </a>
+
+                <a href="insights.html" class="active">
+                    Insights
+                </a>
+
+                <a href="about.html">
+                    About
+                </a>
+
+            </nav>
+
+
+            <!-- MOBILE BUTTON -->
+
+            <button
+                class="menu-toggle"
+                id="menuToggle"
+                aria-label="Open navigation"
+                aria-expanded="false"
+            >
+
+                <span></span>
+                <span></span>
+                <span></span>
+
+            </button>
+
+        </div>
+
+
+        <!-- MOBILE NAVIGATION -->
+
+        <nav class="mobile-navigation" id="mobileNavigation">
+
+            <a href="../index.html">
+                Home
+            </a>
+
+            <a href="dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="data-understanding.html">
+                Data Understanding
+            </a>
+
+            <a href="preprocessing.html">
+                Preprocessing
+            </a>
+
+            <a href="analysis.html">
+                Analysis
+            </a>
+
+            <a href="insights.html" class="active">
+                Insights
+            </a>
+
+            <a href="about.html">
+                About
+            </a>
+
+        </nav>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <main>
+
+        <section class="insights-hero">
+
+            <div class="hero-container">
+
+                <div class="hero-label">
+
+                    <span class="label-line"></span>
+
+                    <span>
+                        HEALTHCARE INTELLIGENCE
+                    </span>
+
+                </div>
+
+
+                <h1>
+                    Discover
+                    <span>Healthcare Insights.</span>
+                </h1>
+
+
+                <p class="hero-description">
+
+                    Transform doctor visit records into meaningful
+                    healthcare intelligence. Explore patient behavior,
+                    demographic patterns, medical conditions, visit
+                    characteristics and actionable findings from the
+                    healthcare dataset.
+
+                </p>
+
+
+                <div class="hero-actions">
+
+                    <a
+                        href="#key-insights"
+                        class="primary-button"
+                    >
+                        Explore Insights
+                        <span>→</span>
+                    </a>
+
+                    <a
+                        href="analysis.html"
+                        class="secondary-button"
+                    >
+                        View Analysis
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             INSIGHT STATUS
+             ===================================================== -->
+
+        <section class="insight-status-section">
+
+            <div class="content-container">
+
+                <div class="insight-status">
+
+                    <span class="status-dot"></span>
+
+                    <span id="insightStatus">
+                        Healthcare insights loaded
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             KEY INSIGHTS
+             ===================================================== -->
+
+        <section
+            class="key-insights"
+            id="key-insights"
+        >
+
+            <div class="content-container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            KEY FINDINGS
+                        </span>
+
+                        <h2>
+                            What the data reveals
+                        </h2>
+
+                    </div>
+
+                    <p>
+                        A structured view of important patterns
+                        identified from the healthcare doctor-visits
+                        dataset.
+                    </p>
+
+                </div>
+
+
+                <div class="insight-grid">
+
+
+                    <!-- CARD 1 -->
+
+                    <article class="insight-card">
+
+                        <div class="insight-number">
+                            01
+                        </div>
+
+                        <div class="insight-icon">
+                            👥
+                        </div>
+
+                        <span class="insight-tag">
+                            PATIENT PATTERN
+                        </span>
+
+                        <h3>
+                            Patient Visit Behavior
+                        </h3>
+
+                        <p>
+                            Patient records can be examined to
+                            understand visit frequency, age patterns
+                            and the distribution of healthcare
+                            utilization across the dataset.
+                        </p>
+
+                        <div class="insight-line"></div>
+
+                        <span class="insight-footer">
+                            Demographic & visit analysis
+                        </span>
+
+                    </article>
+
+
+
+                    <!-- CARD 2 -->
+
+                    <article class="insight-card">
+
+                        <div class="insight-number">
+                            02
+                        </div>
+
+                        <div class="insight-icon">
+                            🩺
+                        </div>
+
+                        <span class="insight-tag">
+                            MEDICAL PATTERNS
+                        </span>
+
+                        <h3>
+                            Medical Condition Trends
+                        </h3>
+
+                        <p>
+                            Medical condition records can be compared
+                            to identify frequently occurring conditions
+                            and understand their distribution within
+                            the available observations.
+                        </p>
+
+                        <div class="insight-line"></div>
+
+                        <span class="insight-footer">
+                            Condition distribution
+                        </span>
+
+                    </article>
+
+
+
+                    <!-- CARD 3 -->
+
+                    <article class="insight-card">
+
+                        <div class="insight-number">
+                            03
+                        </div>
+
+                        <div class="insight-icon">
+                            📅
+                        </div>
+
+                        <span class="insight-tag">
+                            TIME PATTERN
+                        </span>
+
+                        <h3>
+                            Visit Distribution
+                        </h3>
+
+                        <p>
+                            Visit-related information provides a way
+                            to investigate how healthcare encounters
+                            are distributed across available dates,
+                            periods or visit categories.
+                        </p>
+
+                        <div class="insight-line"></div>
+
+                        <span class="insight-footer">
+                            Visit distribution analysis
+                        </span>
+
+                    </article>
+
+
+
+                    <!-- CARD 4 -->
+
+                    <article class="insight-card">
+
+                        <div class="insight-number">
+                            04
+                        </div>
+
+                        <div class="insight-icon">
+                            📊
+                        </div>
+
+                        <span class="insight-tag">
+                            DATA PATTERN
+                        </span>
+
+                        <h3>
+                            Dataset Relationships
+                        </h3>
+
+                        <p>
+                            Relationships between patient,
+                            demographic, visit and medical attributes
+                            can reveal useful associations for further
+                            healthcare analytics.
+                        </p>
+
+                        <div class="insight-line"></div>
+
+                        <span class="insight-footer">
+                            Variable relationship analysis
+                        </span>
+
+                    </article>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             INSIGHT HIGHLIGHTS
+             ===================================================== -->
+
+        <section class="highlight-section">
+
+            <div class="content-container">
+
+                <div class="highlight-panel">
+
+                    <div class="highlight-heading">
+
+                        <span class="section-kicker">
+                            DATA STORY
+                        </span>
+
+                        <h2>
+                            From records to
+                            <span>meaningful patterns.</span>
+                        </h2>
+
+                        <p>
+                            Healthcare analytics becomes useful when
+                            individual records are transformed into
+                            understandable patterns. This section
+                            connects the dataset with the analytical
+                            questions explored throughout the project.
+                        </p>
+
+                    </div>
+
+
+                    <div class="highlight-list">
+
+                        <div class="highlight-item">
+
+                            <span class="highlight-index">
+                                A
+                            </span>
+
+                            <div>
+
+                                <h3>
+                                    Who is represented?
+                                </h3>
+
+                                <p>
+                                    Examine patient and demographic
+                                    characteristics represented in
+                                    the available records.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="highlight-item">
+
+                            <span class="highlight-index">
+                                B
+                            </span>
+
+                            <div>
+
+                                <h3>
+                                    What conditions appear?
+                                </h3>
+
+                                <p>
+                                    Compare medical-condition
+                                    categories and their occurrence
+                                    across the dataset.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="highlight-item">
+
+                            <span class="highlight-index">
+                                C
+                            </span>
+
+                            <div>
+
+                                <h3>
+                                    How do visits vary?
+                                </h3>
+
+                                <p>
+                                    Investigate patterns in healthcare
+                                    visits and identify differences
+                                    between relevant groups.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="highlight-item">
+
+                            <span class="highlight-index">
+                                D
+                            </span>
+
+                            <div>
+
+                                <h3>
+                                    What relationships exist?
+                                </h3>
+
+                                <p>
+                                    Explore associations between
+                                    important attributes using
+                                    statistical and visual analysis.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             INSIGHT METRICS
+             ===================================================== -->
+
+        <section class="metrics-section">
+
+            <div class="content-container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            ANALYTICAL VIEW
+                        </span>
+
+                        <h2>
+                            Insight dimensions
+                        </h2>
+
+                    </div>
+
+                    <p>
+                        Multiple analytical dimensions are combined
+                        to create a structured understanding of the
+                        healthcare dataset.
+                    </p>
+
+                </div>
+
+
+                <div class="metrics-grid">
+
+
+                    <div class="metric-card">
+
+                        <span class="metric-icon">
+                            01
+                        </span>
+
+                        <div>
+
+                            <span class="metric-label">
+                                DEMOGRAPHICS
+                            </span>
+
+                            <strong>
+                                Patient
+                            </strong>
+
+                            <small>
+                                Age and demographic patterns
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="metric-card">
+
+                        <span class="metric-icon">
+                            02
+                        </span>
+
+                        <div>
+
+                            <span class="metric-label">
+                                CLINICAL
+                            </span>
+
+                            <strong>
+                                Conditions
+                            </strong>
+
+                            <small>
+                                Medical category patterns
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="metric-card">
+
+                        <span class="metric-icon">
+                            03
+                        </span>
+
+                        <div>
+
+                            <span class="metric-label">
+                                UTILIZATION
+                            </span>
+
+                            <strong>
+                                Visits
+                            </strong>
+
+                            <small>
+                                Healthcare visit behavior
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="metric-card">
+
+                        <span class="metric-icon">
+                            04
+                        </span>
+
+                        <div>
+
+                            <span class="metric-label">
+                                RELATIONSHIPS
+                            </span>
+
+                            <strong>
+                                Patterns
+                            </strong>
+
+                            <small>
+                                Relationships between variables
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             INTERPRETATION
+             ===================================================== -->
+
+        <section class="interpretation-section">
+
+            <div class="content-container">
+
+                <div class="interpretation-card">
+
+                    <div class="interpretation-left">
+
+                        <span class="section-kicker">
+                            INTERPRETATION
+                        </span>
+
+                        <h2>
+                            Turning analysis into
+                            <span>understanding.</span>
+                        </h2>
+
+                    </div>
+
+
+                    <div class="interpretation-right">
+
+                        <p>
+                            The insights page summarizes the analytical
+                            story developed from the healthcare doctor
+                            visits dataset. Individual charts and
+                            statistical results should be interpreted
+                            together rather than viewed independently.
+                        </p>
+
+                        <p>
+                            Observed patterns describe the available
+                            dataset and should not be treated as medical
+                            diagnoses, treatment recommendations or
+                            conclusions about individual patients.
+                        </p>
+
+                        <div class="interpretation-actions">
+
+                            <a
+                                href="analysis.html"
+                                class="secondary-button"
+                            >
+                                Open Analysis
+                            </a>
+
+                            <a
+                                href="dashboard.html"
+                                class="primary-button"
+                            >
+                                Open Dashboard
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             QUESTIONS
+             ===================================================== -->
+
+        <section class="questions-section">
+
+            <div class="content-container">
+
+                <div class="questions-box">
+
+                    <div class="questions-heading">
+
+                        <span class="section-kicker">
+                            ANALYTICAL QUESTIONS
+                        </span>
+
+                        <h2>
+                            Questions answered by the project
+                        </h2>
+
+                        <p>
+                            The following questions provide a framework
+                            for interpreting the healthcare dataset and
+                            organizing the analysis.
+                        </p>
+
+                    </div>
+
+
+                    <div class="question-grid">
+
+
+                        <div class="question-item">
+
+                            <span>
+                                01
+                            </span>
+
+                            <p>
+                                What are the main characteristics of
+                                the healthcare doctor-visits dataset?
+                            </p>
+
+                        </div>
+
+
+                        <div class="question-item">
+
+                            <span>
+                                02
+                            </span>
+
+                            <p>
+                                How are patient records distributed
+                                across available demographic groups?
+                            </p>
+
+                        </div>
+
+
+                        <div class="question-item">
+
+                            <span>
+                                03
+                            </span>
+
+                            <p>
+                                Which medical conditions occur most
+                                frequently in the available records?
+                            </p>
+
+                        </div>
+
+
+                        <div class="question-item">
+
+                            <span>
+                                04
+                            </span>
+
+                            <p>
+                                What patterns can be observed in
+                                healthcare visits?
+                            </p>
+
+                        </div>
+
+
+                        <div class="question-item">
+
+                            <span>
+                                05
+                            </span>
+
+                            <p>
+                                Which variables show useful
+                                relationships with healthcare visits?
+                            </p>
+
+                        </div>
+
+
+                        <div class="question-item">
+
+                            <span>
+                                06
+                            </span>
+
+                            <p>
+                                What conclusions can be drawn from
+                                the visual and statistical analysis?
+                            </p>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             NEXT SECTION
+             ===================================================== -->
+
+        <section class="next-section">
+
+            <div class="content-container">
+
+                <div class="next-card">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            CONTINUE EXPLORING
+                        </span>
+
+                        <h2>
+                            Explore the complete analysis.
+                        </h2>
+
+                        <p>
+                            Move between the dashboard, analysis,
+                            preprocessing and insights sections to
+                            understand the complete healthcare
+                            analytics workflow.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="analysis.html"
+                        class="primary-button"
+                    >
+                        View Analysis
+                        <span>→</span>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         AI ASSISTANT
+         ===================================================== -->
+
+    <div id="healthcare-ai-widget">
+
+
+        <!-- ROBOT BUTTON -->
+
+        <button
+            class="ai-robot-button"
+            id="aiRobotButton"
+            aria-label="Open Healthcare AI Assistant"
+            title="Healthcare AI Assistant"
+        >
+
+            <img
+                src="../assets/images/ai-robot.png"
+                alt="AI Assistant"
+            >
+
+            <span class="ai-robot-badge">
+                AI
+            </span>
+
+        </button>
+
+
+
+        <!-- CHAT WINDOW -->
+
+        <div
+            class="ai-chat-window"
+            id="aiChatWindow"
+        >
+
+
+            <!-- CHAT HEADER -->
+
+            <div class="ai-chat-header">
+
+                <div class="ai-header-left">
+
+                    <div class="ai-header-icon">
+                        AI
+                    </div>
+
+                    <div class="ai-header-info">
+
+                        <h3>
+                            Healthcare AI
+                        </h3>
+
+                        <span>
+
+                            <i class="ai-online-dot"></i>
+
+                            Online Assistant
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="ai-close-button"
+                    id="aiCloseButton"
+                    aria-label="Close chatbot"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+
+            <!-- CHAT BODY -->
+
+            <div
+                class="ai-chat-body"
+                id="aiChatBody"
+            >
+
+                <div class="ai-message">
+
+                    <div class="ai-avatar-small">
+                        AI
+                    </div>
+
+                    <div class="ai-message-content">
+
+                        <p>
+                            Hello! I'm your Healthcare Analytics
+                            Assistant.
+                        </p>
+
+                        <p>
+                            I can help you understand the insights
+                            and analytical sections of this project.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ai-quick-section">
+
+                    <h4>
+                        QUICK QUESTIONS
+                    </h4>
+
+
+                    <button
+                        class="ai-question"
+                        data-question="What is the purpose of the insights page?"
+                    >
+                        What is the purpose of the insights page?
+                    </button>
+
+
+                    <button
+                        class="ai-question"
+                        data-question="What kind of healthcare patterns can be analyzed?"
+                    >
+                        What healthcare patterns can be analyzed?
+                    </button>
+
+
+                    <button
+                        class="ai-question"
+                        data-question="What is the difference between analysis and insights?"
+                    >
+                        What is the difference between analysis and insights?
+                    </button>
+
+
+                    <button
+                        class="ai-question"
+                        data-question="Can these insights be used as medical advice?"
+                    >
+                        Can these insights be used as medical advice?
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- CHAT INPUT -->
+
+            <form
+                class="ai-chat-input-area"
+                id="aiChatForm"
+            >
+
+                <input
+                    type="text"
+                    id="aiChatInput"
+                    placeholder="Ask about the healthcare data..."
+                    autocomplete="off"
+                >
+
+                <button
+                    type="submit"
+                    class="ai-send-button"
+                    aria-label="Send message"
+                >
+                    ↑
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script src="../js/insights.js"></script>
+
+</body>
+</html>

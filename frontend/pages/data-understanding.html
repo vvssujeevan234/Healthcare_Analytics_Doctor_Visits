@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Healthcare Analytics Doctor Visits - Data Understanding"
+    >
+
+    <title>
+        Data Understanding | Healthcare Analytics
+    </title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Data Understanding CSS -->
+    <link
+        rel="stylesheet"
+        href="../css/data-understanding.css"
+    >
+</head>
+
+<body>
+
+<div class="data-page">
+
+    <!-- =====================================================
+         BACKGROUND
+         ===================================================== -->
+
+    <div class="page-background">
+
+        <img
+            src="../assets/images/data-understanding-bg.png"
+            alt=""
+            class="page-background-image"
+        >
+
+        <div class="page-background-overlay"></div>
+
+        <div class="background-glow glow-one"></div>
+        <div class="background-glow glow-two"></div>
+
+    </div>
+
+
+    <!-- =====================================================
+         HEADER / NAVBAR
+         ===================================================== -->
+
+    <header class="site-header">
+
+        <div class="header-inner">
+
+            <!-- BRAND -->
+
+            <a
+                href="../index.html"
+                class="brand"
+            >
+
+                <img
+                    src="../assets/images/logo.png"
+                    alt="Healthcare Analytics Logo"
+                    class="brand-logo"
+                >
+
+                <div class="brand-copy">
+
+                    <span class="brand-small">
+                        HEALTHCARE ANALYTICS
+                    </span>
+
+                    <strong>
+                        Doctor Visits
+                    </strong>
+
+                </div>
+
+            </a>
+
+
+            <!-- DESKTOP NAVIGATION -->
+
+            <nav class="main-navigation">
+
+                <a href="dashboard.html">
+                    Dashboard
+                </a>
+
+                <a
+                    href="data-understanding.html"
+                    class="active"
+                >
+                    Data
+                </a>
+
+                <a href="preprocessing.html">
+                    Preprocessing
+                </a>
+
+                <a href="analysis.html">
+                    Analysis
+                </a>
+
+                <a href="insights.html">
+                    Insights
+                </a>
+
+                <a href="portfolio.html">
+                    Portfolio
+                </a>
+
+                <a href="about.html">
+                    About
+                </a>
+
+            </nav>
+
+
+            <!-- MOBILE MENU BUTTON -->
+
+            <button
+                class="menu-toggle"
+                id="menuToggle"
+                aria-label="Open navigation"
+                aria-expanded="false"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+        </div>
+
+
+        <!-- MOBILE NAVIGATION -->
+
+        <nav
+            class="mobile-navigation"
+            id="mobileNavigation"
+        >
+
+            <a href="dashboard.html">
+                Dashboard
+            </a>
+
+            <a
+                href="data-understanding.html"
+                class="active"
+            >
+                Data
+            </a>
+
+            <a href="preprocessing.html">
+                Preprocessing
+            </a>
+
+            <a href="analysis.html">
+                Analysis
+            </a>
+
+            <a href="insights.html">
+                Insights
+            </a>
+
+            <a href="portfolio.html">
+                Portfolio
+            </a>
+
+            <a href="about.html">
+                About
+            </a>
+
+        </nav>
+
+    </header>
+
+
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <main>
+
+        <section class="data-hero">
+
+            <div class="hero-container">
+
+                <div class="hero-content">
+
+                    <div class="hero-label">
+
+                        <span class="label-line"></span>
+
+                        <span>
+                            DATA UNDERSTANDING
+                        </span>
+
+                        <span class="label-line"></span>
+
+                    </div>
+
+
+                    <h1>
+
+                        Understand
+                        <span>
+                            Your Healthcare Data
+                        </span>
+
+                    </h1>
+
+
+                    <p class="hero-description">
+
+                        Explore the structure, characteristics and
+                        quality of the healthcare doctor visits dataset.
+                        Understand patients, doctor visits, demographic
+                        attributes and healthcare-related variables
+                        before performing deeper analysis.
+
+                    </p>
+
+
+                    <div class="hero-actions">
+
+                        <button
+                            class="primary-button"
+                            id="exploreDatasetButton"
+                        >
+                            Explore Dataset
+
+                            <span>
+                                ↓
+                            </span>
+
+                        </button>
+
+
+                        <a
+                            href="preprocessing.html"
+                            class="secondary-button"
+                        >
+                            Continue to Preprocessing
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             DATA STATUS
+             ================================================= -->
+
+        <section class="data-status-section">
+
+            <div class="content-container">
+
+                <div class="data-status">
+
+                    <span
+                        class="status-dot"
+                        id="statusDot"
+                    ></span>
+
+                    <span id="dataStatusText">
+                        Loading healthcare dataset...
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             DATASET SNAPSHOT
+             ================================================= -->
+
+        <section
+            class="dataset-overview"
+            id="datasetOverview"
+        >
+
+            <div class="content-container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            DATASET SNAPSHOT
+                        </span>
+
+                        <h2>
+                            Know the Data
+                        </h2>
+
+                    </div>
+
+                    <p>
+                        A quick structural overview of the
+                        healthcare doctor visits dataset.
+                    </p>
+
+                </div>
+
+
+                <div class="metric-grid">
+
+                    <!-- ROWS -->
+
+                    <article class="metric-card">
+
+                        <div class="metric-icon">
+                            #
+                        </div>
+
+                        <div class="metric-content">
+
+                            <span>
+                                TOTAL RECORDS
+                            </span>
+
+                            <strong id="totalRows">
+                                —
+                            </strong>
+
+                            <small>
+                                Dataset observations
+                            </small>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- COLUMNS -->
+
+                    <article class="metric-card">
+
+                        <div class="metric-icon">
+                            C
+                        </div>
+
+                        <div class="metric-content">
+
+                            <span>
+                                TOTAL FEATURES
+                            </span>
+
+                            <strong id="totalColumns">
+                                —
+                            </strong>
+
+                            <small>
+                                Dataset variables
+                            </small>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- NUMERICAL -->
+
+                    <article class="metric-card">
+
+                        <div class="metric-icon">
+                            N
+                        </div>
+
+                        <div class="metric-content">
+
+                            <span>
+                                NUMERICAL
+                            </span>
+
+                            <strong id="numericColumns">
+                                —
+                            </strong>
+
+                            <small>
+                                Quantitative features
+                            </small>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- CATEGORICAL -->
+
+                    <article class="metric-card">
+
+                        <div class="metric-icon">
+                            A
+                        </div>
+
+                        <div class="metric-content">
+
+                            <span>
+                                CATEGORICAL
+                            </span>
+
+                            <strong id="categoricalColumns">
+                                —
+                            </strong>
+
+                            <small>
+                                Qualitative features
+                            </small>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             DATA STRUCTURE
+             ================================================= -->
+
+        <section class="structure-section">
+
+            <div class="content-container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            DATA STRUCTURE
+                        </span>
+
+                        <h2>
+                            Dataset Composition
+                        </h2>
+
+                    </div>
+
+                    <p>
+                        Understand how variables are distributed
+                        between numerical and categorical groups.
+                    </p>
+
+                </div>
+
+
+                <div class="structure-grid">
+
+                    <!-- NUMERICAL CARD -->
+
+                    <article class="structure-card">
+
+                        <div class="structure-card-header">
+
+                            <div>
+
+                                <span>
+                                    NUMERICAL FEATURES
+                                </span>
+
+                                <h3>
+                                    Quantitative Variables
+                                </h3>
+
+                            </div>
+
+                            <div class="card-count">
+                                <span id="numericCountBadge">
+                                    0
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="feature-list"
+                            id="numericFeatureList"
+                        >
+
+                            <div class="loading-item">
+                                Reading dataset...
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- CATEGORICAL CARD -->
+
+                    <article class="structure-card">
+
+                        <div class="structure-card-header">
+
+                            <div>
+
+                                <span>
+                                    CATEGORICAL FEATURES
+                                </span>
+
+                                <h3>
+                                    Descriptive Variables
+                                </h3>
+
+                            </div>
+
+                            <div class="card-count">
+                                <span id="categoricalCountBadge">
+                                    0
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="feature-list"
+                            id="categoricalFeatureList"
+                        >
+
+                            <div class="loading-item">
+                                Reading dataset...
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             DATA QUALITY
+             ================================================= -->
+
+        <section class="quality-section">
+
+            <div class="content-container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            DATA QUALITY
+                        </span>
+
+                        <h2>
+                            Initial Quality Check
+                        </h2>
+
+                    </div>
+
+                    <p>
+                        Basic checks performed directly on the
+                        loaded CSV dataset.
+                    </p>
+
+                </div>
+
+
+                <div class="quality-grid">
+
+                    <!-- MISSING -->
+
+                    <article class="quality-card">
+
+                        <div class="quality-icon">
+                            !
+                        </div>
+
+                        <div>
+
+                            <span>
+                                MISSING VALUES
+                            </span>
+
+                            <strong id="missingValues">
+                                —
+                            </strong>
+
+                            <p>
+                                Total missing cells detected
+                                across the dataset.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- DUPLICATES -->
+
+                    <article class="quality-card">
+
+                        <div class="quality-icon">
+                            =
+                        </div>
+
+                        <div>
+
+                            <span>
+                                DUPLICATE ROWS
+                            </span>
+
+                            <strong id="duplicateRows">
+                                —
+                            </strong>
+
+                            <p>
+                                Repeated complete records
+                                found in the dataset.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- UNIQUE -->
+
+                    <article class="quality-card">
+
+                        <div class="quality-icon">
+                            U
+                        </div>
+
+                        <div>
+
+                            <span>
+                                UNIQUE VALUES
+                            </span>
+
+                            <strong id="uniqueValues">
+                                —
+                            </strong>
+
+                            <p>
+                                Unique-value count across
+                                detected categorical features.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- STATUS -->
+
+                    <article class="quality-card">
+
+                        <div class="quality-icon">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <span>
+                                DATASET STATUS
+                            </span>
+
+                            <strong id="qualityStatus">
+                                CHECKING
+                            </strong>
+
+                            <p id="qualityDescription">
+                                Performing initial dataset checks.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             DATA PREVIEW
+             ================================================= -->
+
+        <section class="preview-section">
+
+            <div class="content-container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            DATA PREVIEW
+                        </span>
+
+                        <h2>
+                            Inspect the Records
+                        </h2>
+
+                    </div>
+
+                    <p>
+                        A preview of the first records from the
+                        healthcare doctor visits dataset.
+                    </p>
+
+                </div>
+
+
+                <div class="preview-card">
+
+                    <div class="preview-header">
+
+                        <div>
+
+                            <span>
+                                CSV DATASET
+                            </span>
+
+                            <h3>
+                                healthcare_doctor_visits.csv
+                            </h3>
+
+                        </div>
+
+                        <div class="preview-badge">
+                            LIVE DATA
+                        </div>
+
+                    </div>
+
+
+                    <div class="table-wrapper">
+
+                        <table id="dataPreviewTable">
+
+                            <thead id="previewHead">
+                            </thead>
+
+                            <tbody id="previewBody">
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <div class="table-footer">
+
+                        <span id="previewInfo">
+                            Loading records...
+                        </span>
+
+                        <span>
+                            First 8 records
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             FEATURE DETAILS
+             ================================================= -->
+
+        <section class="features-section">
+
+            <div class="content-container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            FEATURE EXPLORATION
+                        </span>
+
+                        <h2>
+                            What Does Each Variable Tell Us?
+                        </h2>
+
+                    </div>
+
+                    <p>
+                        Select a feature to inspect its basic
+                        values and characteristics.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-explorer">
+
+                    <div class="feature-selector">
+
+                        <label for="featureSelect">
+                            Select Feature
+                        </label>
+
+                        <select id="featureSelect">
+
+                            <option value="">
+                                Select a dataset feature
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div
+                        class="feature-detail"
+                        id="featureDetail"
+                    >
+
+                        <div class="feature-detail-placeholder">
+
+                            <span>
+                                SELECT
+                            </span>
+
+                            <h3>
+                                Explore a Dataset Feature
+                            </h3>
+
+                            <p>
+                                Choose a variable from the
+                                dropdown to view its type,
+                                unique values and sample data.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             DATA UNDERSTANDING QUESTIONS
+             ================================================= -->
+
+        <section class="questions-section">
+
+            <div class="content-container">
+
+                <div class="questions-box">
+
+                    <div class="questions-heading">
+
+                        <span class="section-kicker">
+                            QUESTIONS TO EXPLORE
+                        </span>
+
+                        <h2>
+                            What Can We Learn From the Dataset?
+                        </h2>
+
+                        <p>
+                            These questions provide a foundation
+                            for the preprocessing, analysis and
+                            insights stages of the project.
+                        </p>
+
+                    </div>
+
+
+                    <div class="question-grid">
+
+                        <div class="question-item">
+
+                            <span>
+                                01
+                            </span>
+
+                            <p>
+                                How many healthcare records are
+                                present in the dataset?
+                            </p>
+
+                        </div>
+
+
+                        <div class="question-item">
+
+                            <span>
+                                02
+                            </span>
+
+                            <p>
+                                What variables describe patient
+                                and doctor visit characteristics?
+                            </p>
+
+                        </div>
+
+
+                        <div class="question-item">
+
+                            <span>
+                                03
+                            </span>
+
+                            <p>
+                                Which features are numerical and
+                                which are categorical?
+                            </p>
+
+                        </div>
+
+
+                        <div class="question-item">
+
+                            <span>
+                                04
+                            </span>
+
+                            <p>
+                                Are there missing or duplicated
+                                observations?
+                            </p>
+
+                        </div>
+
+
+                        <div class="question-item">
+
+                            <span>
+                                05
+                            </span>
+
+                            <p>
+                                Which categorical variables have
+                                the greatest variety?
+                            </p>
+
+                        </div>
+
+
+                        <div class="question-item">
+
+                            <span>
+                                06
+                            </span>
+
+                            <p>
+                                Which variables should be
+                                investigated during preprocessing?
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             NEXT STEP
+             ================================================= -->
+
+        <section class="next-section">
+
+            <div class="content-container">
+
+                <div class="next-card">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            NEXT STAGE
+                        </span>
+
+                        <h2>
+                            Prepare the Data
+                        </h2>
+
+                        <p>
+                            After understanding the dataset,
+                            continue to preprocessing to inspect
+                            missing values, duplicates, data
+                            types and transformation requirements.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="preprocessing.html"
+                        class="primary-button"
+                    >
+                        Open Preprocessing
+
+                        <span>
+                            →
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         AI CHATBOT
+         ===================================================== -->
+
+    <div id="healthcare-ai-widget">
+
+        <!-- ROBOT BUTTON -->
+
+        <button
+            class="ai-robot-button"
+            id="aiRobotButton"
+            aria-label="Open Healthcare AI Assistant"
+            title="Healthcare AI Assistant"
+        >
+
+            <img
+                src="../assets/images/ai-robot.png"
+                alt="AI Assistant"
+            >
+
+            <span class="ai-robot-badge">
+                AI
+            </span>
+
+        </button>
+
+
+        <!-- CHAT WINDOW -->
+
+        <div
+            class="ai-chat-window"
+            id="aiChatWindow"
+        >
+
+            <!-- HEADER -->
+
+            <div class="ai-chat-header">
+
+                <div class="ai-header-left">
+
+                    <div class="ai-header-icon">
+                        AI
+                    </div>
+
+                    <div class="ai-header-info">
+
+                        <h3>
+                            Healthcare AI
+                        </h3>
+
+                        <span>
+
+                            <i class="ai-online-dot"></i>
+
+                            Data Assistant
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="ai-close-button"
+                    id="aiCloseButton"
+                    aria-label="Close chatbot"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <!-- BODY -->
+
+            <div
+                class="ai-chat-body"
+                id="aiChatBody"
+            >
+
+                <div class="ai-message">
+
+                    <div class="ai-avatar-small">
+                        AI
+                    </div>
+
+                    <div class="ai-message-content">
+
+                        <p>
+                            Hello! I'm your Healthcare Data
+                            Assistant.
+                        </p>
+
+                        <p>
+                            I can help you understand the
+                            structure and characteristics of
+                            this dataset.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ai-quick-section">
+
+                    <h4>
+                        QUICK QUESTIONS
+                    </h4>
+
+                    <button
+                        class="ai-question"
+                        data-question="How many records are in the dataset?"
+                    >
+                        How many records are present?
+                    </button>
+
+                    <button
+                        class="ai-question"
+                        data-question="What are the numerical features?"
+                    >
+                        What are the numerical features?
+                    </button>
+
+                    <button
+                        class="ai-question"
+                        data-question="What are the categorical features?"
+                    >
+                        What are the categorical features?
+                    </button>
+
+                    <button
+                        class="ai-question"
+                        data-question="Are there missing values?"
+                    >
+                        Are there missing values?
+                    </button>
+
+                    <button
+                        class="ai-question"
+                        data-question="What should I do after data understanding?"
+                    >
+                        What comes after data understanding?
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- INPUT -->
+
+            <div class="ai-chat-input-area">
+
+                <input
+                    type="text"
+                    id="aiChatInput"
+                    placeholder="Ask about the dataset..."
+                    autocomplete="off"
+                >
+
+                <button
+                    class="ai-send-button"
+                    id="aiSendButton"
+                    aria-label="Send message"
+                >
+                    ↑
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script
+        src="../js/data-understanding.js"
+    ></script>
+
+</div>
+
+</body>
+</html>

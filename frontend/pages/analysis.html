@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Healthcare Analytics Doctor Visits - Data Analysis"
+    >
+
+    <title>Analysis | Healthcare Analytics</title>
+
+    <!-- Main stylesheet -->
+    <link
+        rel="stylesheet"
+        href="../css/style.css"
+    >
+
+    <!-- Analysis stylesheet -->
+    <link
+        rel="stylesheet"
+        href="../css/analysis.css"
+    >
+
+    <!-- Responsive stylesheet -->
+    <link
+        rel="stylesheet"
+        href="../css/responsive.css"
+    >
+</head>
+
+<body>
+
+    <!-- =====================================================
+         BACKGROUND
+    ====================================================== -->
+
+    <div class="page-background">
+        <img
+            src="../assets/images/analysis-bg.png"
+            alt=""
+            class="page-background-image"
+        >
+
+        <div class="page-background-overlay"></div>
+    </div>
+
+
+    <!-- =====================================================
+         NAVIGATION
+    ====================================================== -->
+
+    <header class="site-header">
+
+        <div class="header-inner">
+
+            <!-- BRAND -->
+
+            <a
+                href="../index.html"
+                class="brand"
+            >
+
+                <img
+                    src="../assets/images/logo.png"
+                    alt="Healthcare Analytics"
+                    class="brand-logo"
+                >
+
+                <div class="brand-copy">
+
+                    <span class="brand-small">
+                        HEALTHCARE ANALYTICS
+                    </span>
+
+                    <strong>
+                        Doctor Visits
+                    </strong>
+
+                </div>
+
+            </a>
+
+
+            <!-- DESKTOP NAVIGATION -->
+
+            <nav class="main-navigation">
+
+                <a href="dashboard.html">
+                    Dashboard
+                </a>
+
+                <a
+                    href="data-understanding.html"
+                >
+                    Data
+                </a>
+
+                <a
+                    href="preprocessing.html"
+                >
+                    Preprocessing
+                </a>
+
+                <a
+                    href="analysis.html"
+                    class="active"
+                >
+                    Analysis
+                </a>
+
+                <a href="insights.html">
+                    Insights
+                </a>
+
+                <a href="portfolio.html">
+                    Portfolio
+                </a>
+
+                <a href="about.html">
+                    About
+                </a>
+
+            </nav>
+
+
+            <!-- MOBILE MENU -->
+
+            <button
+                class="menu-toggle"
+                id="menuToggle"
+                type="button"
+                aria-label="Open navigation"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+        </div>
+
+
+        <!-- MOBILE NAVIGATION -->
+
+        <nav
+            class="mobile-navigation"
+            id="mobileNavigation"
+        >
+
+            <a href="dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="data-understanding.html">
+                Data
+            </a>
+
+            <a href="preprocessing.html">
+                Preprocessing
+            </a>
+
+            <a
+                href="analysis.html"
+                class="active"
+            >
+                Analysis
+            </a>
+
+            <a href="insights.html">
+                Insights
+            </a>
+
+            <a href="portfolio.html">
+                Portfolio
+            </a>
+
+            <a href="about.html">
+                About
+            </a>
+
+        </nav>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="analysis-page">
+
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section class="analysis-hero">
+
+            <div class="hero-container">
+
+                <div class="hero-label">
+                    <span class="label-line"></span>
+
+                    DATA ANALYSIS
+
+                    <span class="label-line"></span>
+                </div>
+
+
+                <h1>
+                    Explore
+                    <span>Healthcare Patterns</span>
+                </h1>
+
+
+                <p class="hero-description">
+                    Analyze doctor visits, patient characteristics,
+                    health conditions and demographic patterns using
+                    the healthcare doctor visits dataset.
+                </p>
+
+
+                <div class="hero-actions">
+
+                    <a
+                        href="#analysis-results"
+                        class="primary-button"
+                    >
+                        Explore Analysis
+                        <span>↓</span>
+                    </a>
+
+                    <a
+                        href="data-understanding.html"
+                        class="secondary-button"
+                    >
+                        View Dataset
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             DATA STATUS
+        ================================================== -->
+
+        <section class="data-status-section">
+
+            <div class="content-container">
+
+                <div
+                    class="data-status"
+                    id="dataStatus"
+                >
+
+                    <span
+                        class="status-dot"
+                        id="statusDot"
+                    ></span>
+
+                    <span id="statusText">
+                        Loading healthcare dataset...
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             KPI CARDS
+        ================================================== -->
+
+        <section class="analysis-results">
+
+            <div
+                class="content-container"
+                id="analysis-results"
+            >
+
+                <div class="section-heading">
+
+                    <div>
+                        <span class="section-kicker">
+                            DATA OVERVIEW
+                        </span>
+
+                        <h2>
+                            Key Analysis Metrics
+                        </h2>
+                    </div>
+
+                    <p>
+                        Calculated directly from the healthcare
+                        doctor visits CSV dataset.
+                    </p>
+
+                </div>
+
+
+                <div class="metric-grid">
+
+                    <!-- TOTAL RECORDS -->
+
+                    <article class="metric-card">
+
+                        <div class="metric-icon">
+                            #
+                        </div>
+
+                        <div class="metric-content">
+
+                            <span>
+                                TOTAL RECORDS
+                            </span>
+
+                            <strong
+                                id="totalRecords"
+                            >
+                                —
+                            </strong>
+
+                            <small>
+                                Dataset observations
+                            </small>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- TOTAL VISITS -->
+
+                    <article class="metric-card">
+
+                        <div class="metric-icon">
+                            +
+                        </div>
+
+                        <div class="metric-content">
+
+                            <span>
+                                TOTAL DOCTOR VISITS
+                            </span>
+
+                            <strong
+                                id="totalVisits"
+                            >
+                                —
+                            </strong>
+
+                            <small>
+                                Recorded visit count
+                            </small>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- AVERAGE VISITS -->
+
+                    <article class="metric-card">
+
+                        <div class="metric-icon">
+                            ∑
+                        </div>
+
+                        <div class="metric-content">
+
+                            <span>
+                                AVERAGE VISITS
+                            </span>
+
+                            <strong
+                                id="averageVisits"
+                            >
+                                —
+                            </strong>
+
+                            <small>
+                                Mean visits per record
+                            </small>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- UNIQUE AGE -->
+
+                    <article class="metric-card">
+
+                        <div class="metric-icon">
+                            A
+                        </div>
+
+                        <div class="metric-content">
+
+                            <span>
+                                AVERAGE AGE
+                            </span>
+
+                            <strong
+                                id="averageAge"
+                            >
+                                —
+                            </strong>
+
+                            <small>
+                                Average patient age
+                            </small>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ANALYSIS GRID
+        ================================================== -->
+
+        <section class="visual-analysis">
+
+            <div class="content-container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            VISUAL EXPLORATION
+                        </span>
+
+                        <h2>
+                            Healthcare Data Patterns
+                        </h2>
+
+                    </div>
+
+                    <p>
+                        Interactive visual summaries generated
+                        from the loaded CSV data.
+                    </p>
+
+                </div>
+
+
+
+                <div class="analysis-grid">
+
+
+                    <!-- =====================================
+                         VISIT DISTRIBUTION
+                    ====================================== -->
+
+                    <article class="analysis-card large-card">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <span>
+                                    ANALYSIS 01
+                                </span>
+
+                                <h3>
+                                    Doctor Visit Distribution
+                                </h3>
+
+                            </div>
+
+                            <span class="card-badge">
+                                VISITS
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="bar-chart"
+                            id="visitChart"
+                        >
+                            <!-- JS generates chart -->
+                        </div>
+
+
+                        <div class="chart-footer">
+
+                            <span>
+                                Visit frequency
+                            </span>
+
+                            <span id="visitChartSummary">
+                                Loading...
+                            </span>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- =====================================
+                         AGE DISTRIBUTION
+                    ====================================== -->
+
+                    <article class="analysis-card">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <span>
+                                    ANALYSIS 02
+                                </span>
+
+                                <h3>
+                                    Age Distribution
+                                </h3>
+
+                            </div>
+
+                            <span class="card-badge">
+                                AGE
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="age-chart"
+                            id="ageChart"
+                        >
+                            <!-- JS generates chart -->
+                        </div>
+
+
+                        <div class="chart-footer">
+
+                            <span>
+                                Patient age groups
+                            </span>
+
+                            <span id="ageChartSummary">
+                                Loading...
+                            </span>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- =====================================
+                         CATEGORY ANALYSIS
+                    ====================================== -->
+
+                    <article class="analysis-card">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <span>
+                                    ANALYSIS 03
+                                </span>
+
+                                <h3>
+                                    Patient Characteristics
+                                </h3>
+
+                            </div>
+
+                            <span class="card-badge">
+                                CATEGORY
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="category-list"
+                            id="categoryAnalysis"
+                        >
+                            <!-- JS generates categories -->
+                        </div>
+
+
+                        <div class="chart-footer">
+
+                            <span>
+                                Dataset categories
+                            </span>
+
+                            <span>
+                                CSV
+                            </span>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- =====================================
+                         TOP HEALTH INDICATORS
+                    ====================================== -->
+
+                    <article class="analysis-card large-card">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <span>
+                                    ANALYSIS 04
+                                </span>
+
+                                <h3>
+                                    Health & Visit Relationship
+                                </h3>
+
+                            </div>
+
+                            <span class="card-badge">
+                                INSIGHT
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="relationship-panel"
+                            id="relationshipPanel"
+                        >
+                            <!-- JS generates relationship -->
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ANALYSIS QUESTIONS
+        ================================================== -->
+
+        <section class="questions-section">
+
+            <div class="content-container">
+
+                <div class="questions-box">
+
+                    <div class="questions-heading">
+
+                        <span class="section-kicker">
+                            ANALYSIS QUESTIONS
+                        </span>
+
+                        <h2>
+                            What can this dataset tell us?
+                        </h2>
+
+                        <p>
+                            The following questions guide the
+                            exploratory analysis of doctor visits.
+                        </p>
+
+                    </div>
+
+
+                    <div class="question-grid">
+
+                        <div class="question-item">
+
+                            <span>
+                                01
+                            </span>
+
+                            <p>
+                                How does doctor visit frequency
+                                vary across patients?
+                            </p>
+
+                        </div>
+
+
+                        <div class="question-item">
+
+                            <span>
+                                02
+                            </span>
+
+                            <p>
+                                Which age groups show higher
+                                healthcare utilization?
+                            </p>
+
+                        </div>
+
+
+                        <div class="question-item">
+
+                            <span>
+                                03
+                            </span>
+
+                            <p>
+                                What patient characteristics are
+                                associated with doctor visits?
+                            </p>
+
+                        </div>
+
+
+                        <div class="question-item">
+
+                            <span>
+                                04
+                            </span>
+
+                            <p>
+                                Which variables can be explored
+                                for meaningful healthcare patterns?
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             NEXT SECTION
+        ================================================== -->
+
+        <section class="next-section">
+
+            <div class="content-container">
+
+                <div class="next-card">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            NEXT STEP
+                        </span>
+
+                        <h2>
+                            Turn analysis into insights.
+                        </h2>
+
+                        <p>
+                            Continue to the Insights page to
+                            explore the major findings from the
+                            healthcare dataset.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="insights.html"
+                        class="primary-button"
+                    >
+                        View Insights
+                        <span>→</span>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         AI ASSISTANT
+    ====================================================== -->
+
+    <div id="healthcare-ai-widget">
+
+        <button
+            class="ai-robot-button"
+            id="aiRobotButton"
+            type="button"
+            aria-label="Open Healthcare AI Assistant"
+        >
+
+            <img
+                src="../assets/images/ai-robot.png"
+                alt="Healthcare AI Assistant"
+            >
+
+            <span class="ai-robot-badge">
+                AI
+            </span>
+
+        </button>
+
+
+        <div
+            class="ai-chat-window"
+            id="aiChatWindow"
+        >
+
+            <div class="ai-chat-header">
+
+                <div class="ai-header-left">
+
+                    <div class="ai-header-icon">
+                        AI
+                    </div>
+
+                    <div class="ai-header-info">
+
+                        <h3>
+                            Healthcare AI Assistant
+                        </h3>
+
+                        <span>
+                            <i class="ai-online-dot"></i>
+                            Online
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="ai-close-button"
+                    id="aiCloseButton"
+                    type="button"
+                    aria-label="Close"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div
+                class="ai-chat-body"
+                id="aiChatBody"
+            >
+
+                <div class="ai-message ai-message-bot">
+
+                    <div class="ai-avatar-small">
+                        AI
+                    </div>
+
+                    <div class="ai-message-content">
+
+                        <p>
+                            Hello! I am your Healthcare
+                            Analytics Assistant.
+                        </p>
+
+                        <p>
+                            Ask me about the dataset,
+                            doctor visits, analysis or
+                            project results.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ai-quick-section">
+
+                    <h4>
+                        QUICK QUESTIONS
+                    </h4>
+
+                    <button
+                        class="ai-question"
+                        type="button"
+                        data-question="What is the total number of records?"
+                    >
+                        What is the total number of records?
+                    </button>
+
+                    <button
+                        class="ai-question"
+                        type="button"
+                        data-question="What is the average number of doctor visits?"
+                    >
+                        What is the average number of doctor visits?
+                    </button>
+
+                    <button
+                        class="ai-question"
+                        type="button"
+                        data-question="What is the average patient age?"
+                    >
+                        What is the average patient age?
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <form
+                class="ai-chat-input-area"
+                id="aiChatForm"
+            >
+
+                <input
+                    type="text"
+                    id="aiChatInput"
+                    placeholder="Ask about the dataset..."
+                    autocomplete="off"
+                >
+
+                <button
+                    type="submit"
+                    class="ai-send-button"
+                >
+                    →
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script src="../js/analysis.js"></script>
+
+</body>
+</html>

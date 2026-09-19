@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Preprocessing | Healthcare Analytics</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/preprocessing.css"
+    >
+</head>
+
+<body>
+
+<div class="preprocessing-page">
+
+    <!-- =====================================================
+         BACKGROUND
+         ===================================================== -->
+
+    <div class="page-background">
+        <img
+            src="../assets/images/preprocessing-bg.png"
+            alt=""
+            class="page-background-image"
+        >
+
+        <div class="page-background-overlay"></div>
+    </div>
+
+
+    <!-- =====================================================
+         HEADER / NAVBAR
+         ===================================================== -->
+
+    <header class="site-header">
+
+        <div class="header-inner">
+
+            <!-- BRAND -->
+
+            <a
+                href="../index.html"
+                class="brand"
+            >
+
+                <img
+                    src="../assets/images/logo.png"
+                    alt="Healthcare Analytics Logo"
+                    class="brand-logo"
+                >
+
+                <div class="brand-copy">
+
+                    <span class="brand-small">
+                        HEALTHCARE ANALYTICS
+                    </span>
+
+                    <strong>
+                        Doctor Visits
+                    </strong>
+
+                </div>
+
+            </a>
+
+
+            <!-- DESKTOP NAVIGATION -->
+
+            <nav class="main-navigation">
+
+                <a href="dashboard.html">
+                    Dashboard
+                </a>
+
+                <a href="data-understanding.html">
+                    Data
+                </a>
+
+                <a
+                    href="preprocessing.html"
+                    class="active"
+                >
+                    Preprocessing
+                </a>
+
+                <a href="analysis.html">
+                    Analysis
+                </a>
+
+                <a href="insights.html">
+                    Insights
+                </a>
+
+                <a href="portfolio.html">
+                    Portfolio
+                </a>
+
+                <a href="about.html">
+                    About
+                </a>
+
+            </nav>
+
+
+            <!-- MOBILE BUTTON -->
+
+            <button
+                class="menu-toggle"
+                id="menuToggle"
+                aria-label="Open navigation"
+                type="button"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+        </div>
+
+
+        <!-- MOBILE NAVIGATION -->
+
+        <nav
+            class="mobile-navigation"
+            id="mobileNavigation"
+        >
+
+            <a href="dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="data-understanding.html">
+                Data
+            </a>
+
+            <a
+                href="preprocessing.html"
+                class="active"
+            >
+                Preprocessing
+            </a>
+
+            <a href="analysis.html">
+                Analysis
+            </a>
+
+            <a href="insights.html">
+                Insights
+            </a>
+
+            <a href="portfolio.html">
+                Portfolio
+            </a>
+
+            <a href="about.html">
+                About
+            </a>
+
+        </nav>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <main>
+
+        <section class="preprocessing-hero">
+
+            <div class="hero-container">
+
+                <div class="hero-content">
+
+                    <div class="hero-label">
+
+                        <span class="label-line"></span>
+
+                        <span>
+                            DATA PREPROCESSING
+                        </span>
+
+                        <span class="label-line"></span>
+
+                    </div>
+
+
+                    <h1>
+                        Prepare
+                        <span>Healthcare</span>
+                        Data
+                    </h1>
+
+
+                    <p class="hero-description">
+
+                        Clean, validate and transform the
+                        healthcare doctor visits dataset before
+                        performing meaningful analysis and
+                        visualization.
+
+                    </p>
+
+
+                    <div class="hero-actions">
+
+                        <button
+                            class="primary-button"
+                            id="runPreprocessing"
+                            type="button"
+                        >
+
+                            Run Preprocessing
+
+                            <span>
+                                ↓
+                            </span>
+
+                        </button>
+
+
+                        <a
+                            href="data-understanding.html"
+                            class="secondary-button"
+                        >
+
+                            View Dataset
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             DATA STATUS
+             ================================================= -->
+
+        <section class="status-section">
+
+            <div class="content-container">
+
+                <div
+                    class="data-status"
+                    id="dataStatus"
+                >
+
+                    <span
+                        class="status-dot"
+                        id="statusDot"
+                    ></span>
+
+                    <span id="statusText">
+                        Checking dataset...
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             PREPROCESSING OVERVIEW
+             ================================================= -->
+
+        <section class="preprocessing-overview">
+
+            <div class="content-container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            PIPELINE
+                        </span>
+
+                        <h2>
+                            Data Preparation Workflow
+                        </h2>
+
+                    </div>
+
+                    <p>
+                        A structured preprocessing workflow
+                        converts raw healthcare records into
+                        analysis-ready information.
+                    </p>
+
+                </div>
+
+
+                <div class="pipeline-grid">
+
+                    <!-- STEP 01 -->
+
+                    <article class="pipeline-card">
+
+                        <div class="pipeline-number">
+                            01
+                        </div>
+
+                        <div class="pipeline-icon">
+                            ↧
+                        </div>
+
+                        <div>
+
+                            <span class="pipeline-label">
+                                INPUT
+                            </span>
+
+                            <h3>
+                                Load Dataset
+                            </h3>
+
+                            <p>
+                                Read the healthcare doctor
+                                visits CSV dataset and inspect
+                                its structure.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- STEP 02 -->
+
+                    <article class="pipeline-card">
+
+                        <div class="pipeline-number">
+                            02
+                        </div>
+
+                        <div class="pipeline-icon">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <span class="pipeline-label">
+                                QUALITY
+                            </span>
+
+                            <h3>
+                                Check Missing Values
+                            </h3>
+
+                            <p>
+                                Identify incomplete records
+                                and determine the quality of
+                                available information.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- STEP 03 -->
+
+                    <article class="pipeline-card">
+
+                        <div class="pipeline-number">
+                            03
+                        </div>
+
+                        <div class="pipeline-icon">
+                            #
+                        </div>
+
+                        <div>
+
+                            <span class="pipeline-label">
+                                DUPLICATES
+                            </span>
+
+                            <h3>
+                                Detect Duplicates
+                            </h3>
+
+                            <p>
+                                Detect repeated records so
+                                duplicate observations do not
+                                distort analysis.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- STEP 04 -->
+
+                    <article class="pipeline-card">
+
+                        <div class="pipeline-number">
+                            04
+                        </div>
+
+                        <div class="pipeline-icon">
+                            T
+                        </div>
+
+                        <div>
+
+                            <span class="pipeline-label">
+                                TRANSFORM
+                            </span>
+
+                            <h3>
+                                Standardize Data
+                            </h3>
+
+                            <p>
+                                Normalize categorical and
+                                numerical fields where
+                                appropriate.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- STEP 05 -->
+
+                    <article class="pipeline-card">
+
+                        <div class="pipeline-number">
+                            05
+                        </div>
+
+                        <div class="pipeline-icon">
+                            ◇
+                        </div>
+
+                        <div>
+
+                            <span class="pipeline-label">
+                                VALIDATE
+                            </span>
+
+                            <h3>
+                                Validate Records
+                            </h3>
+
+                            <p>
+                                Verify data types, ranges and
+                                consistency before analysis.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- STEP 06 -->
+
+                    <article class="pipeline-card">
+
+                        <div class="pipeline-number">
+                            06
+                        </div>
+
+                        <div class="pipeline-icon">
+                            →
+                        </div>
+
+                        <div>
+
+                            <span class="pipeline-label">
+                                OUTPUT
+                            </span>
+
+                            <h3>
+                                Analysis Ready
+                            </h3>
+
+                            <p>
+                                Produce a clean dataset ready
+                                for visualization and statistical
+                                analysis.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             DATA QUALITY METRICS
+             ================================================= -->
+
+        <section class="quality-section">
+
+            <div class="content-container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            DATA QUALITY
+                        </span>
+
+                        <h2>
+                            Dataset Health
+                        </h2>
+
+                    </div>
+
+                    <p>
+                        Inspect the main quality indicators
+                        detected from the loaded dataset.
+                    </p>
+
+                </div>
+
+
+                <div class="metric-grid">
+
+                    <article class="metric-card">
+
+                        <div class="metric-icon">
+                            ROW
+                        </div>
+
+                        <div class="metric-content">
+
+                            <span>
+                                TOTAL RECORDS
+                            </span>
+
+                            <strong id="totalRows">
+                                —
+                            </strong>
+
+                            <small>
+                                Dataset observations
+                            </small>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="metric-card">
+
+                        <div class="metric-icon">
+                            COL
+                        </div>
+
+                        <div class="metric-content">
+
+                            <span>
+                                FEATURES
+                            </span>
+
+                            <strong id="totalColumns">
+                                —
+                            </strong>
+
+                            <small>
+                                Available columns
+                            </small>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="metric-card">
+
+                        <div class="metric-icon">
+                            NULL
+                        </div>
+
+                        <div class="metric-content">
+
+                            <span>
+                                MISSING VALUES
+                            </span>
+
+                            <strong id="missingValues">
+                                —
+                            </strong>
+
+                            <small>
+                                Empty or unavailable values
+                            </small>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="metric-card">
+
+                        <div class="metric-icon">
+                            DUP
+                        </div>
+
+                        <div class="metric-content">
+
+                            <span>
+                                DUPLICATE ROWS
+                            </span>
+
+                            <strong id="duplicateRows">
+                                —
+                            </strong>
+
+                            <small>
+                                Repeated observations
+                            </small>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             CLEANING OPERATIONS
+             ================================================= -->
+
+        <section class="operations-section">
+
+            <div class="content-container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            CLEANING OPERATIONS
+                        </span>
+
+                        <h2>
+                            What Happens During Preprocessing?
+                        </h2>
+
+                    </div>
+
+                    <p>
+                        Each operation addresses a specific
+                        data-quality or analysis requirement.
+                    </p>
+
+                </div>
+
+
+                <div class="operations-grid">
+
+                    <article class="operation-card">
+
+                        <div class="operation-top">
+
+                            <span class="operation-index">
+                                01
+                            </span>
+
+                            <span class="operation-state">
+                                CHECK
+                            </span>
+
+                        </div>
+
+                        <h3>
+                            Missing Value Analysis
+                        </h3>
+
+                        <p>
+                            Scan every feature for null,
+                            blank or unavailable values.
+                            Missing-value counts are displayed
+                            before further processing.
+                        </p>
+
+                        <div class="operation-line"></div>
+
+                    </article>
+
+
+                    <article class="operation-card">
+
+                        <div class="operation-top">
+
+                            <span class="operation-index">
+                                02
+                            </span>
+
+                            <span class="operation-state">
+                                CHECK
+                            </span>
+
+                        </div>
+
+                        <h3>
+                            Duplicate Detection
+                        </h3>
+
+                        <p>
+                            Compare complete records and
+                            identify repeated observations
+                            that could affect analytical results.
+                        </p>
+
+                        <div class="operation-line"></div>
+
+                    </article>
+
+
+                    <article class="operation-card">
+
+                        <div class="operation-top">
+
+                            <span class="operation-index">
+                                03
+                            </span>
+
+                            <span class="operation-state">
+                                VALIDATE
+                            </span>
+
+                        </div>
+
+                        <h3>
+                            Data Type Validation
+                        </h3>
+
+                        <p>
+                            Inspect numerical, categorical and
+                            textual fields to make sure values
+                            are represented consistently.
+                        </p>
+
+                        <div class="operation-line"></div>
+
+                    </article>
+
+
+                    <article class="operation-card">
+
+                        <div class="operation-top">
+
+                            <span class="operation-index">
+                                04
+                            </span>
+
+                            <span class="operation-state">
+                                REVIEW
+                            </span>
+
+                        </div>
+
+                        <h3>
+                            Range & Consistency Checks
+                        </h3>
+
+                        <p>
+                            Examine numerical fields for
+                            unexpected values and potential
+                            inconsistencies.
+                        </p>
+
+                        <div class="operation-line"></div>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             BEFORE / AFTER
+             ================================================= -->
+
+        <section class="comparison-section">
+
+            <div class="content-container">
+
+                <div class="comparison-panel">
+
+                    <div class="comparison-header">
+
+                        <div>
+
+                            <span class="section-kicker">
+                                TRANSFORMATION
+                            </span>
+
+                            <h2>
+                                From Raw Records to
+                                Analysis-Ready Data
+                            </h2>
+
+                        </div>
+
+                        <span class="comparison-status">
+                            DATA FLOW
+                        </span>
+
+                    </div>
+
+
+                    <div class="comparison-flow">
+
+                        <div class="comparison-box raw-box">
+
+                            <span class="comparison-label">
+                                RAW DATA
+                            </span>
+
+                            <strong>
+                                Original Dataset
+                            </strong>
+
+                            <p>
+                                Imported healthcare doctor
+                                visit records before quality
+                                checks.
+                            </p>
+
+                            <div class="mini-list">
+
+                                <span>
+                                    CSV records
+                                </span>
+
+                                <span>
+                                    Mixed data types
+                                </span>
+
+                                <span>
+                                    Potential missing values
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="flow-arrow">
+                            →
+                        </div>
+
+
+                        <div class="comparison-box clean-box">
+
+                            <span class="comparison-label">
+                                PROCESSED DATA
+                            </span>
+
+                            <strong>
+                                Analysis Ready
+                            </strong>
+
+                            <p>
+                                Validated records prepared
+                                for analysis, charts and
+                                insights.
+                            </p>
+
+                            <div class="mini-list">
+
+                                <span>
+                                    ✓ Quality checked
+                                </span>
+
+                                <span>
+                                    ✓ Duplicates reviewed
+                                </span>
+
+                                <span>
+                                    ✓ Types validated
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             PREPROCESSING LOG
+             ================================================= -->
+
+        <section class="log-section">
+
+            <div class="content-container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            PROCESS LOG
+                        </span>
+
+                        <h2>
+                            Preprocessing Activity
+                        </h2>
+
+                    </div>
+
+                    <p>
+                        Run the preprocessing check to refresh
+                        the dataset quality indicators.
+                    </p>
+
+                </div>
+
+
+                <div class="log-panel">
+
+                    <div class="log-header">
+
+                        <span>
+                            SYSTEM OUTPUT
+                        </span>
+
+                        <span id="logTime">
+                            READY
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="log-body"
+                        id="preprocessingLog"
+                    >
+
+                        <div class="log-line">
+                            <span class="log-symbol">
+                                ›
+                            </span>
+
+                            <span>
+                                Healthcare preprocessing
+                                module initialized.
+                            </span>
+                        </div>
+
+                        <div class="log-line">
+                            <span class="log-symbol">
+                                ›
+                            </span>
+
+                            <span>
+                                Waiting for dataset inspection.
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             NEXT SECTION
+             ================================================= -->
+
+        <section class="next-section">
+
+            <div class="content-container">
+
+                <div class="next-card">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            NEXT STEP
+                        </span>
+
+                        <h2>
+                            Explore Healthcare Patterns
+                        </h2>
+
+                        <p>
+                            Once the dataset has been reviewed,
+                            continue to Analysis to explore
+                            doctor visits, patient characteristics,
+                            health conditions and demographic
+                            patterns.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="analysis.html"
+                        class="primary-button"
+                    >
+
+                        Open Analysis
+
+                        <span>
+                            →
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         AI HEALTHCARE ASSISTANT
+         ===================================================== -->
+
+    <div id="healthcare-ai-widget">
+
+        <!-- ROBOT BUTTON -->
+
+        <button
+            class="ai-robot-button"
+            id="aiRobotButton"
+            type="button"
+            aria-label="Open healthcare AI assistant"
+        >
+
+            <img
+                src="../assets/images/ai-robot.png"
+                alt="AI Assistant"
+            >
+
+            <span class="ai-robot-badge">
+                AI
+            </span>
+
+        </button>
+
+
+        <!-- CHAT WINDOW -->
+
+        <div
+            class="ai-chat-window"
+            id="aiChatWindow"
+        >
+
+            <!-- CHAT HEADER -->
+
+            <div class="ai-chat-header">
+
+                <div class="ai-header-left">
+
+                    <div class="ai-header-icon">
+                        AI
+                    </div>
+
+                    <div class="ai-header-info">
+
+                        <h3>
+                            Healthcare AI
+                        </h3>
+
+                        <span>
+
+                            <i class="ai-online-dot"></i>
+
+                            Online Assistant
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="ai-close-button"
+                    id="aiCloseButton"
+                    type="button"
+                    aria-label="Close assistant"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <!-- CHAT BODY -->
+
+            <div
+                class="ai-chat-body"
+                id="aiChatBody"
+            >
+
+                <div class="ai-message">
+
+                    <div class="ai-avatar-small">
+                        AI
+                    </div>
+
+                    <div class="ai-message-content">
+
+                        <p>
+                            Hello! I'm your Healthcare
+                            Analytics assistant.
+                        </p>
+
+                        <p>
+                            I can explain preprocessing,
+                            missing values, duplicates and
+                            data-quality concepts.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ai-quick-section">
+
+                    <h4>
+                        QUICK QUESTIONS
+                    </h4>
+
+
+                    <button
+                        class="ai-question"
+                        type="button"
+                        data-question="What is data preprocessing?"
+                    >
+                        What is data preprocessing?
+                    </button>
+
+
+                    <button
+                        class="ai-question"
+                        type="button"
+                        data-question="Why do we check missing values?"
+                    >
+                        Why check missing values?
+                    </button>
+
+
+                    <button
+                        class="ai-question"
+                        type="button"
+                        data-question="What are duplicate records?"
+                    >
+                        What are duplicate records?
+                    </button>
+
+
+                    <button
+                        class="ai-question"
+                        type="button"
+                        data-question="Why validate data types?"
+                    >
+                        Why validate data types?
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- CHAT INPUT -->
+
+            <form
+                class="ai-chat-input-area"
+                id="aiChatForm"
+            >
+
+                <input
+                    type="text"
+                    id="aiChatInput"
+                    placeholder="Ask about preprocessing..."
+                    autocomplete="off"
+                >
+
+                <button
+                    class="ai-send-button"
+                    type="submit"
+                    aria-label="Send message"
+                >
+                    ↑
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script src="../js/preprocessing.js"></script>
+
+</div>
+
+</body>
+</html>
