@@ -1,35 +1,35 @@
 /* =========================================================
    HEALTHCARE ANALYTICS
    PREPROCESSING PAGE
+   DIRECT CSV VERSION
+   VERCEL SAFE
    ========================================================= */
+
+"use strict";
+
+
+/* =========================================================
+   GLOBAL DATA
+   ========================================================= */
+
+let preprocessingData = [];
+let preprocessingColumns = [];
+let preprocessingLoaded = false;
 
 
 /* =========================================================
    DOM READY
    ========================================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
 
     initializeNavigation();
 
     initializeDataset();
 
-    initializePreprocessing();
-
-    initializeAIChat();
+    initializePreprocessingAI();
 
 });
-
-
-/* =========================================================
-   DATASET
-   ========================================================= */
-
-let healthcareDataset = [];
-
-let datasetColumns = [];
-
-let datasetLoaded = false;
 
 
 /* =========================================================
@@ -44,13 +44,11 @@ function initializeNavigation() {
     const mobileNavigation =
         document.getElementById("mobileNavigation");
 
-
     if (!menuToggle || !mobileNavigation) {
         return;
     }
 
-
-    menuToggle.addEventListener("click", () => {
+    menuToggle.addEventListener("click", function () {
 
         const isOpen =
             mobileNavigation.classList.toggle("open");
@@ -62,14 +60,12 @@ function initializeNavigation() {
 
     });
 
-
-    const mobileLinks =
+    const links =
         mobileNavigation.querySelectorAll("a");
 
+    links.forEach(function (link) {
 
-    mobileLinks.forEach(link => {
-
-        link.addEventListener("click", () => {
+        link.addEventListener("click", function () {
 
             mobileNavigation.classList.remove("open");
 
@@ -93,105 +89,45 @@ async function initializeDataset() {
 
     setStatus(
         "loading",
-        "Loading healthcare doctor visits dataset..."
+        "Loading healthcare dataset..."
     );
 
+    addLog(
+        "Initializing healthcare dataset..."
+    );
 
     try {
 
-        const response =
-            await fetch(
-                `${API_BASE_URL}/dataset`,
-                {
-                    method: "GET",
-                    cache: "no-store"
-                }
-            );
+        const csvText =
+            await loadHealthcareCSV();
 
-
-        if (!response.ok) {
-
-            throw new Error(
-                `Backend returned HTTP ${response.status}`
-            );
-
-        }
-
-
-        const result =
-            await response.json();
-
-
-        console.log(
-            "Preprocessing API response:",
-            result
-        );
+        preprocessingData =
+            parseCSV(csvText);
 
 
         if (
-            !result ||
-            !result.success ||
-            !result.data
+            !preprocessingData.length
         ) {
 
             throw new Error(
-                "Invalid dataset response from backend."
+                "Healthcare CSV contains no records."
             );
 
         }
 
 
-        const info =
-            result.data;
-
-
-        const rows =
-            Number(
-                info.rows ||
-                result.rows ||
-                0
+        preprocessingColumns =
+            Object.keys(
+                preprocessingData[0]
             );
 
 
-        const columns =
-            Number(
-                info.columns ||
-                result.columns ||
-                0
-            );
+        preprocessingLoaded = true;
 
 
-        const columnNames =
-            Array.isArray(
-                info.column_names
-            )
-                ? info.column_names
-                : [];
+        updateDatasetSummary();
 
-
-        /*
-         * The current Vercel API returns dataset
-         * information rather than the complete CSV rows.
-         *
-         * We therefore store the row count separately.
-         */
-
-        healthcareDataset =
-            new Array(rows);
-
-
-        datasetColumns =
-            columnNames;
-
-
-        datasetLoaded =
-            true;
-
-
-        updateDatasetMetrics(
-            rows,
-            columns
-        );
+        updatePreprocessingAnalysis();
 
 
         setStatus(
@@ -201,32 +137,26 @@ async function initializeDataset() {
 
 
         addLog(
-            `Healthcare dataset connected: ${rows.toLocaleString()} records detected.`,
+            `Dataset loaded successfully: ${preprocessingData.length.toLocaleString("en-IN")} records.`,
             "success"
         );
 
 
         addLog(
-            `${columns} dataset columns detected.`,
+            `${preprocessingColumns.length} columns detected.`,
             "success"
         );
 
 
-        if (
-            columnNames.length > 0
-        ) {
-
-            addLog(
-                `Columns: ${columnNames.join(", ")}`,
-                "success"
-            );
-
-        }
-
-
         addLog(
-            "Dataset source: Vercel backend API.",
+            "Preprocessing analysis completed.",
             "success"
+        );
+
+
+        console.log(
+            "Preprocessing dataset:",
+            preprocessingData
         );
 
 
@@ -239,32 +169,28 @@ async function initializeDataset() {
         );
 
 
-        datasetLoaded =
-            false;
+        preprocessingLoaded = false;
 
+        preprocessingData = [];
 
-        healthcareDataset =
-            [];
-
-
-        datasetColumns =
-            [];
+        preprocessingColumns = [];
 
 
         setStatus(
             "error",
-            "Unable to connect to healthcare dataset"
+            "Unable to load healthcare dataset"
         );
 
 
         addLog(
-            "Unable to connect to the Vercel dataset API.",
+            "Healthcare dataset could not be loaded.",
             "error"
         );
 
 
         addLog(
-            error.message,
+            error.message ||
+            "Unknown dataset error.",
             "error"
         );
 
@@ -274,60 +200,787 @@ async function initializeDataset() {
 
 
 /* =========================================================
-   UPDATE DATASET METRICS
+   LOAD CSV
    ========================================================= */
 
-function updateDatasetMetrics(
-    totalRows = 0,
-    totalColumns = 0
-) {
-
-    animateNumber(
-        "totalRows",
-        totalRows
-    );
-
-
-    animateNumber(
-        "totalColumns",
-        totalColumns
-    );
-
+async function loadHealthcareCSV() {
 
     /*
-     * The current /api/dataset endpoint provides
-     * metadata only.
-     *
-     * Real missing-value and duplicate-row counts
-     * require the actual dataset rows from the backend.
-     */
+       preprocessing.html is inside:
 
-    animateNumber(
-        "missingValues",
-        0
-    );
+       frontend/pages/preprocessing.html
+
+       CSV is inside:
+
+       frontend/data/healthcare_doctor_visits.csv
+
+       Therefore:
+
+       ../data/healthcare_doctor_visits.csv
+    */
+
+    const possiblePaths = [
+
+        "../data/healthcare_doctor_visits.csv",
+
+        "/data/healthcare_doctor_visits.csv",
+
+        "./data/healthcare_doctor_visits.csv"
+
+    ];
 
 
-    animateNumber(
-        "duplicateRows",
-        0
+    for (
+        const path of possiblePaths
+    ) {
+
+        try {
+
+            console.log(
+                "Trying healthcare CSV:",
+                path
+            );
+
+
+            const response =
+                await fetch(
+                    `${path}?v=${Date.now()}`,
+                    {
+                        method: "GET",
+                        cache: "no-store"
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                console.warn(
+                    `CSV request failed: ${response.status}`,
+                    path
+                );
+
+                continue;
+
+            }
+
+
+            const text =
+                await response.text();
+
+
+            if (
+                !text ||
+                !text.trim()
+            ) {
+
+                continue;
+
+            }
+
+
+            console.log(
+                "Healthcare CSV loaded from:",
+                path
+            );
+
+
+            return text;
+
+        }
+        catch (error) {
+
+            console.warn(
+                "CSV path failed:",
+                path,
+                error
+            );
+
+        }
+
+    }
+
+
+    throw new Error(
+        "Healthcare CSV was not found in frontend/data/healthcare_doctor_visits.csv"
     );
 
 }
 
 
 /* =========================================================
-   NUMBER ANIMATION
+   CSV PARSER
    ========================================================= */
 
-function animateNumber(
-    elementId,
-    targetValue
+function parseCSV(text) {
+
+    const rows = [];
+
+    let row = [];
+
+    let value = "";
+
+    let insideQuotes = false;
+
+
+    for (
+        let i = 0;
+        i < text.length;
+        i++
+    ) {
+
+        const character =
+            text[i];
+
+        const nextCharacter =
+            text[i + 1];
+
+
+        if (
+            character === '"' &&
+            insideQuotes &&
+            nextCharacter === '"'
+        ) {
+
+            value += '"';
+
+            i++;
+
+            continue;
+
+        }
+
+
+        if (
+            character === '"'
+        ) {
+
+            insideQuotes =
+                !insideQuotes;
+
+            continue;
+
+        }
+
+
+        if (
+            character === "," &&
+            !insideQuotes
+        ) {
+
+            row.push(
+                value.trim()
+            );
+
+            value = "";
+
+            continue;
+
+        }
+
+
+        if (
+            (
+                character === "\n" ||
+                character === "\r"
+            ) &&
+            !insideQuotes
+        ) {
+
+            if (
+                character === "\r" &&
+                nextCharacter === "\n"
+            ) {
+
+                i++;
+
+            }
+
+
+            row.push(
+                value.trim()
+            );
+
+            value = "";
+
+
+            if (
+                row.some(
+                    function (item) {
+                        return item !== "";
+                    }
+                )
+            ) {
+
+                rows.push(row);
+
+            }
+
+
+            row = [];
+
+            continue;
+
+        }
+
+
+        value += character;
+
+    }
+
+
+    if (
+        value !== "" ||
+        row.length > 0
+    ) {
+
+        row.push(
+            value.trim()
+        );
+
+
+        if (
+            row.some(
+                function (item) {
+                    return item !== "";
+                }
+            )
+        ) {
+
+            rows.push(row);
+
+        }
+
+    }
+
+
+    if (
+        rows.length < 2
+    ) {
+
+        return [];
+
+    }
+
+
+    const headers =
+        rows[0].map(
+            function (header) {
+
+                return header
+                    .trim()
+                    .replace(/^"|"$/g, "");
+
+            }
+        );
+
+
+    return rows
+        .slice(1)
+        .map(
+            function (rowData) {
+
+                const object = {};
+
+
+                headers.forEach(
+                    function (
+                        header,
+                        index
+                    ) {
+
+                        object[header] =
+                            rowData[index] !== undefined
+                                ? rowData[index].trim()
+                                : "";
+
+                    }
+                );
+
+
+                return object;
+
+            }
+        );
+
+}
+
+
+/* =========================================================
+   DATASET SUMMARY
+   ========================================================= */
+
+function updateDatasetSummary() {
+
+    const rowCount =
+        preprocessingData.length;
+
+    const columnCount =
+        preprocessingColumns.length;
+
+
+    setNumber(
+        "totalRows",
+        rowCount
+    );
+
+    setNumber(
+        "datasetRows",
+        rowCount
+    );
+
+    setNumber(
+        "recordCount",
+        rowCount
+    );
+
+    setNumber(
+        "totalColumns",
+        columnCount
+    );
+
+    setNumber(
+        "datasetColumns",
+        columnCount
+    );
+
+    setNumber(
+        "columnCount",
+        columnCount
+    );
+
+
+    setText(
+        "datasetRecordCount",
+        rowCount.toLocaleString("en-IN")
+    );
+
+    setText(
+        "datasetColumnCount",
+        columnCount.toLocaleString("en-IN")
+    );
+
+
+    displayColumns(
+        preprocessingColumns
+    );
+
+}
+
+
+/* =========================================================
+   PREPROCESSING ANALYSIS
+   ========================================================= */
+
+function updatePreprocessingAnalysis() {
+
+    if (
+        !preprocessingLoaded
+    ) {
+
+        return;
+
+    }
+
+
+    const missingValues =
+        calculateMissingValues();
+
+
+    const duplicateRows =
+        calculateDuplicateRows();
+
+
+    const numericColumns =
+        getNumericColumns();
+
+
+    const categoricalColumns =
+        getCategoricalColumns();
+
+
+    setNumber(
+        "missingValues",
+        missingValues
+    );
+
+
+    setNumber(
+        "duplicateRows",
+        duplicateRows
+    );
+
+
+    setNumber(
+        "numericColumns",
+        numericColumns.length
+    );
+
+
+    setNumber(
+        "categoricalColumns",
+        categoricalColumns.length
+    );
+
+
+    updateAnalysisText(
+        missingValues,
+        duplicateRows,
+        numericColumns,
+        categoricalColumns
+    );
+
+}
+
+
+/* =========================================================
+   MISSING VALUES
+   ========================================================= */
+
+function calculateMissingValues() {
+
+    let count = 0;
+
+
+    preprocessingData.forEach(
+        function (row) {
+
+            preprocessingColumns.forEach(
+                function (column) {
+
+                    const value =
+                        row[column];
+
+
+                    if (
+                        value === null ||
+                        value === undefined ||
+                        String(value).trim() === "" ||
+                        String(value).trim().toLowerCase() === "null" ||
+                        String(value).trim().toLowerCase() === "na" ||
+                        String(value).trim().toLowerCase() === "n/a"
+                    ) {
+
+                        count++;
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+    return count;
+
+}
+
+
+/* =========================================================
+   DUPLICATES
+   ========================================================= */
+
+function calculateDuplicateRows() {
+
+    const seen =
+        new Set();
+
+    let duplicates = 0;
+
+
+    preprocessingData.forEach(
+        function (row) {
+
+            const key =
+                preprocessingColumns
+                    .map(
+                        function (column) {
+                            return String(
+                                row[column] ?? ""
+                            ).trim();
+                        }
+                    )
+                    .join("|");
+
+
+            if (
+                seen.has(key)
+            ) {
+
+                duplicates++;
+
+            }
+            else {
+
+                seen.add(key);
+
+            }
+
+        }
+    );
+
+
+    return duplicates;
+
+}
+
+
+/* =========================================================
+   NUMERIC COLUMNS
+   ========================================================= */
+
+function getNumericColumns() {
+
+    return preprocessingColumns.filter(
+        function (column) {
+
+            let numericCount = 0;
+
+            let totalCount = 0;
+
+
+            preprocessingData.forEach(
+                function (row) {
+
+                    const value =
+                        String(
+                            row[column] ?? ""
+                        ).trim();
+
+
+                    if (!value) {
+                        return;
+                    }
+
+
+                    totalCount++;
+
+
+                    const number =
+                        Number(
+                            value.replace(/,/g, "")
+                        );
+
+
+                    if (
+                        Number.isFinite(number)
+                    ) {
+
+                        numericCount++;
+
+                    }
+
+                }
+            );
+
+
+            return (
+                totalCount > 0 &&
+                numericCount / totalCount >= 0.8
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CATEGORICAL COLUMNS
+   ========================================================= */
+
+function getCategoricalColumns() {
+
+    const numericColumns =
+        getNumericColumns();
+
+
+    return preprocessingColumns.filter(
+        function (column) {
+
+            return !numericColumns.includes(
+                column
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ANALYSIS TEXT
+   ========================================================= */
+
+function updateAnalysisText(
+    missingValues,
+    duplicateRows,
+    numericColumns,
+    categoricalColumns
+) {
+
+    const containers = [
+
+        "preprocessingSummary",
+
+        "analysisSummary",
+
+        "preprocessingResult",
+
+        "datasetSummary"
+
+    ];
+
+
+    containers.forEach(
+        function (id) {
+
+            const element =
+                document.getElementById(id);
+
+
+            if (!element) {
+                return;
+            }
+
+
+            element.textContent =
+                `The healthcare dataset contains ` +
+                `${preprocessingData.length.toLocaleString("en-IN")} records and ` +
+                `${preprocessingColumns.length} columns. ` +
+                `${missingValues.toLocaleString("en-IN")} missing values and ` +
+                `${duplicateRows.toLocaleString("en-IN")} duplicate rows were detected. ` +
+                `${numericColumns.length} numeric columns and ` +
+                `${categoricalColumns.length} categorical columns were identified.`;
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   DISPLAY COLUMNS
+   ========================================================= */
+
+function displayColumns(
+    columns
+) {
+
+    const containers = [
+
+        document.getElementById(
+            "columnList"
+        ),
+
+        document.getElementById(
+            "columnsList"
+        )
+
+    ];
+
+
+    const container =
+        containers.find(
+            function (element) {
+                return element;
+            }
+        );
+
+
+    if (
+        !container
+    ) {
+
+        return;
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    columns.forEach(
+        function (
+            column,
+            index
+        ) {
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "dataset-column-item";
+
+
+            const number =
+                document.createElement(
+                    "span"
+                );
+
+
+            number.className =
+                "column-number";
+
+
+            number.textContent =
+                String(
+                    index + 1
+                ).padStart(
+                    2,
+                    "0"
+                );
+
+
+            const name =
+                document.createElement(
+                    "span"
+                );
+
+
+            name.className =
+                "column-name";
+
+
+            name.textContent =
+                column;
+
+
+            item.appendChild(
+                number
+            );
+
+
+            item.appendChild(
+                name
+            );
+
+
+            container.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   SET NUMBER
+   ========================================================= */
+
+function setNumber(
+    id,
+    value
 ) {
 
     const element =
         document.getElementById(
-            elementId
+            id
         );
 
 
@@ -336,65 +989,38 @@ function animateNumber(
     }
 
 
-    const duration =
-        700;
+    element.textContent =
+        Number(
+            value || 0
+        ).toLocaleString(
+            "en-IN"
+        );
+
+}
 
 
-    const startTime =
-        performance.now();
+/* =========================================================
+   SET TEXT
+   ========================================================= */
+
+function setText(
+    id,
+    value
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
 
 
-    function update(currentTime) {
-
-        const elapsed =
-            currentTime -
-            startTime;
-
-
-        const progress =
-            Math.min(
-                elapsed / duration,
-                1
-            );
-
-
-        const eased =
-            1 -
-            Math.pow(
-                1 - progress,
-                3
-            );
-
-
-        const currentValue =
-            Math.round(
-                targetValue *
-                eased
-            );
-
-
-        element.textContent =
-            currentValue.toLocaleString(
-                "en-IN"
-            );
-
-
-        if (
-            progress < 1
-        ) {
-
-            requestAnimationFrame(
-                update
-            );
-
-        }
-
+    if (!element) {
+        return;
     }
 
 
-    requestAnimationFrame(
-        update
-    );
+    element.textContent =
+        value;
 
 }
 
@@ -408,231 +1034,65 @@ function setStatus(
     message
 ) {
 
-    const statusDot =
+    const dot =
         document.getElementById(
             "statusDot"
         );
 
 
-    const statusText =
+    const text =
         document.getElementById(
             "statusText"
         );
 
 
-    if (!statusDot || !statusText) {
-        return;
-    }
+    if (dot) {
 
+        dot.className =
+            "status-dot";
 
-    statusDot.className =
-        "status-dot";
-
-
-    if (
-        state === "loaded"
-    ) {
-
-        statusDot.classList.add(
-            "loaded"
-        );
-
-    }
-
-
-    if (
-        state === "error"
-    ) {
-
-        statusDot.classList.add(
-            "error"
-        );
-
-    }
-
-
-    statusText.textContent =
-        message;
-
-}
-
-
-/* =========================================================
-   PREPROCESSING
-   ========================================================= */
-
-function initializePreprocessing() {
-
-    const button =
-        document.getElementById(
-            "runPreprocessing"
-        );
-
-
-    if (!button) {
-        return;
-    }
-
-
-    button.addEventListener(
-        "click",
-        runPreprocessing
-    );
-
-}
-
-
-/* =========================================================
-   RUN PREPROCESSING
-   ========================================================= */
-
-function runPreprocessing() {
-
-    const button =
-        document.getElementById(
-            "runPreprocessing"
-        );
-
-
-    if (!datasetLoaded) {
-
-        addLog(
-            "Healthcare dataset is not connected.",
-            "error"
-        );
-
-
-        setStatus(
-            "error",
-            "Dataset is not available"
-        );
-
-
-        return;
-
-    }
-
-
-    button.disabled =
-        true;
-
-
-    button.innerHTML =
-        "Processing... <span>↻</span>";
-
-
-    clearLog();
-
-
-    addLog(
-        "Starting healthcare data preprocessing inspection...",
-        "success"
-    );
-
-
-    setTimeout(() => {
-
-        addLog(
-            "Connected to Vercel healthcare dataset API.",
-            "success"
-        );
-
-    }, 300);
-
-
-    setTimeout(() => {
-
-        addLog(
-            `Loaded ${getDatasetRowCount().toLocaleString()} records.`,
-            "success"
-        );
-
-    }, 650);
-
-
-    setTimeout(() => {
-
-        addLog(
-            `Validated ${datasetColumns.length} dataset columns.`,
-            "success"
-        );
-
-    }, 1000);
-
-
-    setTimeout(() => {
 
         if (
-            datasetColumns.length > 0
+            state === "loading"
         ) {
 
-            addLog(
-                "Dataset column structure validated.",
-                "success"
-            );
-
-        }
-        else {
-
-            addLog(
-                "Dataset column information unavailable.",
-                "warning"
+            dot.classList.add(
+                "loading"
             );
 
         }
 
-    }, 1350);
+
+        if (
+            state === "loaded"
+        ) {
+
+            dot.classList.add(
+                "loaded"
+            );
+
+        }
 
 
-    setTimeout(() => {
+        if (
+            state === "error"
+        ) {
 
-        addLog(
-            "Backend dataset connection verified.",
-            "success"
-        );
+            dot.classList.add(
+                "error"
+            );
 
-    }, 1700);
+        }
 
-
-    setTimeout(() => {
-
-        addLog(
-            "Preprocessing inspection completed.",
-            "success"
-        );
+    }
 
 
-        button.disabled =
-            false;
+    if (text) {
 
+        text.textContent =
+            message;
 
-        button.innerHTML =
-            "Run Again <span>↻</span>";
-
-
-        setStatus(
-            "loaded",
-            "Preprocessing inspection completed"
-        );
-
-
-        updateDatasetMetrics(
-            getDatasetRowCount(),
-            datasetColumns.length
-        );
-
-    }, 2100);
-
-}
-
-
-/* =========================================================
-   GET DATASET ROW COUNT
-   ========================================================= */
-
-function getDatasetRowCount() {
-
-    return healthcareDataset.length;
+    }
 
 }
 
@@ -646,6 +1106,9 @@ function clearLog() {
     const log =
         document.getElementById(
             "preprocessingLog"
+        ) ||
+        document.getElementById(
+            "dataUnderstandingLog"
         );
 
 
@@ -654,15 +1117,10 @@ function clearLog() {
     }
 
 
-    log.innerHTML =
-        "";
+    log.innerHTML = "";
 
 }
 
-
-/* =========================================================
-   ADD LOG
-   ========================================================= */
 
 function addLog(
     message,
@@ -672,6 +1130,9 @@ function addLog(
     const log =
         document.getElementById(
             "preprocessingLog"
+        ) ||
+        document.getElementById(
+            "dataUnderstandingLog"
         );
 
 
@@ -771,10 +1232,6 @@ function addLog(
 }
 
 
-/* =========================================================
-   LOG TIME
-   ========================================================= */
-
 function updateLogTime() {
 
     const element =
@@ -788,12 +1245,8 @@ function updateLogTime() {
     }
 
 
-    const now =
-        new Date();
-
-
     element.textContent =
-        now.toLocaleTimeString(
+        new Date().toLocaleTimeString(
             [],
             {
                 hour: "2-digit",
@@ -806,110 +1259,201 @@ function updateLogTime() {
 
 
 /* =========================================================
-   AI CHAT
+   AI ROBOT / CHAT
    ========================================================= */
 
-function initializeAIChat() {
+function initializePreprocessingAI() {
 
-    const robotButton =
+    const robot =
         document.getElementById(
             "aiRobotButton"
         );
 
 
-    const chatWindow =
+    const chat =
         document.getElementById(
             "aiChatWindow"
         );
 
 
-    const closeButton =
+    const close =
         document.getElementById(
             "aiCloseButton"
         );
 
 
-    const chatForm =
+    const form =
         document.getElementById(
             "aiChatForm"
         );
 
 
-    const chatInput =
+    const input =
         document.getElementById(
             "aiChatInput"
         );
 
 
     if (
-        !robotButton ||
-        !chatWindow ||
-        !closeButton
+        !robot ||
+        !chat ||
+        !close
     ) {
+
+        console.warn(
+            "AI robot elements were not found."
+        );
 
         return;
 
     }
 
 
-    /* =====================================================
-       OPEN CHAT
-       ===================================================== */
-
-    robotButton.addEventListener(
+    robot.addEventListener(
         "click",
-        () => {
+        function (event) {
 
-            chatWindow.classList.add(
+            event.stopPropagation();
+
+            chat.classList.add(
                 "active"
             );
 
 
-            setTimeout(() => {
+            if (input) {
 
-                if (
-                    chatInput
-                ) {
+                setTimeout(
+                    function () {
+                        input.focus();
+                    },
+                    150
+                );
 
-                    chatInput.focus();
+            }
 
+        }
+    );
+
+
+    close.addEventListener(
+        "click",
+        function (event) {
+
+            event.stopPropagation();
+
+            chat.classList.remove(
+                "active"
+            );
+
+        }
+    );
+
+
+    if (
+        form &&
+        input
+    ) {
+
+        form.addEventListener(
+            "submit",
+            function (event) {
+
+                event.preventDefault();
+
+
+                const question =
+                    input.value.trim();
+
+
+                if (!question) {
+                    return;
                 }
 
-            }, 250);
 
-        }
-    );
+                addUserChatMessage(
+                    question
+                );
 
 
-    /* =====================================================
-       CLOSE CHAT
-       ===================================================== */
+                input.value = "";
 
-    closeButton.addEventListener(
-        "click",
-        () => {
 
-            chatWindow.classList.remove(
-                "active"
+                setTimeout(
+                    function () {
+
+                        addAIChatMessage(
+                            getPreprocessingAIResponse(
+                                question
+                            )
+                        );
+
+                    },
+                    300
+                );
+
+            }
+        );
+
+    }
+
+
+    const questions =
+        document.querySelectorAll(
+            ".ai-question"
+        );
+
+
+    questions.forEach(
+        function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    const question =
+                        button.dataset.question ||
+                        button.textContent.trim();
+
+
+                    if (!question) {
+                        return;
+                    }
+
+
+                    addUserChatMessage(
+                        question
+                    );
+
+
+                    setTimeout(
+                        function () {
+
+                            addAIChatMessage(
+                                getPreprocessingAIResponse(
+                                    question
+                                )
+                            );
+
+                        },
+                        300
+                    );
+
+                }
             );
 
         }
     );
 
-
-    /* =====================================================
-       ESCAPE KEY
-       ===================================================== */
 
     document.addEventListener(
         "keydown",
-        event => {
+        function (event) {
 
             if (
                 event.key === "Escape"
             ) {
 
-                chatWindow.classList.remove(
+                chat.classList.remove(
                     "active"
                 );
 
@@ -918,162 +1462,25 @@ function initializeAIChat() {
         }
     );
 
-
-    /* =====================================================
-       CHAT FORM
-       ===================================================== */
-
-    if (
-        chatForm
-    ) {
-
-        chatForm.addEventListener(
-            "submit",
-            event => {
-
-                event.preventDefault();
-
-
-                if (
-                    !chatInput
-                ) {
-
-                    return;
-
-                }
-
-
-                const message =
-                    chatInput.value.trim();
-
-
-                if (
-                    !message
-                ) {
-
-                    return;
-
-                }
-
-
-                sendAIMessage(
-                    message
-                );
-
-
-                chatInput.value =
-                    "";
-
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       QUICK QUESTIONS
-       ===================================================== */
-
-    const quickQuestions =
-        document.querySelectorAll(
-            ".ai-question"
-        );
-
-
-    quickQuestions.forEach(
-        button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    const question =
-                        button.dataset.question;
-
-
-                    if (
-                        !question
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    addUserMessage(
-                        question
-                    );
-
-
-                    setTimeout(() => {
-
-                        addAIMessage(
-                            getAIResponse(
-                                question
-                            )
-                        );
-
-                    }, 350);
-
-                }
-            );
-
-        }
-    );
-
 }
 
 
 /* =========================================================
-   SEND AI MESSAGE
+   USER CHAT MESSAGE
    ========================================================= */
 
-function sendAIMessage(
+function addUserChatMessage(
     message
 ) {
 
-    addUserMessage(
-        message
-    );
-
-
-    setTimeout(() => {
-
-        const response =
-            getAIResponse(
-                message
-            );
-
-
-        addAIMessage(
-            response
-        );
-
-    }, 400);
-
-}
-
-
-/* =========================================================
-   ADD USER MESSAGE
-   ========================================================= */
-
-function addUserMessage(
-    message
-) {
-
-    const chatBody =
+    const body =
         document.getElementById(
             "aiChatBody"
         );
 
 
-    if (
-        !chatBody
-    ) {
-
+    if (!body) {
         return;
-
     }
 
 
@@ -1106,36 +1513,32 @@ function addUserMessage(
     );
 
 
-    chatBody.appendChild(
+    body.appendChild(
         wrapper
     );
 
 
-    scrollChatToBottom();
+    scrollChat();
 
 }
 
 
 /* =========================================================
-   ADD AI MESSAGE
+   AI CHAT MESSAGE
    ========================================================= */
 
-function addAIMessage(
+function addAIChatMessage(
     message
 ) {
 
-    const chatBody =
+    const body =
         document.getElementById(
             "aiChatBody"
         );
 
 
-    if (
-        !chatBody
-    ) {
-
+    if (!body) {
         return;
-
     }
 
 
@@ -1198,41 +1601,160 @@ function addAIMessage(
     );
 
 
-    chatBody.appendChild(
+    body.appendChild(
         wrapper
     );
 
 
-    scrollChatToBottom();
+    scrollChat();
 
 }
 
 
 /* =========================================================
-   SCROLL CHAT
+   AI RESPONSE
    ========================================================= */
 
-function scrollChatToBottom() {
+function getPreprocessingAIResponse(
+    question
+) {
 
-    const chatBody =
+    const q =
+        question.toLowerCase();
+
+
+    if (
+        q.includes("dataset") ||
+        q.includes("records") ||
+        q.includes("rows")
+    ) {
+
+        if (
+            preprocessingLoaded
+        ) {
+
+            return (
+                `The healthcare dataset contains ` +
+                `${preprocessingData.length.toLocaleString("en-IN")} records and ` +
+                `${preprocessingColumns.length} columns.`
+            );
+
+        }
+
+
+        return (
+            "The healthcare dataset is not currently loaded."
+        );
+
+    }
+
+
+    if (
+        q.includes("missing")
+    ) {
+
+        if (
+            preprocessingLoaded
+        ) {
+
+            const missing =
+                calculateMissingValues();
+
+
+            return (
+                `The preprocessing check detected ` +
+                `${missing.toLocaleString("en-IN")} missing values.`
+            );
+
+        }
+
+
+        return (
+            "The dataset is not currently loaded."
+        );
+
+    }
+
+
+    if (
+        q.includes("duplicate")
+    ) {
+
+        if (
+            preprocessingLoaded
+        ) {
+
+            const duplicates =
+                calculateDuplicateRows();
+
+
+            return (
+                `The preprocessing check detected ` +
+                `${duplicates.toLocaleString("en-IN")} duplicate rows.`
+            );
+
+        }
+
+
+        return (
+            "The dataset is not currently loaded."
+        );
+
+    }
+
+
+    if (
+        q.includes("column")
+    ) {
+
+        return (
+            `The healthcare dataset contains ` +
+            `${preprocessingColumns.length} columns.`
+        );
+
+    }
+
+
+    if (
+        q.includes("preprocess") ||
+        q.includes("clean")
+    ) {
+
+        return (
+            "Preprocessing checks the healthcare dataset for missing values, duplicate rows, numeric fields, categorical fields and data-quality issues before analysis."
+        );
+
+    }
+
+
+    return (
+        "I can explain the healthcare dataset, missing values, duplicate records, columns and preprocessing results."
+    );
+
+}
+
+
+/* =========================================================
+   CHAT SCROLL
+   ========================================================= */
+
+function scrollChat() {
+
+    const body =
         document.getElementById(
             "aiChatBody"
         );
 
 
-    if (
-        !chatBody
-    ) {
-
+    if (!body) {
         return;
-
     }
 
 
-    chatBody.scrollTo({
+    body.scrollTo({
 
         top:
-            chatBody.scrollHeight,
+            body.scrollHeight,
 
         behavior:
             "smooth"
@@ -1243,144 +1765,28 @@ function scrollChatToBottom() {
 
 
 /* =========================================================
-   AI RESPONSE
-   ========================================================= */
-
-function getAIResponse(
-    question
-) {
-
-    const text =
-        question.toLowerCase();
-
-
-    if (
-        text.includes("preprocess") ||
-        text.includes("clean")
-    ) {
-
-        return (
-            "Data preprocessing prepares raw records for analysis. " +
-            "It can include checking missing values, detecting duplicates, " +
-            "validating data types and reviewing inconsistent values."
-        );
-
-    }
-
-
-    if (
-        text.includes("missing") ||
-        text.includes("null")
-    ) {
-
-        return (
-            "Missing-value analysis identifies fields where information " +
-            "is empty or unavailable. These values should be reviewed " +
-            "before analytical processing."
-        );
-
-    }
-
-
-    if (
-        text.includes("duplicate")
-    ) {
-
-        return (
-            "Duplicate records are repeated observations. " +
-            "They should be identified because repeated rows can affect " +
-            "counts, averages and other analytical results."
-        );
-
-    }
-
-
-    if (
-        text.includes("type") ||
-        text.includes("numeric") ||
-        text.includes("categor")
-    ) {
-
-        return (
-            "Data-type validation checks whether each field is represented " +
-            "appropriately, such as numerical values for measurements and " +
-            "categorical values for groups or classifications."
-        );
-
-    }
-
-
-    if (
-        text.includes("dataset") ||
-        text.includes("data")
-    ) {
-
-        return (
-            `The healthcare dataset contains ` +
-            `${getDatasetRowCount().toLocaleString()} records ` +
-            `and ${datasetColumns.length} columns based on the ` +
-            `Vercel backend dataset information.`
-        );
-
-    }
-
-
-    if (
-        text.includes("row")
-    ) {
-
-        return (
-            `The healthcare dataset contains ` +
-            `${getDatasetRowCount().toLocaleString()} data rows.`
-        );
-
-    }
-
-
-    if (
-        text.includes("column")
-    ) {
-
-        return (
-            `The healthcare dataset currently contains ` +
-            `${datasetColumns.length} columns.`
-        );
-
-    }
-
-
-    return (
-        "I can help explain the preprocessing workflow. " +
-        "Try asking about missing values, duplicate records, " +
-        "data types, cleaning or the healthcare dataset."
-    );
-
-}
-
-
-/* =========================================================
    CLICK OUTSIDE CHAT
    ========================================================= */
 
 document.addEventListener(
     "click",
-    event => {
+    function (event) {
 
-        const chatWindow =
+        const chat =
             document.getElementById(
                 "aiChatWindow"
             );
 
 
-        const robotButton =
+        const robot =
             document.getElementById(
                 "aiRobotButton"
             );
 
 
         if (
-            !chatWindow ||
-            !robotButton
+            !chat ||
+            !robot
         ) {
 
             return;
@@ -1389,15 +1795,15 @@ document.addEventListener(
 
 
         if (
-            !chatWindow.contains(
+            !chat.contains(
                 event.target
             ) &&
-            !robotButton.contains(
+            !robot.contains(
                 event.target
             )
         ) {
 
-            chatWindow.classList.remove(
+            chat.classList.remove(
                 "active"
             );
 
