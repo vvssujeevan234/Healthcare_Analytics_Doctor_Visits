@@ -2,7 +2,7 @@
    HEALTHCARE ANALYTICS POWER DASHBOARD
    ========================================================== */
 
-const API_BASE = "https://your-backend-domain.vercel.app";
+const API_BASE = "";
 
 const charts = {};
 
