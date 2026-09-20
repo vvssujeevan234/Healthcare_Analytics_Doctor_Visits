@@ -3,7 +3,7 @@ import pandas as pd
 
 
 # ============================================================
-# NUMERIC CONVERSION
+# SAFE NUMERIC CONVERSION
 # ============================================================
 
 def numeric_columns(df):
@@ -11,12 +11,14 @@ def numeric_columns(df):
     result = df.copy()
 
     numeric = [
+
         "visits",
         "age",
         "income",
         "illness",
         "reduced",
         "health"
+
     ]
 
     for column in numeric:
@@ -32,30 +34,104 @@ def numeric_columns(df):
 
 
 # ============================================================
+# SAFE CATEGORICAL CONVERSION
+# ============================================================
+
+def categorical_columns(df):
+
+    result = df.copy()
+
+    categorical = [
+
+        "gender",
+        "private",
+        "freepoor",
+        "freerepat",
+        "nchronic",
+        "lchronic"
+
+    ]
+
+    for column in categorical:
+
+        if column in result.columns:
+
+            result[column] = (
+                result[column]
+                .astype("string")
+                .str.strip()
+            )
+
+    return result
+
+
+# ============================================================
+# PREPARE DATA
+# ============================================================
+
+def prepare_data(df):
+
+    result = numeric_columns(
+        df
+    )
+
+    result = categorical_columns(
+        result
+    )
+
+    return result
+
+
+# ============================================================
 # AGE GROUP
 # ============================================================
 
 def get_age_group(age):
 
     if pd.isna(age):
+
         return "Unknown"
+
 
     age = float(age)
 
+
     if age < 18:
+
         return "0-17"
 
     elif age < 30:
+
         return "18-29"
 
     elif age < 45:
+
         return "30-44"
 
     elif age < 60:
+
         return "45-59"
 
     else:
+
         return "60+"
+
+
+# ============================================================
+# AGE GROUP LABELS
+# ============================================================
+
+def get_age_groups():
+
+    return [
+
+        "0-17",
+        "18-29",
+        "30-44",
+        "45-59",
+        "60+"
+
+    ]
 
 
 # ============================================================
@@ -76,195 +152,322 @@ def apply_filters(
     max_visits=None
 ):
 
-    filtered = df.copy()
+    filtered = prepare_data(
+        df
+    ).copy()
+
 
     # --------------------------------------------------------
     # Gender
     # --------------------------------------------------------
 
-    if gender and str(gender).lower() != "all":
+    if (
+        gender
+        and str(gender).lower() != "all"
+    ):
 
-        filtered = filtered[
-            filtered["gender"]
-            .astype(str)
-            .str.lower()
-            == str(gender).lower()
-        ]
+        if "gender" in filtered.columns:
+
+            filtered = filtered[
+                filtered["gender"]
+                .astype(str)
+                .str.lower()
+                ==
+                str(gender).lower()
+            ]
+
 
     # --------------------------------------------------------
-    # Age Group
+    # Age group
     # --------------------------------------------------------
 
-    if age_group and str(age_group).lower() != "all":
+    if (
+        age_group
+        and str(age_group).lower() != "all"
+    ):
 
-        filtered = filtered[
-            filtered["age"].apply(
-                get_age_group
-            )
-            == age_group
-        ]
+        if "age" in filtered.columns:
+
+            filtered = filtered[
+                filtered["age"].apply(
+                    get_age_group
+                )
+                ==
+                str(age_group)
+            ]
+
 
     # --------------------------------------------------------
     # Illness
     # --------------------------------------------------------
 
-    if illness and str(illness).lower() != "all":
+    if (
+        illness
+        and str(illness).lower() != "all"
+    ):
 
-        try:
+        if "illness" in filtered.columns:
 
-            value = float(illness)
+            try:
 
-            filtered = filtered[
-                filtered["illness"] == value
-            ]
+                value = float(
+                    illness
+                )
 
-        except (ValueError, TypeError):
+                filtered = filtered[
+                    filtered["illness"]
+                    == value
+                ]
 
-            pass
+            except (
+                ValueError,
+                TypeError
+            ):
+
+                pass
+
 
     # --------------------------------------------------------
     # Health
     # --------------------------------------------------------
 
-    if health and str(health).lower() != "all":
+    if (
+        health
+        and str(health).lower() != "all"
+    ):
 
-        try:
+        if "health" in filtered.columns:
 
-            value = float(health)
+            try:
 
-            filtered = filtered[
-                filtered["health"] == value
-            ]
+                value = float(
+                    health
+                )
 
-        except (ValueError, TypeError):
+                filtered = filtered[
+                    filtered["health"]
+                    == value
+                ]
 
-            pass
+            except (
+                ValueError,
+                TypeError
+            ):
+
+                pass
+
 
     # --------------------------------------------------------
     # Chronic
-    #
-    # Dataset contains yes/no values.
     # --------------------------------------------------------
 
-    if chronic and str(chronic).lower() != "all":
+    if (
+        chronic
+        and str(chronic).lower() != "all"
+    ):
 
-        filtered = filtered[
-            filtered["nchronic"]
-            .astype(str)
-            .str.lower()
-            == str(chronic).lower()
-        ]
+        if "nchronic" in filtered.columns:
+
+            value = str(
+                chronic
+            ).strip()
+
+            filtered = filtered[
+                filtered["nchronic"]
+                .astype(str)
+                .str.strip()
+                == value
+            ]
+
 
     # --------------------------------------------------------
     # Private
     # --------------------------------------------------------
 
-    if private and str(private).lower() != "all":
+    if (
+        private
+        and str(private).lower() != "all"
+    ):
 
-        filtered = filtered[
-            filtered["private"]
-            .astype(str)
-            .str.lower()
-            == str(private).lower()
-        ]
+        if "private" in filtered.columns:
+
+            value = str(
+                private
+            ).strip()
+
+            filtered = filtered[
+                filtered["private"]
+                .astype(str)
+                .str.strip()
+                .str.lower()
+                ==
+                value.lower()
+            ]
+
 
     # --------------------------------------------------------
     # Free Poor
     # --------------------------------------------------------
 
-    if freepoor and str(freepoor).lower() != "all":
+    if (
+        freepoor
+        and str(freepoor).lower() != "all"
+    ):
 
-        filtered = filtered[
-            filtered["freepoor"]
-            .astype(str)
-            .str.lower()
-            == str(freepoor).lower()
-        ]
+        if "freepoor" in filtered.columns:
+
+            value = str(
+                freepoor
+            ).strip()
+
+            filtered = filtered[
+                filtered["freepoor"]
+                .astype(str)
+                .str.strip()
+                .str.lower()
+                ==
+                value.lower()
+            ]
+
 
     # --------------------------------------------------------
     # Free Repat
     # --------------------------------------------------------
 
-    if freerepat and str(freerepat).lower() != "all":
+    if (
+        freerepat
+        and str(freerepat).lower() != "all"
+    ):
 
-        filtered = filtered[
-            filtered["freerepat"]
-            .astype(str)
-            .str.lower()
-            == str(freerepat).lower()
-        ]
+        if "freerepat" in filtered.columns:
+
+            value = str(
+                freerepat
+            ).strip()
+
+            filtered = filtered[
+                filtered["freerepat"]
+                .astype(str)
+                .str.strip()
+                .str.lower()
+                ==
+                value.lower()
+            ]
+
 
     # --------------------------------------------------------
     # Minimum Visits
     # --------------------------------------------------------
 
-    if min_visits not in [None, ""]:
+    if (
+        min_visits
+        not in [None, ""]
+    ):
 
         try:
 
+            value = float(
+                min_visits
+            )
+
             filtered = filtered[
                 filtered["visits"]
-                >= float(min_visits)
+                >= value
             ]
 
-        except (ValueError, TypeError):
+        except (
+            ValueError,
+            TypeError
+        ):
 
             pass
+
 
     # --------------------------------------------------------
     # Maximum Visits
     # --------------------------------------------------------
 
-    if max_visits not in [None, ""]:
+    if (
+        max_visits
+        not in [None, ""]
+    ):
 
         try:
 
+            value = float(
+                max_visits
+            )
+
             filtered = filtered[
                 filtered["visits"]
-                <= float(max_visits)
+                <= value
             ]
 
-        except (ValueError, TypeError):
+        except (
+            ValueError,
+            TypeError
+        ):
 
             pass
 
-    return filtered
+
+    return filtered.reset_index(
+        drop=True
+    )
 
 
 # ============================================================
 # HISTOGRAM
 # ============================================================
 
-def histogram(values, bins=10):
+def histogram(
+    values,
+    bins=10
+):
 
-    values = pd.Series(values).dropna()
+    values = pd.to_numeric(
+        pd.Series(values),
+        errors="coerce"
+    ).dropna()
+
 
     if len(values) == 0:
 
         return {
+
             "labels": [],
             "values": []
+
         }
+
 
     counts, edges = np.histogram(
         values,
         bins=bins
     )
 
+
     labels = []
 
-    for i in range(len(edges) - 1):
 
-        start = round(edges[i], 2)
-        end = round(edges[i + 1], 2)
+    for i in range(
+        len(edges) - 1
+    ):
 
         labels.append(
-            f"{start}-{end}"
+            f"{edges[i]:.2f}-{edges[i + 1]:.2f}"
         )
 
+
     return {
-        "labels": labels,
-        "values": counts.astype(int).tolist()
+
+        "labels":
+            labels,
+
+        "values":
+            counts.astype(int)
+            .tolist()
+
     }
 
 
@@ -274,19 +477,32 @@ def histogram(values, bins=10):
 
 def gender_distribution(df):
 
-    result = (
+    if "gender" not in df.columns:
+
+        return {
+            "labels": [],
+            "values": []
+        }
+
+
+    counts = (
         df["gender"]
         .astype(str)
-        .str.title()
         .value_counts()
     )
 
+
     return {
+
         "labels":
-            result.index.tolist(),
+            counts.index
+            .tolist(),
 
         "values":
-            result.values.astype(int).tolist()
+            counts.values
+            .astype(int)
+            .tolist()
+
     }
 
 
@@ -295,6 +511,14 @@ def gender_distribution(df):
 # ============================================================
 
 def age_distribution(df):
+
+    if "age" not in df.columns:
+
+        return {
+            "labels": [],
+            "values": []
+        }
+
 
     return histogram(
         df["age"],
@@ -308,10 +532,19 @@ def age_distribution(df):
 
 def visit_distribution(df):
 
+    if "visits" not in df.columns:
+
+        return {
+            "labels": [],
+            "values": []
+        }
+
+
     visits = pd.to_numeric(
         df["visits"],
         errors="coerce"
     ).dropna()
+
 
     if len(visits) == 0:
 
@@ -320,21 +553,28 @@ def visit_distribution(df):
             "values": []
         }
 
-    result = (
+
+    counts = (
         visits
         .value_counts()
         .sort_index()
     )
 
+
     return {
 
         "labels": [
-            str(int(value))
-            for value in result.index
+            str(int(x))
+            if float(x).is_integer()
+            else str(x)
+            for x in counts.index
         ],
 
         "values":
-            result.astype(int).tolist()
+            counts.values
+            .astype(int)
+            .tolist()
+
     }
 
 
@@ -344,22 +584,48 @@ def visit_distribution(df):
 
 def gender_average_visits(df):
 
+    if (
+        "gender" not in df.columns
+        or
+        "visits" not in df.columns
+    ):
+
+        return {
+            "labels": [],
+            "values": []
+        }
+
+
+    temp = df.copy()
+
+    temp["visits"] = pd.to_numeric(
+        temp["visits"],
+        errors="coerce"
+    )
+
+
     result = (
-        df.groupby("gender")["visits"]
+        temp
+        .dropna(
+            subset=["visits"]
+        )
+        .groupby("gender")["visits"]
         .mean()
         .round(2)
     )
+
 
     return {
 
         "labels":
             result.index
             .astype(str)
-            .str.title()
             .tolist(),
 
         "values":
-            result.values.tolist()
+            result.values
+            .tolist()
+
     }
 
 
@@ -369,23 +635,57 @@ def gender_average_visits(df):
 
 def illness_vs_visits(df):
 
+    if (
+        "illness" not in df.columns
+        or
+        "visits" not in df.columns
+    ):
+
+        return {
+            "labels": [],
+            "values": []
+        }
+
+
+    temp = df.copy()
+
+
+    temp["illness"] = pd.to_numeric(
+        temp["illness"],
+        errors="coerce"
+    )
+
+    temp["visits"] = pd.to_numeric(
+        temp["visits"],
+        errors="coerce"
+    )
+
+
     result = (
-        df.groupby("illness")["visits"]
+        temp
+        .dropna(
+            subset=[
+                "illness",
+                "visits"
+            ]
+        )
+        .groupby("illness")["visits"]
         .mean()
         .round(2)
-        .reset_index()
     )
+
 
     return {
 
         "labels":
-            result["illness"]
+            result.index
             .astype(str)
             .tolist(),
 
         "values":
-            result["visits"]
+            result.values
             .tolist()
+
     }
 
 
@@ -395,11 +695,26 @@ def illness_vs_visits(df):
 
 def illness_distribution(df):
 
+    if "illness" not in df.columns:
+
+        return {
+            "labels": [],
+            "values": []
+        }
+
+
+    values = pd.to_numeric(
+        df["illness"],
+        errors="coerce"
+    ).dropna()
+
+
     result = (
-        df["illness"]
+        values
         .value_counts()
         .sort_index()
     )
+
 
     return {
 
@@ -412,6 +727,7 @@ def illness_distribution(df):
             result.values
             .astype(int)
             .tolist()
+
     }
 
 
@@ -421,13 +737,25 @@ def illness_distribution(df):
 
 def age_vs_visits(df):
 
-    columns = [
+    required = [
         "age",
         "visits",
         "gender"
     ]
 
-    temp = df[columns].copy()
+
+    if not all(
+        column in df.columns
+        for column in required
+    ):
+
+        return []
+
+
+    temp = df[
+        required
+    ].copy()
+
 
     temp["age"] = pd.to_numeric(
         temp["age"],
@@ -439,9 +767,17 @@ def age_vs_visits(df):
         errors="coerce"
     )
 
-    temp = temp.dropna()
+
+    temp = temp.dropna(
+        subset=[
+            "age",
+            "visits"
+        ]
+    )
+
 
     points = []
+
 
     for _, row in temp.iterrows():
 
@@ -455,8 +791,9 @@ def age_vs_visits(df):
 
             "gender":
                 str(row["gender"])
-                .title()
+
         })
+
 
     return points
 
@@ -467,37 +804,66 @@ def age_vs_visits(df):
 
 def age_group_analysis(df):
 
+    if (
+        "age" not in df.columns
+        or
+        "visits" not in df.columns
+    ):
+
+        return {
+            "labels": [],
+            "values": []
+        }
+
+
     temp = df.copy()
+
+
+    temp["age"] = pd.to_numeric(
+        temp["age"],
+        errors="coerce"
+    )
+
+    temp["visits"] = pd.to_numeric(
+        temp["visits"],
+        errors="coerce"
+    )
+
 
     temp["age_group"] = (
         temp["age"]
         .apply(get_age_group)
     )
 
-    order = [
-        "0-17",
-        "18-29",
-        "30-44",
-        "45-59",
-        "60+"
-    ]
+
+    order = get_age_groups()
+
 
     result = (
         temp
-        .groupby("age_group")["visits"]
+        .dropna(
+            subset=["visits"]
+        )
+        .groupby(
+            "age_group"
+        )["visits"]
         .mean()
         .reindex(order)
         .dropna()
         .round(2)
     )
 
+
     return {
 
         "labels":
-            result.index.tolist(),
+            result.index
+            .tolist(),
 
         "values":
-            result.values.tolist()
+            result.values
+            .tolist()
+
     }
 
 
@@ -507,53 +873,52 @@ def age_group_analysis(df):
 
 def chronic_analysis(df):
 
-    if "nchronic" not in df.columns:
+    if (
+        "nchronic" not in df.columns
+        or
+        "visits" not in df.columns
+    ):
 
         return {
             "labels": [],
             "values": []
         }
 
+
+    temp = df.copy()
+
+
+    temp["visits"] = pd.to_numeric(
+        temp["visits"],
+        errors="coerce"
+    )
+
+
     result = (
-        df.groupby("nchronic")["visits"]
+        temp
+        .dropna(
+            subset=["visits"]
+        )
+        .groupby(
+            "nchronic"
+        )["visits"]
         .mean()
+        .sort_index()
         .round(2)
     )
 
-    # Put no before yes
-    preferred_order = [
-        "no",
-        "yes"
-    ]
-
-    existing = [
-        value
-        for value in preferred_order
-        if value in result.index
-    ]
-
-    remaining = [
-        value
-        for value in result.index
-        if value not in existing
-    ]
-
-    final_order = existing + remaining
-
-    result = result.reindex(
-        final_order
-    )
 
     return {
 
         "labels":
             result.index
             .astype(str)
-            .str.title()
             .tolist(),
 
         "values":
-            result.values.tolist()
+            result.values
+            .tolist()
+
     }
 
 
@@ -563,12 +928,48 @@ def chronic_analysis(df):
 
 def health_analysis(df):
 
+    if (
+        "health" not in df.columns
+        or
+        "visits" not in df.columns
+    ):
+
+        return {
+            "labels": [],
+            "values": []
+        }
+
+
+    temp = df.copy()
+
+
+    temp["health"] = pd.to_numeric(
+        temp["health"],
+        errors="coerce"
+    )
+
+    temp["visits"] = pd.to_numeric(
+        temp["visits"],
+        errors="coerce"
+    )
+
+
     result = (
-        df.groupby("health")["visits"]
+        temp
+        .dropna(
+            subset=[
+                "health",
+                "visits"
+            ]
+        )
+        .groupby(
+            "health"
+        )["visits"]
         .mean()
         .sort_index()
         .round(2)
     )
+
 
     return {
 
@@ -578,7 +979,9 @@ def health_analysis(df):
             .tolist(),
 
         "values":
-            result.values.tolist()
+            result.values
+            .tolist()
+
     }
 
 
@@ -588,9 +991,25 @@ def health_analysis(df):
 
 def correlation_matrix(df):
 
-    numeric = df.select_dtypes(
+    temp = numeric_columns(
+        df
+    )
+
+
+    numeric = temp.select_dtypes(
         include=["number"]
     )
+
+
+    if numeric.empty:
+
+        return {
+
+            "labels": [],
+            "values": []
+
+        }
+
 
     correlation = (
         numeric
@@ -599,13 +1018,17 @@ def correlation_matrix(df):
         .fillna(0)
     )
 
+
     return {
 
         "labels":
-            correlation.columns.tolist(),
+            correlation.columns
+            .tolist(),
 
         "values":
-            correlation.values.tolist()
+            correlation.values
+            .tolist()
+
     }
 
 
@@ -615,39 +1038,74 @@ def correlation_matrix(df):
 
 def statistics(df):
 
+    temp = numeric_columns(
+        df
+    )
+
+
     visits = pd.to_numeric(
-        df["visits"],
+        temp.get(
+            "visits",
+            pd.Series(
+                dtype=float
+            )
+        ),
         errors="coerce"
     )
 
+
     age = pd.to_numeric(
-        df["age"],
+        temp.get(
+            "age",
+            pd.Series(
+                dtype=float
+            )
+        ),
         errors="coerce"
     )
+
+
+    total_visits = (
+        visits.sum()
+        if visits.notna().any()
+        else 0
+    )
+
+
+    average_visits = (
+        visits.mean()
+        if visits.notna().any()
+        else 0
+    )
+
+
+    average_age = (
+        age.mean()
+        if age.notna().any()
+        else 0
+    )
+
 
     return {
 
         "total_records":
-            int(len(df)),
+            int(len(temp)),
 
         "total_visits":
-            int(visits.sum()),
+            int(total_visits),
 
         "average_visits":
             round(
-                float(visits.mean()),
+                float(average_visits),
                 2
-            )
-            if visits.notna().any()
-            else 0,
+            ),
 
         "average_age":
             round(
-                float(age.mean()),
+                float(average_age),
                 2
             )
-            if age.notna().any()
-            else 0
+
     }
 
 
@@ -660,23 +1118,96 @@ def recent_records(
     limit=10
 ):
 
+    try:
+
+        limit = int(
+            limit
+        )
+
+    except (
+        ValueError,
+        TypeError
+    ):
+
+        limit = 10
+
+
+    limit = max(
+        1,
+        min(
+            limit,
+            100
+        )
+    )
+
+
     records = (
-        df.head(limit)
+        df
+        .head(limit)
         .copy()
     )
 
-    records = records.astype(object)
+
+    records = records.astype(
+        object
+    )
+
 
     records = records.where(
         pd.notna(records),
         None
     )
 
+
     return {
 
         "columns":
-            records.columns.tolist(),
+            records.columns
+            .tolist(),
 
         "rows":
-            records.values.tolist()
+            records.values
+            .tolist()
+
+    }
+
+
+# ============================================================
+# DATASET OVERVIEW
+# ============================================================
+
+def dataset_overview(df):
+
+    temp = prepare_data(
+        df
+    )
+
+
+    return {
+
+        "rows":
+            int(len(temp)),
+
+        "columns":
+            int(len(temp.columns)),
+
+        "column_names":
+            temp.columns.tolist(),
+
+        "missing_values":
+            {
+                column:
+                int(value)
+                for column, value
+                in temp.isnull()
+                .sum()
+                .items()
+            },
+
+        "duplicate_rows":
+            int(
+                temp.duplicated()
+                .sum()
+            )
+
     }

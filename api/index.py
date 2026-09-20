@@ -638,3 +638,14 @@ def insights_question():
 
 # Do NOT use app.run() on Vercel.
 # Vercel imports this Flask application as `app`.
+
+# ============================================================
+# LOCAL DEVELOPMENT SERVER
+# ============================================================
+
+if __name__ == "__main__":
+    app.run(
+        host="127.0.0.1",
+        port=5000,
+        debug=True
+    )

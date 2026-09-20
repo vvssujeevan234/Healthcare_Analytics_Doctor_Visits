@@ -8,7 +8,11 @@ import pandas as pd
 
 API_DIR = Path(__file__).resolve().parent
 
-DATA_FILE = API_DIR / "data" / "healthcare_doctor_visits.csv"
+DATA_FILE = (
+    API_DIR
+    / "data"
+    / "healthcare_doctor_visits.csv"
+)
 
 
 # ============================================================
@@ -16,32 +20,44 @@ DATA_FILE = API_DIR / "data" / "healthcare_doctor_visits.csv"
 # ============================================================
 
 def load_dataset():
+    """
+    Load the healthcare doctor visits CSV dataset.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Cleaned healthcare dataset.
+    """
 
     if not DATA_FILE.exists():
         raise FileNotFoundError(
             f"Dataset not found at: {DATA_FILE}"
         )
 
-    df = pd.read_csv(DATA_FILE)
+    try:
+
+        df = pd.read_csv(
+            DATA_FILE
+        )
+
+    except Exception as error:
+
+        raise RuntimeError(
+            f"Unable to read dataset: {error}"
+        )
+
 
     # --------------------------------------------------------
-    # Clean column names
-    # --------------------------------------------------------
-
-    df.columns = (
-        df.columns
-        .astype(str)
-        .str.strip()
-    )
-
-    # --------------------------------------------------------
-    # Remove CSV index column
+    # Remove unnamed index columns
     # --------------------------------------------------------
 
     unnamed_columns = [
         column
         for column in df.columns
-        if str(column).strip().lower().startswith("unnamed")
+        if str(column)
+        .strip()
+        .lower()
+        .startswith("unnamed")
     ]
 
     if unnamed_columns:
@@ -50,8 +66,21 @@ def load_dataset():
             columns=unnamed_columns
         )
 
+
     # --------------------------------------------------------
-    # Convert numeric columns
+    # Clean column names
+    # --------------------------------------------------------
+
+    df.columns = [
+        str(column)
+        .strip()
+        .lower()
+        for column in df.columns
+    ]
+
+
+    # --------------------------------------------------------
+    # Expected numeric columns
     # --------------------------------------------------------
 
     numeric_columns = [
@@ -63,6 +92,7 @@ def load_dataset():
         "health"
     ]
 
+
     for column in numeric_columns:
 
         if column in df.columns:
@@ -72,8 +102,9 @@ def load_dataset():
                 errors="coerce"
             )
 
+
     # --------------------------------------------------------
-    # Convert categorical columns
+    # Expected categorical columns
     # --------------------------------------------------------
 
     categorical_columns = [
@@ -85,6 +116,7 @@ def load_dataset():
         "lchronic"
     ]
 
+
     for column in categorical_columns:
 
         if column in df.columns:
@@ -95,6 +127,7 @@ def load_dataset():
                 .str.strip()
             )
 
+
     # --------------------------------------------------------
     # Reset index
     # --------------------------------------------------------
@@ -102,6 +135,7 @@ def load_dataset():
     df = df.reset_index(
         drop=True
     )
+
 
     return df
 
@@ -111,8 +145,13 @@ def load_dataset():
 # ============================================================
 
 def get_dataset_path():
+    """
+    Return the dataset file path.
+    """
 
-    return str(DATA_FILE)
+    return str(
+        DATA_FILE
+    )
 
 
 # ============================================================
@@ -120,12 +159,110 @@ def get_dataset_path():
 # ============================================================
 
 def get_dataset_info():
+    """
+    Return basic information about the dataset.
+    """
 
     df = load_dataset()
 
     return {
 
         "success": True,
+
+        "rows": int(
+            len(df)
+        ),
+
+        "columns": int(
+            len(df.columns)
+        ),
+
+        "column_names":
+            df.columns.tolist(),
+
+        "path":
+            str(DATA_FILE)
+
+    }
+
+
+# ============================================================
+# DATASET PREVIEW
+# ============================================================
+
+def get_dataset_preview(
+    limit=10
+):
+    """
+    Return first records from dataset.
+    """
+
+    df = load_dataset()
+
+    limit = max(
+        1,
+        min(
+            int(limit),
+            100
+        )
+    )
+
+    preview = df.head(
+        limit
+    ).copy()
+
+
+    preview = preview.where(
+        pd.notna(preview),
+        None
+    )
+
+
+    return {
+
+        "columns":
+            preview.columns.tolist(),
+
+        "rows":
+            preview.values.tolist(),
+
+        "count":
+            int(len(preview))
+
+    }
+
+
+# ============================================================
+# DATASET COLUMN TYPES
+# ============================================================
+
+def get_column_types():
+    """
+    Return dataset column data types.
+    """
+
+    df = load_dataset()
+
+    return {
+        column:
+        str(dtype)
+        for column, dtype
+        in df.dtypes.items()
+    }
+
+
+# ============================================================
+# DATASET SUMMARY
+# ============================================================
+
+def get_dataset_summary():
+    """
+    Return complete dataset summary.
+    """
+
+    df = load_dataset()
+
+    return {
 
         "rows":
             int(len(df)),
@@ -136,20 +273,28 @@ def get_dataset_info():
         "column_names":
             df.columns.tolist(),
 
-        "path":
-            str(DATA_FILE),
-
-        "dtypes": {
-            column:
+        "column_types":
+            {
+                column:
                 str(dtype)
-            for column, dtype
-            in df.dtypes.items()
-        },
+                for column, dtype
+                in df.dtypes.items()
+            },
 
-        "missing_values": {
-            column:
+        "missing_values":
+            {
+                column:
                 int(value)
-            for column, value
-            in df.isnull().sum().items()
-        }
+                for column, value
+                in df.isnull()
+                .sum()
+                .items()
+            },
+
+        "duplicate_rows":
+            int(
+                df.duplicated()
+                .sum()
+            )
+
     }

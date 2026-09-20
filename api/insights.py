@@ -1,621 +1,551 @@
-# ============================================================
-# HEALTHCARE ANALYTICS
-# INSIGHTS + AI ASSISTANT
-# ============================================================
+import pandas as pd
 
 
 # ============================================================
-# AUTOMATED INSIGHT GENERATOR
+# PREPARE DATA
+# ============================================================
+
+def prepare_insight_data(df):
+    result = df.copy()
+
+    numeric_columns = [
+        "visits",
+        "age",
+        "income",
+        "illness",
+        "reduced",
+        "health",
+    ]
+
+    for column in numeric_columns:
+        if column in result.columns:
+            result[column] = pd.to_numeric(
+                result[column],
+                errors="coerce"
+            )
+
+    # Dataset contains some yes/no fields as text.
+    # Convert them safely to numeric 0/1 where possible.
+    binary_columns = [
+        "private",
+        "freepoor",
+        "freerepat",
+        "nchronic",
+        "lchronic",
+    ]
+
+    for column in binary_columns:
+        if column in result.columns:
+
+            text = (
+                result[column]
+                .astype(str)
+                .str.strip()
+                .str.lower()
+            )
+
+            result[column] = text.map({
+                "yes": 1,
+                "no": 0,
+                "1": 1,
+                "0": 0,
+                "true": 1,
+                "false": 0,
+            })
+
+            # If original values are numeric strings,
+            # recover them safely.
+            numeric = pd.to_numeric(
+                text,
+                errors="coerce"
+            )
+
+            result[column] = result[column].fillna(
+                numeric
+            )
+
+    return result
+
+
+# ============================================================
+# AGE GROUP
+# ============================================================
+
+def age_group(age):
+
+    if pd.isna(age):
+        return "Unknown"
+
+    age = float(age)
+
+    if age < 18:
+        return "0-17"
+    elif age < 30:
+        return "18-29"
+    elif age < 45:
+        return "30-44"
+    elif age < 60:
+        return "45-59"
+    else:
+        return "60+"
+
+
+# ============================================================
+# GENERATE INSIGHT
 # ============================================================
 
 def generate_insight(df):
 
-    # --------------------------------------------------------
-    # Empty dataset
-    # --------------------------------------------------------
-
-    if df.empty:
-
+    if df is None or len(df) == 0:
         return {
-            "title": "No matching records",
-            "message": "The selected filters returned no records."
+            "title": "No Data",
+            "summary": "No healthcare records are available.",
+            "details": [],
+            "type": "info"
         }
 
+    df = prepare_insight_data(df)
+
+    insights = []
 
     # --------------------------------------------------------
-    # Basic statistics
+    # BASIC STATISTICS
     # --------------------------------------------------------
 
     total_records = len(df)
 
-    average_age = df["age"].mean()
-
-    average_visits = df["visits"].mean()
-
-    average_income = df["income"].mean()
-
-    average_health = df["health"].mean()
-
-    average_illness = df["illness"].mean()
-
-
-    # --------------------------------------------------------
-    # Gender
-    # --------------------------------------------------------
-
-    gender_counts = (
-        df["gender"]
-        .astype(str)
-        .value_counts()
+    visits = pd.to_numeric(
+        df.get("visits"),
+        errors="coerce"
     )
 
-    if not gender_counts.empty:
+    total_visits = (
+        visits.sum()
+        if visits.notna().any()
+        else 0
+    )
 
-        most_common_gender = str(
-            gender_counts.index[0]
+    average_visits = (
+        visits.mean()
+        if visits.notna().any()
+        else 0
+    )
+
+    insights.append(
+        f"The dataset contains {total_records:,} healthcare records "
+        f"with {int(total_visits):,} total doctor visits."
+    )
+
+    insights.append(
+        f"The average number of doctor visits per record is "
+        f"{average_visits:.2f}."
+    )
+
+    # --------------------------------------------------------
+    # GENDER
+    # --------------------------------------------------------
+
+    if (
+        "gender" in df.columns
+        and "visits" in df.columns
+    ):
+
+        gender_data = (
+            df.groupby("gender")["visits"]
+            .mean()
+            .dropna()
+            .sort_values(ascending=False)
         )
 
-        gender_count = int(
-            gender_counts.iloc[0]
+        if len(gender_data) > 0:
+
+            highest_gender = str(
+                gender_data.index[0]
+            )
+
+            highest_value = float(
+                gender_data.iloc[0]
+            )
+
+            insights.append(
+                f"The highest average visit level by gender "
+                f"is observed for {highest_gender}, "
+                f"at {highest_value:.2f} visits."
+            )
+
+    # --------------------------------------------------------
+    # ILLNESS
+    # --------------------------------------------------------
+
+    if (
+        "illness" in df.columns
+        and "visits" in df.columns
+    ):
+
+        illness_data = (
+            df.groupby("illness")["visits"]
+            .mean()
+            .dropna()
+            .sort_values(ascending=False)
         )
 
-    else:
+        if len(illness_data) > 0:
 
-        most_common_gender = "N/A"
+            illness_level = illness_data.index[0]
+            illness_value = float(
+                illness_data.iloc[0]
+            )
 
-        gender_count = 0
-
-
-    # --------------------------------------------------------
-    # Visits
-    # --------------------------------------------------------
-
-    max_visits = int(
-        df["visits"].max()
-    )
-
-    min_visits = int(
-        df["visits"].min()
-    )
-
+            insights.append(
+                f"Illness level {illness_level} has the "
+                f"highest average visits at "
+                f"{illness_value:.2f}."
+            )
 
     # --------------------------------------------------------
-    # Illness
+    # CHRONIC CONDITIONS
     # --------------------------------------------------------
 
-    max_illness = int(
-        df["illness"].max()
-    )
+    chronic_columns = []
 
-    min_illness = int(
-        df["illness"].min()
-    )
+    if "nchronic" in df.columns:
+        chronic_columns.append("nchronic")
 
+    if "lchronic" in df.columns:
+        chronic_columns.append("lchronic")
+
+    if chronic_columns:
+
+        chronic_mask = pd.Series(
+            False,
+            index=df.index
+        )
+
+        for column in chronic_columns:
+
+            values = pd.to_numeric(
+                df[column],
+                errors="coerce"
+            )
+
+            chronic_mask = (
+                chronic_mask |
+                values.fillna(0).gt(0)
+            )
+
+        chronic_count = int(
+            chronic_mask.sum()
+        )
+
+        if chronic_count > 0:
+
+            insights.append(
+                f"{chronic_count:,} records indicate "
+                f"at least one chronic condition."
+            )
+
+            if "visits" in df.columns:
+
+                chronic_visits = pd.to_numeric(
+                    df.loc[
+                        chronic_mask,
+                        "visits"
+                    ],
+                    errors="coerce"
+                ).mean()
+
+                non_chronic_visits = pd.to_numeric(
+                    df.loc[
+                        ~chronic_mask,
+                        "visits"
+                    ],
+                    errors="coerce"
+                ).mean()
+
+                if pd.notna(chronic_visits):
+
+                    insights.append(
+                        f"Records with chronic conditions "
+                        f"average {chronic_visits:.2f} visits."
+                    )
+
+                if pd.notna(non_chronic_visits):
+
+                    insights.append(
+                        f"Records without chronic conditions "
+                        f"average {non_chronic_visits:.2f} visits."
+                    )
 
     # --------------------------------------------------------
-    # Chronic conditions
+    # HEALTH STATUS
     # --------------------------------------------------------
 
-    chronic_count = int(
-        (
-            (df["nchronic"] > 0) |
-            (df["lchronic"] > 0)
-        ).sum()
-    )
+    if (
+        "health" in df.columns
+        and "visits" in df.columns
+    ):
 
+        health_data = (
+            df.groupby("health")["visits"]
+            .mean()
+            .dropna()
+            .sort_values(ascending=False)
+        )
+
+        if len(health_data) > 0:
+
+            health_level = health_data.index[0]
+            health_visits = float(
+                health_data.iloc[0]
+            )
+
+            insights.append(
+                f"Health level {health_level} "
+                f"has an average of "
+                f"{health_visits:.2f} visits."
+            )
 
     # --------------------------------------------------------
-    # Private healthcare
+    # AGE
     # --------------------------------------------------------
 
-    private_count = int(
-        df["private"].sum()
-    )
+    if (
+        "age" in df.columns
+        and "visits" in df.columns
+    ):
 
+        temp = df[
+            ["age", "visits"]
+        ].copy()
+
+        temp["age"] = pd.to_numeric(
+            temp["age"],
+            errors="coerce"
+        )
+
+        temp["visits"] = pd.to_numeric(
+            temp["visits"],
+            errors="coerce"
+        )
+
+        temp = temp.dropna(
+            subset=[
+                "age",
+                "visits"
+            ]
+        )
+
+        if len(temp) > 0:
+
+            temp["age_group"] = (
+                temp["age"]
+                .apply(age_group)
+            )
+
+            age_data = (
+                temp.groupby(
+                    "age_group"
+                )["visits"]
+                .mean()
+                .dropna()
+            )
+
+            if len(age_data) > 0:
+
+                highest_age_group = (
+                    age_data
+                    .sort_values(
+                        ascending=False
+                    )
+                    .index[0]
+                )
+
+                highest_age_visits = float(
+                    age_data
+                    .sort_values(
+                        ascending=False
+                    )
+                    .iloc[0]
+                )
+
+                insights.append(
+                    f"The {highest_age_group} age group "
+                    f"has the highest average visits "
+                    f"at {highest_age_visits:.2f}."
+                )
 
     # --------------------------------------------------------
-    # Reduced activity
+    # RETURN RESULT
     # --------------------------------------------------------
-
-    reduced_count = int(
-        df["reduced"].sum()
-    )
-
-
-    # --------------------------------------------------------
-    # Automated message
-    # --------------------------------------------------------
-
-    message = (
-
-        f"The filtered dataset contains "
-        f"{total_records:,} records. "
-
-        f"The average patient age is "
-        f"{average_age:.2f} years, while the "
-        f"average recorded doctor visits is "
-        f"{average_visits:.2f}. "
-
-        f"The average income value is "
-        f"{average_income:.2f}. "
-
-        f"The most represented gender is "
-        f"{most_common_gender} with "
-        f"{gender_count:,} records. "
-
-        f"The recorded visit values range from "
-        f"{min_visits} to {max_visits}. "
-
-        f"The illness values range from "
-        f"{min_illness} to {max_illness}. "
-
-        f"{chronic_count:,} records indicate "
-        f"at least one chronic-condition indicator. "
-
-        f"{private_count:,} records have the "
-        f"private healthcare indicator enabled. "
-
-        f"{reduced_count:,} records have the "
-        f"reduced-activity indicator enabled."
-    )
-
 
     return {
-
-        "title": "Automated Dataset Summary",
-
-        "message": message,
-
-        "statistics": {
-
-            "total_records": total_records,
-
-            "average_age": round(
-                average_age,
-                2
-            ),
-
-            "average_visits": round(
-                average_visits,
-                2
-            ),
-
-            "average_income": round(
-                average_income,
-                2
-            ),
-
-            "average_health": round(
-                average_health,
-                2
-            ),
-
-            "average_illness": round(
-                average_illness,
-                2
-            ),
-
-            "max_visits": max_visits,
-
-            "max_illness": max_illness,
-
-            "most_common_gender":
-                most_common_gender,
-
-            "gender_count":
-                gender_count,
-
-            "chronic_records":
-                chronic_count,
-
-            "private_records":
-                private_count,
-
-            "reduced_records":
-                reduced_count
-        }
+        "title": "Healthcare Analytics Insights",
+        "summary": (
+            f"Analysis is based on "
+            f"{total_records:,} healthcare records."
+        ),
+        "details": insights,
+        "type": "analysis"
     }
 
 
 # ============================================================
-# AI QUESTION ANSWER
+# ANSWER QUESTION
 # ============================================================
 
 def answer_question(df, question):
 
-    # --------------------------------------------------------
-    # Empty dataset
-    # --------------------------------------------------------
+    if not question:
+        return "Please enter a healthcare analytics question."
 
-    if df.empty:
+    if df is None or len(df) == 0:
+        return "No dataset records are available."
 
-        return (
-            "There are no records matching "
-            "the current filters."
-        )
+    df = prepare_insight_data(df)
 
-
-    # --------------------------------------------------------
-    # Clean question
-    # --------------------------------------------------------
-
-    q = (
+    question_lower = str(
         question
-        .lower()
-        .strip()
-    )
+    ).lower()
 
-
-    # ========================================================
-    # RECORD COUNT
-    # ========================================================
+    # --------------------------------------------------------
+    # TOTAL RECORDS
+    # --------------------------------------------------------
 
     if (
-        ("how many" in q or
-         "number of" in q or
-         "count" in q)
-        and
-        ("record" in q or
-         "patient" in q)
+        "total records" in question_lower
+        or "how many records" in question_lower
+        or "number of records" in question_lower
     ):
 
         return (
-            f"The current filtered dataset "
-            f"contains {len(df):,} records."
+            f"The dataset contains "
+            f"{len(df):,} records."
         )
 
-
-    # ========================================================
-    # AVERAGE AGE
-    # ========================================================
+    # --------------------------------------------------------
+    # TOTAL VISITS
+    # --------------------------------------------------------
 
     if (
-        "average age" in q
-        or
-        "mean age" in q
+        "total visits" in question_lower
+        or "how many visits" in question_lower
     ):
 
-        return (
-            f"The average patient age is "
-            f"{df['age'].mean():.2f} years."
+        visits = pd.to_numeric(
+            df["visits"],
+            errors="coerce"
         )
 
-
-    # ========================================================
-    # MINIMUM AGE
-    # ========================================================
-
-    if (
-        "youngest" in q
-        or
-        "minimum age" in q
-        or
-        "lowest age" in q
-    ):
-
         return (
-            f"The minimum recorded age is "
-            f"{df['age'].min():.0f} years."
+            f"The dataset contains "
+            f"{int(visits.sum()):,} total doctor visits."
         )
 
-
-    # ========================================================
-    # MAXIMUM AGE
-    # ========================================================
-
-    if (
-        "oldest" in q
-        or
-        "maximum age" in q
-        or
-        "highest age" in q
-    ):
-
-        return (
-            f"The maximum recorded age is "
-            f"{df['age'].max():.0f} years."
-        )
-
-
-    # ========================================================
+    # --------------------------------------------------------
     # AVERAGE VISITS
-    # ========================================================
+    # --------------------------------------------------------
 
     if (
-        (
-            "average" in q
-            or
-            "mean" in q
-        )
-        and
-        "visit" in q
+        "average visits" in question_lower
+        or "mean visits" in question_lower
     ):
 
-        return (
-            f"The average number of recorded "
-            f"doctor visits is "
-            f"{df['visits'].mean():.2f}."
+        visits = pd.to_numeric(
+            df["visits"],
+            errors="coerce"
         )
 
+        return (
+            f"The average number of visits is "
+            f"{visits.mean():.2f}."
+        )
 
-    # ========================================================
-    # HIGHEST VISITS
-    # ========================================================
+    # --------------------------------------------------------
+    # AVERAGE AGE
+    # --------------------------------------------------------
 
     if (
-        (
-            "highest" in q
-            or
-            "maximum" in q
-            or
-            "max" in q
-        )
-        and
-        "visit" in q
+        "average age" in question_lower
+        or "mean age" in question_lower
     ):
 
-        return (
-            f"The highest recorded visit value "
-            f"is {int(df['visits'].max())}."
+        age = pd.to_numeric(
+            df["age"],
+            errors="coerce"
         )
-
-
-    # ========================================================
-    # LOWEST VISITS
-    # ========================================================
-
-    if (
-        (
-            "lowest" in q
-            or
-            "minimum" in q
-            or
-            "min" in q
-        )
-        and
-        "visit" in q
-    ):
 
         return (
-            f"The lowest recorded visit value "
-            f"is {int(df['visits'].min())}."
+            f"The average age value in the dataset is "
+            f"{age.mean():.2f}."
         )
 
-
-    # ========================================================
+    # --------------------------------------------------------
     # GENDER
-    # ========================================================
+    # --------------------------------------------------------
 
-    if "gender" in q:
+    if "gender" in question_lower:
 
-        counts = (
-            df["gender"]
-            .astype(str)
-            .value_counts()
-        )
+        if "gender" in df.columns:
 
-
-        if not counts.empty:
-
-            gender = str(
-                counts.index[0]
+            counts = (
+                df["gender"]
+                .value_counts()
             )
 
-            count = int(
-                counts.iloc[0]
-            )
+            result = []
+
+            for gender, count in counts.items():
+
+                result.append(
+                    f"{gender}: {count:,}"
+                )
 
             return (
-                f"The most represented gender "
-                f"is {gender}, with "
-                f"{count:,} records."
+                "Gender distribution: "
+                + ", ".join(result)
+                + "."
             )
 
+    # --------------------------------------------------------
+    # CHRONIC
+    # --------------------------------------------------------
 
-    # ========================================================
-    # INCOME
-    # ========================================================
+    if "chronic" in question_lower:
 
-    if (
-        "income" in q
-        and
-        (
-            "average" in q
-            or
-            "mean" in q
+        chronic_mask = pd.Series(
+            False,
+            index=df.index
         )
-    ):
+
+        for column in [
+            "nchronic",
+            "lchronic"
+        ]:
+
+            if column in df.columns:
+
+                values = pd.to_numeric(
+                    df[column],
+                    errors="coerce"
+                )
+
+                chronic_mask = (
+                    chronic_mask |
+                    values.fillna(0).gt(0)
+                )
 
         return (
-            f"The average income value "
-            f"is {df['income'].mean():.2f}."
+            f"{int(chronic_mask.sum()):,} records "
+            f"indicate at least one chronic condition."
         )
 
-
-    # ========================================================
-    # HEALTH
-    # ========================================================
-
-    if "health" in q:
-
-        return (
-            f"The average health value in the "
-            f"current filtered data is "
-            f"{df['health'].mean():.2f}."
-        )
-
-
-    # ========================================================
-    # ILLNESS
-    # ========================================================
-
-    if "illness" in q:
-
-        return (
-            f"The highest illness level in "
-            f"the current filtered data is "
-            f"{int(df['illness'].max())}. "
-            f"The average illness value is "
-            f"{df['illness'].mean():.2f}."
-        )
-
-
-    # ========================================================
-    # CHRONIC CONDITIONS
-    # ========================================================
-
-    if (
-        "chronic" in q
-        or
-        "chronic condition" in q
-    ):
-
-        chronic_count = int(
-            (
-                (df["nchronic"] > 0) |
-                (df["lchronic"] > 0)
-            ).sum()
-        )
-
-        return (
-            f"{chronic_count:,} records in the "
-            f"current filtered dataset have at "
-            f"least one chronic-condition indicator."
-        )
-
-
-    # ========================================================
-    # PRIVATE HEALTHCARE
-    # ========================================================
-
-    if "private" in q:
-
-        private_count = int(
-            df["private"].sum()
-        )
-
-        return (
-            f"{private_count:,} records have "
-            f"the private healthcare indicator "
-            f"enabled."
-        )
-
-
-    # ========================================================
-    # FREE / POOR
-    # ========================================================
-
-    if (
-        "freepoor" in q
-        or
-        "free poor" in q
-        or
-        "poor" in q
-    ):
-
-        count = int(
-            df["freepoor"].sum()
-        )
-
-        return (
-            f"{count:,} records have the "
-            f"free-poor healthcare indicator "
-            f"enabled."
-        )
-
-
-    # ========================================================
-    # REDUCED ACTIVITY
-    # ========================================================
-
-    if (
-        "reduced" in q
-        or
-        "activity" in q
-    ):
-
-        count = int(
-            df["reduced"].sum()
-        )
-
-        return (
-            f"{count:,} records have the "
-            f"reduced-activity indicator "
-            f"enabled."
-        )
-
-
-    # ========================================================
-    # DASHBOARD
-    # ========================================================
-
-    if "dashboard" in q:
-
-        return (
-
-            "The dashboard provides an interactive "
-            "Power BI-style view of the healthcare "
-            "doctor-visits dataset. It can be used "
-            "to explore demographics, age, visits, "
-            "income, illness, health, healthcare "
-            "access indicators and chronic-condition "
-            "variables."
-        )
-
-
-    # ========================================================
-    # INSIGHTS
-    # ========================================================
-
-    if (
-        "insight" in q
-        or
-        "insights" in q
-    ):
-
-        return (
-
-            "The Insights page summarizes important "
-            "patterns found in the available "
-            "healthcare doctor-visits dataset. "
-            "It focuses on patient characteristics, "
-            "healthcare visits, illness, health, "
-            "healthcare access and relationships "
-            "between variables."
-        )
-
-
-    # ========================================================
-    # DATASET
-    # ========================================================
-
-    if (
-        "dataset" in q
-        or
-        "data" in q
-    ):
-
-        return (
-
-            f"The current filtered dataset contains "
-            f"{len(df):,} records and includes "
-            f"variables related to visits, gender, "
-            f"age, income, illness, reduced activity, "
-            f"healthcare access and chronic conditions."
-        )
-
-
-    # ========================================================
-    # GENERAL RESPONSE
-    # ========================================================
+    # --------------------------------------------------------
+    # DEFAULT
+    # --------------------------------------------------------
 
     return (
-
-        "I can answer questions about the current "
-        "healthcare dataset, including record count, "
-        "average age, visits, gender, income, health, "
-        "illness, chronic conditions, private healthcare "
-        "and reduced activity. Try asking: "
-        "\"What is the average age?\" or "
-        "\"How many records are there?\""
+        "I can answer questions about total records, "
+        "doctor visits, average visits, average age, "
+        "gender distribution, illness, health status, "
+        "age groups, and chronic conditions."
     )
