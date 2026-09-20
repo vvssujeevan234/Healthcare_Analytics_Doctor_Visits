@@ -3,7 +3,6 @@
    ANALYSIS PAGE JAVASCRIPT
    ========================================================= */
 
-
 /* =========================================================
    GLOBAL DATA
    ========================================================= */
@@ -55,6 +54,14 @@ function initializeNavigation() {
 
         mobileNavigation.classList.toggle("open");
 
+        const isOpen =
+            mobileNavigation.classList.contains("open");
+
+        menuToggle.setAttribute(
+            "aria-expanded",
+            String(isOpen)
+        );
+
     });
 
 
@@ -68,6 +75,11 @@ function initializeNavigation() {
 
             mobileNavigation.classList.remove("open");
 
+            menuToggle.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
         });
 
     });
@@ -76,7 +88,7 @@ function initializeNavigation() {
 
 
 /* =========================================================
-   LOAD CSV
+   LOAD HEALTHCARE CSV
    ========================================================= */
 
 async function loadHealthcareCSV() {
@@ -87,29 +99,67 @@ async function loadHealthcareCSV() {
     );
 
 
+    /*
+     * IMPORTANT
+     *
+     * The deployed Vercel project contains:
+     *
+     * /data/healthcare_doctor_visits.csv
+     *
+     * Therefore use an absolute URL from the
+     * website root.
+     */
+
     const possiblePaths = [
 
-        "../../data/healthcare_doctor_visits.csv",
+        "/data/healthcare_doctor_visits.csv",
+
+        "./data/healthcare_doctor_visits.csv",
 
         "../data/healthcare_doctor_visits.csv",
 
-        "../../healthcare_doctor_visits.csv",
-
-        "../healthcare_doctor_visits.csv"
+        "/healthcare_doctor_visits.csv"
 
     ];
+
+
+    console.log(
+        "Healthcare CSV paths:",
+        possiblePaths
+    );
 
 
     for (const path of possiblePaths) {
 
         try {
 
+            console.log(
+                "Trying healthcare CSV:",
+                path
+            );
+
+
             const response =
-                await fetch(path);
+                await fetch(
+                    path,
+                    {
+                        method: "GET",
+                        cache: "no-store"
+                    }
+                );
+
+
+            console.log(
+                `CSV response ${path}:`,
+                response.status,
+                response.statusText
+            );
 
 
             if (!response.ok) {
+
                 continue;
+
             }
 
 
@@ -121,7 +171,40 @@ async function loadHealthcareCSV() {
                 !csvText ||
                 csvText.trim().length === 0
             ) {
+
+                console.warn(
+                    "CSV is empty:",
+                    path
+                );
+
                 continue;
+
+            }
+
+
+            /*
+             * Prevent accidentally parsing an HTML
+             * 404 page as CSV.
+             */
+
+            const contentType =
+                response.headers.get(
+                    "content-type"
+                ) || "";
+
+
+            if (
+                contentType.includes("text/html") &&
+                csvText.trim().startsWith("<")
+            ) {
+
+                console.warn(
+                    "Received HTML instead of CSV:",
+                    path
+                );
+
+                continue;
+
             }
 
 
@@ -134,19 +217,39 @@ async function loadHealthcareCSV() {
                 healthcareData.length > 0
             ) {
 
+                console.log(
+                    "Healthcare CSV loaded successfully:",
+                    healthcareData.length,
+                    "records"
+                );
+
+
+                console.log(
+                    "CSV columns:",
+                    Object.keys(
+                        healthcareData[0]
+                    )
+                );
+
+
                 detectColumns();
+
 
                 renderAnalysis();
 
+
                 updateStatus(
-                    `Healthcare dataset loaded • ${healthcareData.length.toLocaleString()} records`,
+                    `Healthcare dataset loaded • ${healthcareData.length.toLocaleString("en-IN")} records`,
                     "loaded"
                 );
 
+
                 return;
+
             }
 
-        } catch (error) {
+        }
+        catch (error) {
 
             console.warn(
                 `Unable to load CSV from ${path}`,
@@ -158,10 +261,20 @@ async function loadHealthcareCSV() {
     }
 
 
+    /*
+     * If all paths failed
+     */
+
+    console.error(
+        "Healthcare CSV could not be loaded."
+    );
+
+
     updateStatus(
-        "CSV could not be loaded. Check the dataset path and Live Server.",
+        "CSV could not be loaded. Check /data/healthcare_doctor_visits.csv deployment.",
         "error"
     );
+
 
     renderFallback();
 
@@ -183,23 +296,41 @@ function parseCSV(text) {
     let insideQuotes = false;
 
 
-    for (let i = 0; i < text.length; i++) {
+    for (
+        let i = 0;
+        i < text.length;
+        i++
+    ) {
 
-        const character = text[i];
+        const character =
+            text[i];
 
         const nextCharacter =
             text[i + 1];
 
 
-        if (character === '"' && insideQuotes && nextCharacter === '"') {
+        /*
+         * Escaped quote
+         */
+
+        if (
+            character === '"' &&
+            insideQuotes &&
+            nextCharacter === '"'
+        ) {
 
             currentValue += '"';
 
             i++;
 
             continue;
+
         }
 
+
+        /*
+         * Quote
+         */
 
         if (character === '"') {
 
@@ -207,8 +338,13 @@ function parseCSV(text) {
                 !insideQuotes;
 
             continue;
+
         }
 
+
+        /*
+         * Comma
+         */
 
         if (
             character === "," &&
@@ -222,12 +358,19 @@ function parseCSV(text) {
             currentValue = "";
 
             continue;
+
         }
 
 
+        /*
+         * New line
+         */
+
         if (
-            (character === "\n" ||
-             character === "\r") &&
+            (
+                character === "\n" ||
+                character === "\r"
+            ) &&
             !insideQuotes
         ) {
 
@@ -235,7 +378,9 @@ function parseCSV(text) {
                 character === "\r" &&
                 nextCharacter === "\n"
             ) {
+
                 i++;
+
             }
 
 
@@ -243,30 +388,41 @@ function parseCSV(text) {
                 currentValue.trim()
             );
 
+
             currentValue = "";
 
 
             if (
                 currentRow.some(
-                    value => value !== ""
+                    value =>
+                        value !== ""
                 )
             ) {
 
-                rows.push(currentRow);
+                rows.push(
+                    currentRow
+                );
 
             }
 
 
             currentRow = [];
 
+
             continue;
+
         }
 
 
-        currentValue += character;
+        currentValue +=
+            character;
 
     }
 
+
+    /*
+     * Last row
+     */
 
     if (
         currentValue !== "" ||
@@ -277,15 +433,24 @@ function parseCSV(text) {
             currentValue.trim()
         );
 
-        rows.push(currentRow);
+
+        rows.push(
+            currentRow
+        );
 
     }
 
 
     if (rows.length < 2) {
+
         return [];
+
     }
 
+
+    /*
+     * Header
+     */
 
     const headers =
         rows[0].map(
@@ -296,14 +461,22 @@ function parseCSV(text) {
         );
 
 
+    /*
+     * Convert rows to objects
+     */
+
     return rows
         .slice(1)
         .map(row => {
 
             const object = {};
 
+
             headers.forEach(
-                (header, index) => {
+                (
+                    header,
+                    index
+                ) => {
 
                     object[header] =
                         row[index] !== undefined
@@ -312,6 +485,7 @@ function parseCSV(text) {
 
                 }
             );
+
 
             return object;
 
@@ -328,7 +502,10 @@ function normalizeColumnName(name) {
 
     return String(name)
         .toLowerCase()
-        .replace(/[^a-z0-9]/g, "");
+        .replace(
+            /[^a-z0-9]/g,
+            ""
+        );
 
 }
 
@@ -342,7 +519,9 @@ function findColumn(possibleNames) {
     if (
         !healthcareData.length
     ) {
+
         return null;
+
     }
 
 
@@ -352,29 +531,37 @@ function findColumn(possibleNames) {
         );
 
 
-    for (const wanted of possibleNames) {
+    for (
+        const wanted
+        of possibleNames
+    ) {
 
         const normalizedWanted =
-            normalizeColumnName(wanted);
+            normalizeColumnName(
+                wanted
+            );
 
 
         const found =
-            columns.find(column => {
-
-                return normalizeColumnName(column)
-                    === normalizedWanted;
-
-            });
+            columns.find(
+                column =>
+                    normalizeColumnName(
+                        column
+                    ) === normalizedWanted
+            );
 
 
         if (found) {
+
             return found;
+
         }
 
     }
 
 
     return null;
+
 }
 
 
@@ -425,7 +612,7 @@ function detectColumns() {
 
 
     console.log(
-        "Detected columns:",
+        "Detected healthcare columns:",
         columnMap
     );
 
@@ -442,7 +629,9 @@ function toNumber(value) {
         value === null ||
         value === undefined
     ) {
+
         return null;
+
     }
 
 
@@ -471,13 +660,18 @@ function toNumber(value) {
 function getNumericValues(column) {
 
     if (!column) {
+
         return [];
+
     }
 
 
     return healthcareData
-        .map(row =>
-            toNumber(row[column])
+        .map(
+            row =>
+                toNumber(
+                    row[column]
+                )
         )
         .filter(
             value =>
@@ -491,14 +685,19 @@ function getNumericValues(column) {
    FORMAT NUMBER
    ========================================================= */
 
-function formatNumber(number, decimals = 0) {
+function formatNumber(
+    number,
+    decimals = 0
+) {
 
     if (
         number === null ||
         number === undefined ||
         Number.isNaN(number)
     ) {
+
         return "—";
+
     }
 
 
@@ -506,8 +705,11 @@ function formatNumber(number, decimals = 0) {
         .toLocaleString(
             "en-IN",
             {
-                minimumFractionDigits: decimals,
-                maximumFractionDigits: decimals
+                minimumFractionDigits:
+                    decimals,
+
+                maximumFractionDigits:
+                    decimals
             }
         );
 
@@ -584,7 +786,9 @@ function renderKPIs() {
 
     setText(
         "totalRecords",
-        formatNumber(totalRecords)
+        formatNumber(
+            totalRecords
+        )
     );
 
 
@@ -592,7 +796,9 @@ function renderKPIs() {
         "totalVisits",
         totalVisits === null
             ? "—"
-            : formatNumber(totalVisits)
+            : formatNumber(
+                totalVisits
+            )
     );
 
 
@@ -639,7 +845,9 @@ function renderVisitChart() {
 
 
     if (!container) {
+
         return;
+
     }
 
 
@@ -659,12 +867,17 @@ function renderVisitChart() {
                 "Doctor visit column not detected."
             );
 
+
         if (summary) {
+
             summary.textContent =
                 "No visit data";
+
         }
 
+
         return;
+
     }
 
 
@@ -678,22 +891,30 @@ function renderVisitChart() {
 
 
         frequency[integerValue] =
-            (frequency[integerValue] || 0) + 1;
+            (
+                frequency[integerValue] ||
+                0
+            ) + 1;
 
     });
 
 
     const sorted =
-        Object.entries(frequency)
-            .sort(
-                (a, b) =>
-                    Number(a[0]) -
-                    Number(b[0])
-            );
+        Object.entries(
+            frequency
+        )
+        .sort(
+            (a, b) =>
+                Number(a[0]) -
+                Number(b[0])
+        );
 
 
     const displayData =
-        sorted.slice(0, 12);
+        sorted.slice(
+            0,
+            12
+        );
 
 
     const maxFrequency =
@@ -713,6 +934,7 @@ function renderVisitChart() {
                     "div"
                 );
 
+
             column.className =
                 "bar-column";
 
@@ -722,8 +944,10 @@ function renderVisitChart() {
                     "div"
                 );
 
+
             value.className =
                 "bar-value";
+
 
             value.textContent =
                 count.toLocaleString(
@@ -736,14 +960,16 @@ function renderVisitChart() {
                     "div"
                 );
 
+
             bar.className =
                 "bar";
 
 
             const percentage =
-                (count /
-                    maxFrequency) *
-                100;
+                (
+                    count /
+                    maxFrequency
+                ) * 100;
 
 
             bar.style.height =
@@ -758,8 +984,10 @@ function renderVisitChart() {
                     "div"
                 );
 
+
             label.className =
                 "bar-label";
+
 
             label.textContent =
                 visit;
@@ -769,9 +997,11 @@ function renderVisitChart() {
                 value
             );
 
+
             column.appendChild(
                 bar
             );
+
 
             column.appendChild(
                 label
@@ -789,14 +1019,23 @@ function renderVisitChart() {
     if (summary) {
 
         const minimum =
-            Math.min(...visits);
+            Math.min(
+                ...visits
+            );
+
 
         const maximum =
-            Math.max(...visits);
+            Math.max(
+                ...visits
+            );
 
 
         summary.textContent =
-            `${formatNumber(minimum)} – ${formatNumber(maximum)} visits`;
+            `${formatNumber(
+                minimum
+            )} – ${formatNumber(
+                maximum
+            )} visits`;
 
     }
 
@@ -822,7 +1061,9 @@ function renderAgeChart() {
 
 
     if (!container) {
+
         return;
+
     }
 
 
@@ -843,54 +1084,64 @@ function renderAgeChart() {
             );
 
         return;
+
     }
 
 
     const groups = [
+
         {
             label: "0–17",
             min: 0,
             max: 17
         },
+
         {
             label: "18–29",
             min: 18,
             max: 29
         },
+
         {
             label: "30–44",
             min: 30,
             max: 44
         },
+
         {
             label: "45–59",
             min: 45,
             max: 59
         },
+
         {
             label: "60+",
             min: 60,
             max: Infinity
         }
+
     ];
 
 
     const counts =
-        groups.map(group => {
+        groups.map(
+            group => {
 
-            return {
-                ...group,
+                return {
 
-                count:
-                    ages.filter(
-                        age =>
-                            age >= group.min &&
-                            age <= group.max
-                    ).length
+                    ...group,
 
-            };
+                    count:
+                        ages.filter(
+                            age =>
+                                age >= group.min &&
+                                age <= group.max
+                        ).length
 
-        });
+                };
+
+            }
+        );
 
 
     const maximum =
@@ -902,104 +1153,119 @@ function renderAgeChart() {
         );
 
 
-    counts.forEach(group => {
+    counts.forEach(
+        group => {
 
-        const row =
-            document.createElement(
-                "div"
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+
+            row.className =
+                "age-row";
+
+
+            const label =
+                document.createElement(
+                    "span"
+                );
+
+
+            label.className =
+                "age-label";
+
+
+            label.textContent =
+                group.label;
+
+
+            const track =
+                document.createElement(
+                    "div"
+                );
+
+
+            track.className =
+                "age-track";
+
+
+            const fill =
+                document.createElement(
+                    "div"
+                );
+
+
+            fill.className =
+                "age-fill";
+
+
+            const width =
+                maximum > 0
+                    ? (
+                        group.count /
+                        maximum
+                    ) * 100
+                    : 0;
+
+
+            fill.style.width =
+                `${Math.max(
+                    width,
+                    1
+                )}%`;
+
+
+            const number =
+                document.createElement(
+                    "span"
+                );
+
+
+            number.className =
+                "age-number";
+
+
+            number.textContent =
+                formatNumber(
+                    group.count
+                );
+
+
+            track.appendChild(
+                fill
             );
 
-        row.className =
-            "age-row";
 
-
-        const label =
-            document.createElement(
-                "span"
-            );
-
-        label.className =
-            "age-label";
-
-        label.textContent =
-            group.label;
-
-
-        const track =
-            document.createElement(
-                "div"
-            );
-
-        track.className =
-            "age-track";
-
-
-        const fill =
-            document.createElement(
-                "div"
-            );
-
-        fill.className =
-            "age-fill";
-
-
-        const width =
-            maximum > 0
-                ? (group.count /
-                    maximum) * 100
-                : 0;
-
-
-        fill.style.width =
-            `${Math.max(
-                width,
-                1
-            )}%`;
-
-
-        const number =
-            document.createElement(
-                "span"
-            );
-
-        number.className =
-            "age-number";
-
-        number.textContent =
-            formatNumber(
-                group.count
+            row.appendChild(
+                label
             );
 
 
-        track.appendChild(
-            fill
-        );
+            row.appendChild(
+                track
+            );
 
 
-        row.appendChild(
-            label
-        );
-
-        row.appendChild(
-            track
-        );
-
-        row.appendChild(
-            number
-        );
+            row.appendChild(
+                number
+            );
 
 
-        container.appendChild(
-            row
-        );
+            container.appendChild(
+                row
+            );
 
-    });
+        }
+    );
 
 
     if (summary) {
 
         summary.textContent =
-            `${ages.length.toLocaleString("en-IN")} age values`;
+            `${ages.length.toLocaleString(
+                "en-IN"
+            )} age values`;
 
     }
 
@@ -1019,7 +1285,9 @@ function renderCategoryAnalysis() {
 
 
     if (!container) {
+
         return;
+
     }
 
 
@@ -1048,27 +1316,29 @@ function renderCategoryAnalysis() {
 
 
         selectedColumn =
-            columns.find(column => {
+            columns.find(
+                column => {
 
-                const values =
-                    healthcareData.map(
-                        row =>
-                            row[column]
+                    const values =
+                        healthcareData.map(
+                            row =>
+                                row[column]
+                        );
+
+
+                    const unique =
+                        new Set(
+                            values
+                        ).size;
+
+
+                    return (
+                        unique >= 2 &&
+                        unique <= 10
                     );
 
-
-                const unique =
-                    new Set(
-                        values
-                    ).size;
-
-
-                return (
-                    unique >= 2 &&
-                    unique <= 10
-                );
-
-            });
+                }
+            );
 
     }
 
@@ -1081,6 +1351,7 @@ function renderCategoryAnalysis() {
             );
 
         return;
+
     }
 
 
@@ -1098,7 +1369,10 @@ function renderCategoryAnalysis() {
             (a, b) =>
                 b[1] - a[1]
         )
-        .slice(0, 6);
+        .slice(
+            0,
+            6
+        );
 
 
     const maximum =
@@ -1115,6 +1389,7 @@ function renderCategoryAnalysis() {
                     "div"
                 );
 
+
             row.className =
                 "category-row";
 
@@ -1124,11 +1399,14 @@ function renderCategoryAnalysis() {
                     "span"
                 );
 
+
             categoryName.className =
                 "category-name";
 
+
             categoryName.title =
                 name;
+
 
             categoryName.textContent =
                 name;
@@ -1139,6 +1417,7 @@ function renderCategoryAnalysis() {
                     "div"
                 );
 
+
             track.className =
                 "category-track";
 
@@ -1147,6 +1426,7 @@ function renderCategoryAnalysis() {
                 document.createElement(
                     "div"
                 );
+
 
             fill.className =
                 "category-fill";
@@ -1164,8 +1444,10 @@ function renderCategoryAnalysis() {
                     "span"
                 );
 
+
             number.className =
                 "category-number";
+
 
             number.textContent =
                 formatNumber(
@@ -1182,9 +1464,11 @@ function renderCategoryAnalysis() {
                 categoryName
             );
 
+
             row.appendChild(
                 track
             );
+
 
             row.appendChild(
                 number
@@ -1200,12 +1484,13 @@ function renderCategoryAnalysis() {
 
 
     const footer =
-        container.closest(
-            ".analysis-card"
-        )
-        ?.querySelector(
-            ".chart-footer span:first-child"
-        );
+        container
+            .closest(
+                ".analysis-card"
+            )
+            ?.querySelector(
+                ".chart-footer span:first-child"
+            );
 
 
     if (footer) {
@@ -1231,7 +1516,9 @@ function renderRelationshipAnalysis() {
 
 
     if (!container) {
+
         return;
+
     }
 
 
@@ -1309,7 +1596,7 @@ function renderRelationshipAnalysis() {
                 "Average Age",
 
             text:
-                "Average patient age calculated from the age values available in the dataset."
+                "Average patient age calculated from the available age values."
         },
 
         {
@@ -1336,6 +1623,7 @@ function renderRelationshipAnalysis() {
                     "div"
                 );
 
+
             element.className =
                 "relationship-item";
 
@@ -1343,7 +1631,7 @@ function renderRelationshipAnalysis() {
             element.innerHTML = `
 
                 <span class="relationship-number">
-                    ${item.number}
+                    ${escapeHTML(item.number)}
                 </span>
 
                 <h4>
@@ -1376,30 +1664,38 @@ function getFrequency(column) {
     const frequency = {};
 
 
-    healthcareData.forEach(row => {
+    healthcareData.forEach(
+        row => {
 
-        let value =
-            row[column];
+            let value =
+                row[column];
 
 
-        if (
-            value === null ||
-            value === undefined ||
-            value === ""
-        ) {
-            value = "Unknown";
+            if (
+                value === null ||
+                value === undefined ||
+                value === ""
+            ) {
+
+                value =
+                    "Unknown";
+
+            }
+
+
+            value =
+                String(value)
+                    .trim();
+
+
+            frequency[value] =
+                (
+                    frequency[value] ||
+                    0
+                ) + 1;
+
         }
-
-
-        value =
-            String(value)
-                .trim();
-
-
-        frequency[value] =
-            (frequency[value] || 0) + 1;
-
-    });
+    );
 
 
     return frequency;
@@ -1429,8 +1725,10 @@ function updateStatus(
 
 
     if (text) {
+
         text.textContent =
             message;
+
     }
 
 
@@ -1441,16 +1739,29 @@ function updateStatus(
 
 
         if (state === "loaded") {
+
             dot.classList.add(
                 "loaded"
             );
+
         }
 
 
         if (state === "error") {
+
             dot.classList.add(
                 "error"
             );
+
+        }
+
+
+        if (state === "loading") {
+
+            dot.classList.add(
+                "loading"
+            );
+
         }
 
     }
@@ -1469,15 +1780,18 @@ function renderFallback() {
         "—"
     );
 
+
     setText(
         "totalVisits",
         "—"
     );
 
+
     setText(
         "averageVisits",
         "—"
     );
+
 
     setText(
         "averageAge",
@@ -1498,24 +1812,26 @@ function renderFallback() {
     ];
 
 
-    charts.forEach(id => {
+    charts.forEach(
+        id => {
 
-        const element =
-            document.getElementById(
-                id
-            );
-
-
-        if (element) {
-
-            element.innerHTML =
-                createEmptyMessage(
-                    "Dataset unavailable."
+            const element =
+                document.getElementById(
+                    id
                 );
 
-        }
 
-    });
+            if (element) {
+
+                element.innerHTML =
+                    createEmptyMessage(
+                        "Dataset unavailable."
+                    );
+
+            }
+
+        }
+    );
 
 }
 
@@ -1524,7 +1840,9 @@ function renderFallback() {
    EMPTY MESSAGE
    ========================================================= */
 
-function createEmptyMessage(message) {
+function createEmptyMessage(
+    message
+) {
 
     return `
 
@@ -1538,8 +1856,11 @@ function createEmptyMessage(message) {
             color:rgba(255,255,255,.42);
             font-size:11px;
             line-height:1.6;
+            padding:20px;
         ">
+
             ${escapeHTML(message)}
+
         </div>
 
     `;
@@ -1557,12 +1878,16 @@ function setText(
 ) {
 
     const element =
-        document.getElementById(id);
+        document.getElementById(
+            id
+        );
 
 
     if (element) {
+
         element.textContent =
             value;
+
     }
 
 }
@@ -1575,22 +1900,27 @@ function setText(
 function escapeHTML(value) {
 
     return String(value)
+
         .replace(
             /&/g,
             "&amp;"
         )
+
         .replace(
             /</g,
             "&lt;"
         )
+
         .replace(
             />/g,
             "&gt;"
         )
+
         .replace(
             /"/g,
             "&quot;"
         )
+
         .replace(
             /'/g,
             "&#039;"
@@ -1646,17 +1976,35 @@ function initializeAI() {
         !chat ||
         !close
     ) {
+
+        console.warn(
+            "AI robot elements not found on analysis page."
+        );
+
         return;
+
     }
 
 
     robot.addEventListener(
         "click",
-        () => {
+        event => {
+
+            event.stopPropagation();
 
             chat.classList.add(
                 "active"
             );
+
+
+            if (input) {
+
+                setTimeout(
+                    () => input.focus(),
+                    200
+                );
+
+            }
 
         }
     );
@@ -1664,11 +2012,31 @@ function initializeAI() {
 
     close.addEventListener(
         "click",
-        () => {
+        event => {
+
+            event.stopPropagation();
 
             chat.classList.remove(
                 "active"
             );
+
+        }
+    );
+
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Escape"
+            ) {
+
+                chat.classList.remove(
+                    "active"
+                );
+
+            }
 
         }
     );
@@ -1692,6 +2060,13 @@ function initializeAI() {
                         button.textContent.trim();
 
 
+                    if (!body) {
+
+                        return;
+
+                    }
+
+
                     addUserMessage(
                         question,
                         body
@@ -1712,7 +2087,8 @@ function initializeAI() {
 
     if (
         form &&
-        input
+        input &&
+        body
     ) {
 
         form.addEventListener(
@@ -1727,7 +2103,9 @@ function initializeAI() {
 
 
                 if (!question) {
+
                     return;
+
                 }
 
 
@@ -1762,10 +2140,18 @@ function addUserMessage(
     body
 ) {
 
+    if (!body) {
+
+        return;
+
+    }
+
+
     const wrapper =
         document.createElement(
             "div"
         );
+
 
     wrapper.className =
         "ai-message ai-message-user";
@@ -1776,8 +2162,10 @@ function addUserMessage(
             "div"
         );
 
+
     content.className =
         "ai-user-message-content";
+
 
     content.textContent =
         message;
@@ -1809,10 +2197,18 @@ function answerAI(
     body
 ) {
 
+    if (!body) {
+
+        return;
+
+    }
+
+
     const typing =
         document.createElement(
             "div"
         );
+
 
     typing.className =
         "ai-message ai-message-bot";
@@ -1827,9 +2223,11 @@ function answerAI(
         <div class="ai-message-content">
 
             <div class="ai-typing">
+
                 <span></span>
                 <span></span>
                 <span></span>
+
             </div>
 
         </div>
@@ -1864,6 +2262,7 @@ function answerAI(
                     "div"
                 );
 
+
             wrapper.className =
                 "ai-message ai-message-bot";
 
@@ -1875,7 +2274,9 @@ function answerAI(
                 </div>
 
                 <div class="ai-message-content">
+
                     ${answer}
+
                 </div>
 
             `;
@@ -1928,6 +2329,7 @@ function generateAIAnswer(
     ) {
 
         return `
+
             <p>
                 The healthcare dataset currently contains
                 <strong>
@@ -1935,6 +2337,41 @@ function generateAIAnswer(
                 </strong>
                 records.
             </p>
+
+        `;
+
+    }
+
+
+    if (
+        q.includes("column")
+    ) {
+
+        const columns =
+            healthcareData.length
+                ? Object.keys(
+                    healthcareData[0]
+                )
+                : [];
+
+
+        return `
+
+            <p>
+                The dataset contains
+                <strong>
+                    ${columns.length}
+                </strong>
+                columns.
+            </p>
+
+            <p>
+                Columns:
+                ${escapeHTML(
+                    columns.join(", ")
+                )}
+            </p>
+
         `;
 
     }
@@ -1948,10 +2385,12 @@ function generateAIAnswer(
         if (!visits.length) {
 
             return `
+
                 <p>
-                    A doctor-visit column could not be detected
-                    in the CSV.
+                    A doctor-visit column could not
+                    be detected in the CSV.
                 </p>
+
             `;
 
         }
@@ -1966,6 +2405,7 @@ function generateAIAnswer(
 
 
         return `
+
             <p>
                 The average number of doctor visits is
                 <strong>
@@ -1975,6 +2415,7 @@ function generateAIAnswer(
                     )}
                 </strong>.
             </p>
+
         `;
 
     }
@@ -1987,10 +2428,12 @@ function generateAIAnswer(
         if (!ages.length) {
 
             return `
+
                 <p>
                     An age column could not be detected
                     in the CSV.
                 </p>
+
             `;
 
         }
@@ -2005,6 +2448,7 @@ function generateAIAnswer(
 
 
         return `
+
             <p>
                 The average patient age is
                 <strong>
@@ -2015,6 +2459,7 @@ function generateAIAnswer(
                 </strong>
                 years.
             </p>
+
         `;
 
     }
@@ -2025,17 +2470,20 @@ function generateAIAnswer(
     ) {
 
         return `
+
             <p>
                 The analysis page uses the doctor-visit
-                values from the CSV to calculate visit
-                frequency and average visits.
+                values from the healthcare CSV to calculate
+                visit frequency and average visits.
             </p>
+
         `;
 
     }
 
 
     return `
+
         <p>
             I can help you understand the healthcare
             dataset, doctor visits, patient age,
@@ -2044,8 +2492,9 @@ function generateAIAnswer(
 
         <p>
             Try asking about the total records,
-            average visits or average age.
+            columns, average visits or average age.
         </p>
+
     `;
 
 }
@@ -2060,13 +2509,20 @@ function scrollChat(
 ) {
 
     if (!body) {
+
         return;
+
     }
 
 
     body.scrollTo({
-        top: body.scrollHeight,
-        behavior: "smooth"
+
+        top:
+            body.scrollHeight,
+
+        behavior:
+            "smooth"
+
     });
 
 }
