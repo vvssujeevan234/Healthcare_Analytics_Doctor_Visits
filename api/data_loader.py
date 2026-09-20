@@ -1,18 +1,15 @@
-import os
+from pathlib import Path
 import pandas as pd
 
 
 # ============================================================
-# PATHS
+# PROJECT PATHS
 # ============================================================
 
-API_DIR = os.path.dirname(os.path.abspath(__file__))
+API_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = API_DIR.parent
 
-DATASET_PATH = os.path.join(
-    API_DIR,
-    "data",
-    "healthcare_doctor_visits.csv"
-)
+DATA_FILE = API_DIR / "data" / "healthcare_doctor_visits.csv"
 
 
 # ============================================================
@@ -21,12 +18,12 @@ DATASET_PATH = os.path.join(
 
 def load_dataset():
 
-    if not os.path.exists(DATASET_PATH):
+    if not DATA_FILE.exists():
         raise FileNotFoundError(
-            f"Dataset not found: {DATASET_PATH}"
+            f"Dataset not found at: {DATA_FILE}"
         )
 
-    df = pd.read_csv(DATASET_PATH)
+    df = pd.read_csv(DATA_FILE)
 
     # --------------------------------------------------------
     # Clean column names
@@ -39,12 +36,18 @@ def load_dataset():
     )
 
     # --------------------------------------------------------
-    # Remove CSV index column
+    # Remove CSV index column if present
     # --------------------------------------------------------
 
-    if "Unnamed: 0" in df.columns:
+    unnamed_columns = [
+        column
+        for column in df.columns
+        if str(column).lower().startswith("unnamed")
+    ]
+
+    if unnamed_columns:
         df = df.drop(
-            columns=["Unnamed: 0"]
+            columns=unnamed_columns
         )
 
     # --------------------------------------------------------
@@ -57,12 +60,7 @@ def load_dataset():
         "income",
         "illness",
         "reduced",
-        "health",
-        "private",
-        "freepoor",
-        "freerepat",
-        "nchronic",
-        "lchronic"
+        "health"
     ]
 
     for column in numeric_columns:
@@ -75,6 +73,19 @@ def load_dataset():
             )
 
     # --------------------------------------------------------
+    # Age conversion
+    #
+    # Dataset stores age as:
+    # 0.19 = 19 years
+    # 0.40 = 40 years
+    # 0.72 = 72 years
+    # --------------------------------------------------------
+
+    if "age" in df.columns:
+
+        df["age"] = df["age"] * 100
+
+    # --------------------------------------------------------
     # Categorical columns
     # --------------------------------------------------------
 
@@ -82,29 +93,24 @@ def load_dataset():
         "gender",
         "private",
         "freepoor",
-        "freerepat"
+        "freerepat",
+        "nchronic",
+        "lchronic"
     ]
 
     for column in categorical_columns:
 
         if column in df.columns:
 
-            # Do not destroy useful numeric values
-            if column in [
-                "private",
-                "freepoor",
-                "freerepat"
-            ]:
-                continue
-
             df[column] = (
                 df[column]
                 .astype(str)
                 .str.strip()
+                .str.lower()
             )
 
     # --------------------------------------------------------
-    # Remove rows where core values are invalid
+    # Remove invalid core rows
     # --------------------------------------------------------
 
     core_columns = [
@@ -142,7 +148,7 @@ def load_dataset():
 
 def get_dataset_path():
 
-    return DATASET_PATH
+    return str(DATA_FILE)
 
 
 # ============================================================
@@ -155,17 +161,17 @@ def get_dataset_info():
 
     return {
 
-        "column_names":
-            list(df.columns),
+        "rows":
+            int(len(df)),
 
         "columns":
             int(len(df.columns)),
 
-        "rows":
-            int(len(df)),
+        "column_names":
+            df.columns.tolist(),
 
         "path":
-            DATASET_PATH,
+            str(DATA_FILE),
 
         "dtypes": {
             column: str(dtype)
