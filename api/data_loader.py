@@ -7,7 +7,6 @@ import pandas as pd
 # ============================================================
 
 API_DIR = Path(__file__).resolve().parent
-PROJECT_DIR = API_DIR.parent
 
 DATA_FILE = API_DIR / "data" / "healthcare_doctor_visits.csv"
 
@@ -36,22 +35,23 @@ def load_dataset():
     )
 
     # --------------------------------------------------------
-    # Remove CSV index column if present
+    # Remove CSV index column
     # --------------------------------------------------------
 
     unnamed_columns = [
         column
         for column in df.columns
-        if str(column).lower().startswith("unnamed")
+        if str(column).strip().lower().startswith("unnamed")
     ]
 
     if unnamed_columns:
+
         df = df.drop(
             columns=unnamed_columns
         )
 
     # --------------------------------------------------------
-    # Numeric columns
+    # Convert numeric columns
     # --------------------------------------------------------
 
     numeric_columns = [
@@ -73,20 +73,7 @@ def load_dataset():
             )
 
     # --------------------------------------------------------
-    # Age conversion
-    #
-    # Dataset stores age as:
-    # 0.19 = 19 years
-    # 0.40 = 40 years
-    # 0.72 = 72 years
-    # --------------------------------------------------------
-
-    if "age" in df.columns:
-
-        df["age"] = df["age"] * 100
-
-    # --------------------------------------------------------
-    # Categorical columns
+    # Convert categorical columns
     # --------------------------------------------------------
 
     categorical_columns = [
@@ -104,32 +91,9 @@ def load_dataset():
 
             df[column] = (
                 df[column]
-                .astype(str)
+                .astype("string")
                 .str.strip()
-                .str.lower()
             )
-
-    # --------------------------------------------------------
-    # Remove invalid core rows
-    # --------------------------------------------------------
-
-    core_columns = [
-        column
-        for column in [
-            "visits",
-            "age",
-            "income",
-            "illness",
-            "health"
-        ]
-        if column in df.columns
-    ]
-
-    if core_columns:
-
-        df = df.dropna(
-            subset=core_columns
-        )
 
     # --------------------------------------------------------
     # Reset index
@@ -161,6 +125,8 @@ def get_dataset_info():
 
     return {
 
+        "success": True,
+
         "rows":
             int(len(df)),
 
@@ -174,13 +140,15 @@ def get_dataset_info():
             str(DATA_FILE),
 
         "dtypes": {
-            column: str(dtype)
+            column:
+                str(dtype)
             for column, dtype
             in df.dtypes.items()
         },
 
         "missing_values": {
-            column: int(value)
+            column:
+                int(value)
             for column, value
             in df.isnull().sum().items()
         }
