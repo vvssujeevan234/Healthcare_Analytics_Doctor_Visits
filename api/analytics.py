@@ -54,100 +54,89 @@ def apply_filters(
     max_visits=None
 ):
 
-    df = numeric_columns(df)
-
-    filtered = df.copy()
+    filtered = numeric_columns(df)
 
     # --------------------------------------------------------
     # Gender
     # --------------------------------------------------------
 
-    if gender and gender.lower() != "all":
+    if gender and str(gender).lower() != "all":
 
         filtered = filtered[
             filtered["gender"]
             .astype(str)
             .str.lower()
-            == gender.lower()
+            == str(gender).lower()
         ]
-
 
     # --------------------------------------------------------
     # Age group
     # --------------------------------------------------------
 
-    if age_group and age_group.lower() != "all":
+    if age_group and str(age_group).lower() != "all":
 
         filtered = filtered[
-            filtered["age"].apply(
-                lambda x: get_age_group(x)
-            )
+            filtered["age"]
+            .apply(get_age_group)
             == age_group
         ]
-
 
     # --------------------------------------------------------
     # Illness
     # --------------------------------------------------------
 
-    if illness and illness.lower() != "all":
+    if illness and str(illness).lower() != "all":
 
         try:
 
-            illness_value = float(illness)
+            value = float(illness)
 
             filtered = filtered[
-                filtered["illness"] == illness_value
+                filtered["illness"] == value
             ]
 
-        except ValueError:
-
+        except (ValueError, TypeError):
             pass
-
 
     # --------------------------------------------------------
     # Health
     # --------------------------------------------------------
 
-    if health and health.lower() != "all":
+    if health and str(health).lower() != "all":
 
         try:
 
-            health_value = float(health)
+            value = float(health)
 
             filtered = filtered[
-                filtered["health"] == health_value
+                filtered["health"] == value
             ]
 
-        except ValueError:
-
+        except (ValueError, TypeError):
             pass
 
-
     # --------------------------------------------------------
-    # Chronic conditions
+    # Chronic
     # --------------------------------------------------------
 
-    if chronic and chronic.lower() != "all":
+    if chronic and str(chronic).lower() != "all":
 
         try:
 
-            chronic_value = float(chronic)
+            value = float(chronic)
 
             filtered = filtered[
-                filtered["nchronic"] == chronic_value
+                filtered["nchronic"] == value
             ]
 
-        except ValueError:
-
+        except (ValueError, TypeError):
             pass
-
 
     # --------------------------------------------------------
     # Private
     # --------------------------------------------------------
 
-    if private and private.lower() != "all":
+    if private and str(private).lower() != "all":
 
         try:
 
@@ -157,16 +146,14 @@ def apply_filters(
                 filtered["private"] == value
             ]
 
-        except ValueError:
-
+        except (ValueError, TypeError):
             pass
-
 
     # --------------------------------------------------------
     # Free Poor
     # --------------------------------------------------------
 
-    if freepoor and freepoor.lower() != "all":
+    if freepoor and str(freepoor).lower() != "all":
 
         try:
 
@@ -176,16 +163,14 @@ def apply_filters(
                 filtered["freepoor"] == value
             ]
 
-        except ValueError:
-
+        except (ValueError, TypeError):
             pass
-
 
     # --------------------------------------------------------
     # Free Repat
     # --------------------------------------------------------
 
-    if freerepat and freerepat.lower() != "all":
+    if freerepat and str(freerepat).lower() != "all":
 
         try:
 
@@ -195,44 +180,44 @@ def apply_filters(
                 filtered["freerepat"] == value
             ]
 
-        except ValueError:
-
+        except (ValueError, TypeError):
             pass
 
-
     # --------------------------------------------------------
-    # Visit range
+    # Minimum visits
     # --------------------------------------------------------
 
     if min_visits not in [None, ""]:
 
         try:
 
+            value = float(min_visits)
+
             filtered = filtered[
-                filtered["visits"]
-                >= float(min_visits)
+                filtered["visits"] >= value
             ]
 
-        except ValueError:
-
+        except (ValueError, TypeError):
             pass
 
+    # --------------------------------------------------------
+    # Maximum visits
+    # --------------------------------------------------------
 
     if max_visits not in [None, ""]:
 
         try:
 
+            value = float(max_visits)
+
             filtered = filtered[
-                filtered["visits"]
-                <= float(max_visits)
+                filtered["visits"] <= value
             ]
 
-        except ValueError:
-
+        except (ValueError, TypeError):
             pass
 
-
-    return filtered
+    return filtered.reset_index(drop=True)
 
 
 # ============================================================
@@ -246,16 +231,20 @@ def get_age_group(age):
 
     age = float(age)
 
-    if age < 18:
+    # Your dataset stores normalized age values.
+    # 0.19 - 0.72 corresponds to approximately 19 - 72 years.
+    actual_age = age * 100
+
+    if actual_age < 18:
         return "0-17"
 
-    elif age < 30:
+    elif actual_age < 30:
         return "18-29"
 
-    elif age < 45:
+    elif actual_age < 45:
         return "30-44"
 
-    elif age < 60:
+    elif actual_age < 60:
         return "45-59"
 
     else:
@@ -268,13 +257,30 @@ def get_age_group(age):
 
 def histogram(values, bins=10):
 
-    values = pd.Series(values).dropna()
+    values = pd.to_numeric(
+        pd.Series(values),
+        errors="coerce"
+    ).dropna()
 
     if len(values) == 0:
 
         return {
             "labels": [],
             "values": []
+        }
+
+    minimum = float(values.min())
+    maximum = float(values.max())
+
+    if minimum == maximum:
+
+        return {
+            "labels": [
+                str(round(minimum, 2))
+            ],
+            "values": [
+                int(len(values))
+            ]
         }
 
     counts, edges = np.histogram(
@@ -287,7 +293,7 @@ def histogram(values, bins=10):
     for i in range(len(edges) - 1):
 
         labels.append(
-            f"{edges[i]:.0f}-{edges[i + 1]:.0f}"
+            f"{edges[i]:.2f}-{edges[i + 1]:.2f}"
         )
 
     return {
@@ -302,15 +308,26 @@ def histogram(values, bins=10):
 
 def gender_distribution(df):
 
+    if "gender" not in df.columns:
+
+        return {
+            "labels": [],
+            "values": []
+        }
+
     counts = (
         df["gender"]
         .astype(str)
+        .str.strip()
         .value_counts()
     )
 
     return {
-        "labels": counts.index.tolist(),
-        "values": counts.values.astype(int).tolist()
+        "labels":
+            counts.index.tolist(),
+
+        "values":
+            counts.astype(int).tolist()
     }
 
 
@@ -344,14 +361,20 @@ def visit_distribution(df):
             "values": []
         }
 
-    counts = visits.value_counts().sort_index()
+    counts = (
+        visits
+        .value_counts()
+        .sort_index()
+    )
 
     return {
         "labels": [
             str(int(x))
             for x in counts.index
         ],
-        "values": counts.astype(int).tolist()
+
+        "values":
+            counts.astype(int).tolist()
     }
 
 
@@ -361,15 +384,26 @@ def visit_distribution(df):
 
 def gender_average_visits(df):
 
+    temp = df.copy()
+
+    temp["visits"] = pd.to_numeric(
+        temp["visits"],
+        errors="coerce"
+    )
+
     result = (
-        df.groupby("gender")["visits"]
+        temp
+        .groupby("gender")["visits"]
         .mean()
         .round(2)
     )
 
     return {
-        "labels": result.index.astype(str).tolist(),
-        "values": result.values.tolist()
+        "labels":
+            result.index.astype(str).tolist(),
+
+        "values":
+            result.fillna(0).tolist()
     }
 
 
@@ -379,16 +413,39 @@ def gender_average_visits(df):
 
 def illness_vs_visits(df):
 
+    temp = df.copy()
+
+    temp["illness"] = pd.to_numeric(
+        temp["illness"],
+        errors="coerce"
+    )
+
+    temp["visits"] = pd.to_numeric(
+        temp["visits"],
+        errors="coerce"
+    )
+
+    temp = temp.dropna(
+        subset=[
+            "illness",
+            "visits"
+        ]
+    )
+
     result = (
-        df.groupby("illness")["visits"]
+        temp
+        .groupby("illness")["visits"]
         .mean()
+        .sort_index()
         .round(2)
-        .reset_index()
     )
 
     return {
-        "labels": result["illness"].astype(str).tolist(),
-        "values": result["visits"].tolist()
+        "labels":
+            result.index.astype(str).tolist(),
+
+        "values":
+            result.tolist()
     }
 
 
@@ -398,15 +455,23 @@ def illness_vs_visits(df):
 
 def illness_distribution(df):
 
+    illness = pd.to_numeric(
+        df["illness"],
+        errors="coerce"
+    ).dropna()
+
     result = (
-        df["illness"]
+        illness
         .value_counts()
         .sort_index()
     )
 
     return {
-        "labels": result.index.astype(str).tolist(),
-        "values": result.values.astype(int).tolist()
+        "labels":
+            result.index.astype(str).tolist(),
+
+        "values":
+            result.astype(int).tolist()
     }
 
 
@@ -417,7 +482,11 @@ def illness_distribution(df):
 def age_vs_visits(df):
 
     temp = df[
-        ["age", "visits", "gender"]
+        [
+            "age",
+            "visits",
+            "gender"
+        ]
     ].copy()
 
     temp["age"] = pd.to_numeric(
@@ -430,16 +499,27 @@ def age_vs_visits(df):
         errors="coerce"
     )
 
-    temp = temp.dropna()
+    temp = temp.dropna(
+        subset=[
+            "age",
+            "visits"
+        ]
+    )
 
     points = []
 
     for _, row in temp.iterrows():
 
         points.append({
-            "x": float(row["age"]),
-            "y": float(row["visits"]),
-            "gender": str(row["gender"])
+
+            "x":
+                float(row["age"]) * 100,
+
+            "y":
+                float(row["visits"]),
+
+            "gender":
+                str(row["gender"])
         })
 
     return points
@@ -453,8 +533,19 @@ def age_group_analysis(df):
 
     temp = df.copy()
 
-    temp["age_group"] = temp["age"].apply(
-        get_age_group
+    temp["age"] = pd.to_numeric(
+        temp["age"],
+        errors="coerce"
+    )
+
+    temp["visits"] = pd.to_numeric(
+        temp["visits"],
+        errors="coerce"
+    )
+
+    temp["age_group"] = (
+        temp["age"]
+        .apply(get_age_group)
     )
 
     order = [
@@ -466,7 +557,11 @@ def age_group_analysis(df):
     ]
 
     result = (
-        temp.groupby("age_group")["visits"]
+        temp
+        .groupby(
+            "age_group",
+            observed=False
+        )["visits"]
         .mean()
         .reindex(order)
         .dropna()
@@ -474,8 +569,11 @@ def age_group_analysis(df):
     )
 
     return {
-        "labels": result.index.tolist(),
-        "values": result.values.tolist()
+        "labels":
+            result.index.tolist(),
+
+        "values":
+            result.tolist()
     }
 
 
@@ -485,16 +583,46 @@ def age_group_analysis(df):
 
 def chronic_analysis(df):
 
+    temp = df.copy()
+
+    temp["nchronic"] = pd.to_numeric(
+        temp["nchronic"],
+        errors="coerce"
+    )
+
+    temp["visits"] = pd.to_numeric(
+        temp["visits"],
+        errors="coerce"
+    )
+
+    temp = temp.dropna(
+        subset=[
+            "nchronic",
+            "visits"
+        ]
+    )
+
+    if temp.empty:
+
+        return {
+            "labels": [],
+            "values": []
+        }
+
     result = (
-        df.groupby("nchronic")["visits"]
+        temp
+        .groupby("nchronic")["visits"]
         .mean()
         .sort_index()
         .round(2)
     )
 
     return {
-        "labels": result.index.astype(str).tolist(),
-        "values": result.values.tolist()
+        "labels":
+            result.index.astype(str).tolist(),
+
+        "values":
+            result.tolist()
     }
 
 
@@ -504,28 +632,60 @@ def chronic_analysis(df):
 
 def health_analysis(df):
 
+    temp = df.copy()
+
+    temp["health"] = pd.to_numeric(
+        temp["health"],
+        errors="coerce"
+    )
+
+    temp["visits"] = pd.to_numeric(
+        temp["visits"],
+        errors="coerce"
+    )
+
+    temp = temp.dropna(
+        subset=[
+            "health",
+            "visits"
+        ]
+    )
+
     result = (
-        df.groupby("health")["visits"]
+        temp
+        .groupby("health")["visits"]
         .mean()
         .sort_index()
         .round(2)
     )
 
     return {
-        "labels": result.index.astype(str).tolist(),
-        "values": result.values.tolist()
+        "labels":
+            result.index.astype(str).tolist(),
+
+        "values":
+            result.tolist()
     }
 
 
 # ============================================================
-# CORRELATION
+# CORRELATION MATRIX
 # ============================================================
 
 def correlation_matrix(df):
 
-    numeric = df.select_dtypes(
+    temp = numeric_columns(df)
+
+    numeric = temp.select_dtypes(
         include=["number"]
     )
+
+    if numeric.empty:
+
+        return {
+            "labels": [],
+            "values": []
+        }
 
     correlation = (
         numeric
@@ -535,8 +695,11 @@ def correlation_matrix(df):
     )
 
     return {
-        "labels": correlation.columns.tolist(),
-        "values": correlation.values.tolist()
+        "labels":
+            correlation.columns.tolist(),
+
+        "values":
+            correlation.values.tolist()
     }
 
 
@@ -556,6 +719,9 @@ def statistics(df):
         errors="coerce"
     )
 
+    # Dataset age is normalized.
+    actual_age = age * 100
+
     return {
 
         "total_records":
@@ -565,13 +731,19 @@ def statistics(df):
             int(visits.sum()),
 
         "average_visits":
-            round(float(visits.mean()), 2)
+            round(
+                float(visits.mean()),
+                2
+            )
             if visits.notna().any()
             else 0,
 
         "average_age":
-            round(float(age.mean()), 2)
-            if age.notna().any()
+            round(
+                float(actual_age.mean()),
+                2
+            )
+            if actual_age.notna().any()
             else 0
     }
 
@@ -580,15 +752,28 @@ def statistics(df):
 # RECENT RECORDS
 # ============================================================
 
-def recent_records(df, limit=10):
+def recent_records(
+    df,
+    limit=10
+):
 
-    records = df.head(limit).copy()
+    records = (
+        df
+        .head(limit)
+        .copy()
+    )
 
     records = records.replace(
-        {np.nan: None}
+        {
+            np.nan: None
+        }
     )
 
     return {
-        "columns": records.columns.tolist(),
-        "rows": records.values.tolist()
+
+        "columns":
+            records.columns.tolist(),
+
+        "rows":
+            records.values.tolist()
     }
