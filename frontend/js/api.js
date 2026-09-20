@@ -1,342 +1,154 @@
-// ============================================================
-// HEALTHCARE ANALYTICS - FRONTEND API
-// ============================================================
+/* =========================================================
+   HEALTHCARE ANALYTICS
+   CENTRAL API MODULE
+   ========================================================= */
 
-const API_BASE_URL =
-    "https://healthcare-analytics-doctor-visits.vercel.app/api";
+const API_BASE_URL = "http://127.0.0.1:5000";
 
 
-// ============================================================
-// GENERIC API REQUEST
-// ============================================================
+/* =========================================================
+   GENERIC API REQUEST
+   ========================================================= */
 
 async function apiRequest(endpoint, options = {}) {
 
+    const url = `${API_BASE_URL}${endpoint}`;
+
+    const response = await fetch(url, {
+        method: options.method || "GET",
+        headers: {
+            "Content-Type": "application/json",
+            ...(options.headers || {})
+        },
+        body: options.body
+            ? JSON.stringify(options.body)
+            : undefined
+    });
+
+    let result = null;
+
     try {
-
-        const response = await fetch(
-            `${API_BASE_URL}${endpoint}`,
-            {
-                ...options,
-
-                headers: {
-                    "Content-Type": "application/json",
-                    ...(options.headers || {})
-                }
-            }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.error ||
-                `API Error: ${response.status}`
-            );
-        }
-
-        return data;
-
+        result = await response.json();
     } catch (error) {
+        result = null;
+    }
 
-        console.error(
-            "API request failed:",
-            endpoint,
-            error
+    if (!response.ok) {
+
+        throw new Error(
+            result?.message ||
+            result?.error ||
+            `API request failed: ${response.status}`
         );
 
-        throw error;
     }
+
+    return result;
 }
 
 
-// ============================================================
-// HEALTH
-// ============================================================
+/* =========================================================
+   HEALTH CHECK
+   ========================================================= */
 
-async function getHealth() {
+async function checkAPIHealth() {
 
-    return await apiRequest("/health");
+    return await apiRequest("/");
+
+
 }
 
 
-// ============================================================
-// DATASET
-// ============================================================
+/* =========================================================
+   GET DATASET
+   ========================================================= */
 
 async function getDataset() {
 
     return await apiRequest("/dataset");
+
 }
 
 
-// ============================================================
-// DASHBOARD
-// ============================================================
+/* =========================================================
+   GET DATASET INFORMATION
+   ========================================================= */
 
-async function getDashboard() {
+async function getDatasetInfo() {
 
-    return await apiRequest("/dashboard");
+    return await apiRequest("/dataset/info");
+
 }
 
 
-// ============================================================
-// ANALYSIS
-// ============================================================
+/* =========================================================
+   GET DATASET SUMMARY
+   ========================================================= */
 
-async function getAnalysis() {
+async function getDatasetSummary() {
 
-    return await apiRequest("/analysis");
+    return await apiRequest("/dataset/summary");
+
 }
 
 
-// ============================================================
-// INSIGHTS
-// ============================================================
+/* =========================================================
+   GET ANALYTICS
+   ========================================================= */
+
+async function getAnalytics() {
+
+    return await apiRequest("/analytics");
+
+}
+
+
+/* =========================================================
+   GET INSIGHTS
+   ========================================================= */
 
 async function getInsights() {
 
     return await apiRequest("/insights");
+
 }
 
 
-// ============================================================
-// RECENT RECORDS
-// ============================================================
-
-async function getRecords(limit = 10) {
-
-    return await apiRequest(
-        `/records?limit=${limit}`
-    );
-}
+/* =========================================================
+   EXPORT
+   ========================================================= */
 
+window.HealthcareAPI = {
 
-// ============================================================
-// FILTERED ANALYSIS
-// ============================================================
+    baseURL: API_BASE_URL,
 
-async function getFilteredAnalysis(filters = {}) {
-
-    const params =
-        new URLSearchParams();
+    request: apiRequest,
 
-    Object.entries(filters).forEach(
-        ([key, value]) => {
+    health: checkAPIHealth,
 
-            if (
-                value !== undefined &&
-                value !== null &&
-                value !== "" &&
-                value !== "all"
-            ) {
+    getDataset: getDataset,
 
-                params.append(
-                    key,
-                    value
-                );
-            }
-        }
-    );
+    getDatasetInfo: getDatasetInfo,
 
-    const query =
-        params.toString();
+    getDatasetSummary: getDatasetSummary,
 
-    return await apiRequest(
-        query
-            ? `/analysis?${query}`
-            : "/analysis"
-    );
-}
+    getAnalytics: getAnalytics,
 
+    getInsights: getInsights
 
-// ============================================================
-// FILTERED DASHBOARD
-// ============================================================
+};
 
-async function getFilteredDashboard(filters = {}) {
 
-    const params =
-        new URLSearchParams();
+/* =========================================================
+   GLOBAL FUNCTIONS
+   ========================================================= */
 
-    Object.entries(filters).forEach(
-        ([key, value]) => {
+window.getDataset = getDataset;
 
-            if (
-                value !== undefined &&
-                value !== null &&
-                value !== "" &&
-                value !== "all"
-            ) {
+window.getDatasetInfo = getDatasetInfo;
 
-                params.append(
-                    key,
-                    value
-                );
-            }
-        }
-    );
+window.getDatasetSummary = getDatasetSummary;
 
-    const query =
-        params.toString();
+window.getAnalytics = getAnalytics;
 
-    return await apiRequest(
-        query
-            ? `/dashboard?${query}`
-            : "/dashboard"
-    );
-}
-
-
-// ============================================================
-// DATASET CONNECTION STATUS
-// ============================================================
-
-async function showDatasetStatus(
-    elementId = "dataset-status"
-) {
-
-    const element =
-        document.getElementById(
-            elementId
-        );
-
-    if (!element) {
-        return;
-    }
-
-    try {
-
-        element.textContent =
-            "Connecting to dataset...";
-
-        const data =
-            await getHealth();
-
-        if (
-            data.success === true &&
-            data.status === "connected"
-        ) {
-
-            element.textContent =
-                `Dataset Connected • ${formatNumber(data.rows)} records • ${formatNumber(data.columns)} columns`;
-
-            element.classList.add(
-                "connected"
-            );
-
-            element.classList.remove(
-                "disconnected"
-            );
-
-        } else {
-
-            element.textContent =
-                "Dataset connection unavailable";
-
-            element.classList.add(
-                "disconnected"
-            );
-
-            element.classList.remove(
-                "connected"
-            );
-        }
-
-    } catch (error) {
-
-        element.textContent =
-            "Dataset connection unavailable";
-
-        element.classList.add(
-            "disconnected"
-        );
-
-        element.classList.remove(
-            "connected"
-        );
-    }
-}
-
-
-// ============================================================
-// LOAD COMMON PAGE DATA
-// ============================================================
-
-async function loadCommonData() {
-
-    try {
-
-        const [
-            health,
-            dataset
-        ] = await Promise.all([
-
-            getHealth(),
-            getDataset()
-
-        ]);
-
-        return {
-            health,
-            dataset
-        };
-
-    } catch (error) {
-
-        console.error(
-            "Unable to load common data:",
-            error
-        );
-
-        throw error;
-    }
-}
-
-
-// ============================================================
-// NUMBER FORMAT
-// ============================================================
-
-function formatNumber(
-    value,
-    decimals = 0
-) {
-
-    const number =
-        Number(value);
-
-    if (!Number.isFinite(number)) {
-        return "0";
-    }
-
-    return number.toLocaleString(
-        "en-IN",
-        {
-            minimumFractionDigits:
-                decimals,
-
-            maximumFractionDigits:
-                decimals
-        }
-    );
-}
-
-
-// ============================================================
-// SAFE TEXT
-// ============================================================
-
-function safeText(value) {
-
-    if (
-        value === null ||
-        value === undefined
-    ) {
-
-        return "";
-    }
-
-    return String(value);
-}
+window.getInsights = getInsights;

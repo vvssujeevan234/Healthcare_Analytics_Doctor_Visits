@@ -1,4 +1,4 @@
-/* =========================================================
+﻿/* =========================================================
    HEALTHCARE ANALYTICS
    DATA UNDERSTANDING PAGE
    NO API_BASE_URL DECLARATION
@@ -516,7 +516,7 @@ function addLog(message, type = "") {
     symbol.className =
         "log-symbol";
 
-    symbol.textContent = "›";
+    symbol.textContent = "â€º";
 
     const text =
         document.createElement("span");
@@ -1087,7 +1087,7 @@ function initializeRobot() {
                         cursor:pointer;
                     "
                 >
-                    ×
+                    Ã—
                 </button>
 
             </div>
