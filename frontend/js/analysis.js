@@ -79,6 +79,14 @@ function initializeNavigation() {
 
 /* =========================================================
    LOAD HEALTHCARE CSV
+   IMPORTANT:
+   CSV is located at:
+
+   frontend/data/healthcare_doctor_visits.csv
+
+   Therefore Vercel public URL is:
+
+   /data/healthcare_doctor_visits.csv
    ========================================================= */
 
 async function loadHealthcareCSV() {
@@ -88,124 +96,119 @@ async function loadHealthcareCSV() {
         "loading"
     );
 
-    /*
-     * IMPORTANT
-     *
-     * analysis.html is inside:
-     *
-     * frontend/pages/analysis.html
-     *
-     * CSV is inside:
-     *
-     * frontend/data/healthcare_doctor_visits.csv
-     *
-     * Therefore:
-     *
-     * ../data/healthcare_doctor_visits.csv
-     *
-     * is the correct production URL.
-     */
+    const possiblePaths = [
 
-    const datasetURL =
-        "../data/healthcare_doctor_visits.csv";
+        /* Vercel / deployed website */
+        "/data/healthcare_doctor_visits.csv",
 
-    console.log(
-        "Healthcare CSV URL:",
-        new URL(
-            datasetURL,
-            window.location.href
-        ).href
+        /* Relative path from frontend/pages/analysis.html */
+        "../data/healthcare_doctor_visits.csv",
+
+        /* Relative path if page is served differently */
+        "./data/healthcare_doctor_visits.csv",
+
+        /* Root fallback */
+        "/healthcare_doctor_visits.csv"
+
+    ];
+
+    for (const path of possiblePaths) {
+
+        try {
+
+            console.log(
+                "Trying healthcare CSV:",
+                path
+            );
+
+            const response =
+                await fetch(
+                    path,
+                    {
+                        cache: "no-store"
+                    }
+                );
+
+            console.log(
+                "CSV response:",
+                path,
+                response.status,
+                response.statusText
+            );
+
+            if (!response.ok) {
+
+                continue;
+
+            }
+
+            const csvText =
+                await response.text();
+
+            if (
+                !csvText ||
+                csvText.trim().length === 0
+            ) {
+
+                continue;
+
+            }
+
+            healthcareData =
+                parseCSV(csvText);
+
+            if (
+                healthcareData &&
+                healthcareData.length > 0
+            ) {
+
+                console.log(
+                    "Healthcare CSV loaded successfully:",
+                    healthcareData.length,
+                    "records"
+                );
+
+                console.log(
+                    "First record:",
+                    healthcareData[0]
+                );
+
+                detectColumns();
+
+                renderAnalysis();
+
+                updateStatus(
+                    `Healthcare dataset loaded • ${healthcareData.length.toLocaleString("en-IN")} records`,
+                    "loaded"
+                );
+
+                return;
+
+            }
+
+        }
+        catch (error) {
+
+            console.warn(
+                "Unable to load CSV:",
+                path,
+                error
+            );
+
+        }
+
+    }
+
+    console.error(
+        "Healthcare CSV could not be loaded."
     );
 
-    try {
+    updateStatus(
+        "CSV could not be loaded. Check that frontend/data/healthcare_doctor_visits.csv is deployed.",
+        "error"
+    );
 
-        const response =
-            await fetch(
-                datasetURL,
-                {
-                    method: "GET",
-                    cache: "no-cache"
-                }
-            );
-
-        console.log(
-            "CSV response:",
-            response.status,
-            response.statusText
-        );
-
-        if (!response.ok) {
-
-            throw new Error(
-                `CSV request failed: ${response.status} ${response.statusText}`
-            );
-
-        }
-
-        const csvText =
-            await response.text();
-
-        if (
-            !csvText ||
-            csvText.trim().length === 0
-        ) {
-
-            throw new Error(
-                "CSV file is empty."
-            );
-
-        }
-
-        healthcareData =
-            parseCSV(csvText);
-
-        if (
-            !healthcareData ||
-            healthcareData.length === 0
-        ) {
-
-            throw new Error(
-                "CSV was found, but no records could be parsed."
-            );
-
-        }
-
-        console.log(
-            "Healthcare dataset loaded:",
-            healthcareData.length,
-            "records"
-        );
-
-        console.log(
-            "First record:",
-            healthcareData[0]
-        );
-
-        detectColumns();
-
-        renderAnalysis();
-
-        updateStatus(
-            `Healthcare dataset loaded • ${healthcareData.length.toLocaleString("en-IN")} records`,
-            "loaded"
-        );
-
-    }
-    catch (error) {
-
-        console.error(
-            "Healthcare CSV loading error:",
-            error
-        );
-
-        updateStatus(
-            "Unable to load healthcare dataset.",
-            "error"
-        );
-
-        renderFallback();
-
-    }
+    renderFallback();
 
 }
 
@@ -253,9 +256,7 @@ function parseCSV(text) {
         }
 
 
-        if (
-            character === '"'
-        ) {
+        if (character === '"') {
 
             insideQuotes =
                 !insideQuotes;
@@ -327,8 +328,7 @@ function parseCSV(text) {
         }
 
 
-        currentValue +=
-            character;
+        currentValue += character;
 
     }
 
@@ -349,9 +349,7 @@ function parseCSV(text) {
     }
 
 
-    if (
-        rows.length < 2
-    ) {
+    if (rows.length < 2) {
 
         return [];
 
@@ -363,10 +361,7 @@ function parseCSV(text) {
             header =>
                 header
                     .trim()
-                    .replace(
-                        /^"|"$/g,
-                        ""
-                    )
+                    .replace(/^"|"$/g, "")
         );
 
 
@@ -449,7 +444,8 @@ function findColumn(possibleNames) {
                 column =>
                     normalizeColumnName(
                         column
-                    ) === normalizedWanted
+                    ) ===
+                    normalizedWanted
             );
 
 
@@ -522,7 +518,7 @@ function detectColumns() {
 
 
 /* =========================================================
-   NUMBER CONVERSION
+   CONVERT NUMBER
    ========================================================= */
 
 function toNumber(value) {
@@ -539,14 +535,8 @@ function toNumber(value) {
 
     const cleaned =
         String(value)
-            .replace(
-                /,/g,
-                ""
-            )
-            .replace(
-                /%/g,
-                ""
-            )
+            .replace(/,/g, "")
+            .replace(/%/g, "")
             .trim();
 
 
@@ -668,10 +658,7 @@ function renderKPIs() {
     const totalVisits =
         visits.length
             ? visits.reduce(
-                (
-                    sum,
-                    value
-                ) =>
+                (sum, value) =>
                     sum + value,
                 0
             )
@@ -688,10 +675,7 @@ function renderKPIs() {
     const averageAge =
         ages.length
             ? ages.reduce(
-                (
-                    sum,
-                    value
-                ) =>
+                (sum, value) =>
                     sum + value,
                 0
             ) / ages.length
@@ -765,8 +749,7 @@ function renderVisitChart() {
     }
 
 
-    container.innerHTML =
-        "";
+    container.innerHTML = "";
 
 
     const visits =
@@ -782,14 +765,12 @@ function renderVisitChart() {
                 "Doctor visit column not detected."
             );
 
-
         if (summary) {
 
             summary.textContent =
                 "No visit data";
 
         }
-
 
         return;
 
@@ -799,21 +780,19 @@ function renderVisitChart() {
     const frequency = {};
 
 
-    visits.forEach(
-        value => {
+    visits.forEach(value => {
 
-            const integerValue =
-                Math.round(value);
+        const integerValue =
+            Math.round(value);
 
 
-            frequency[integerValue] =
-                (
-                    frequency[integerValue] ||
-                    0
-                ) + 1;
+        frequency[integerValue] =
+            (
+                frequency[integerValue] ||
+                0
+            ) + 1;
 
-        }
-    );
+    });
 
 
     const sorted =
@@ -821,10 +800,7 @@ function renderVisitChart() {
             frequency
         )
         .sort(
-            (
-                a,
-                b
-            ) =>
+            (a, b) =>
                 Number(a[0]) -
                 Number(b[0])
         );
@@ -847,9 +823,7 @@ function renderVisitChart() {
 
 
     displayData.forEach(
-        (
-            [visit, count]
-        ) => {
+        ([visit, count]) => {
 
             const column =
                 document.createElement(
@@ -989,8 +963,7 @@ function renderAgeChart() {
     }
 
 
-    container.innerHTML =
-        "";
+    container.innerHTML = "";
 
 
     const ages =
@@ -1055,8 +1028,10 @@ function renderAgeChart() {
                 count:
                     ages.filter(
                         age =>
-                            age >= group.min &&
-                            age <= group.max
+                            age >=
+                                group.min &&
+                            age <=
+                                group.max
                     ).length
 
             })
@@ -1210,8 +1185,7 @@ function renderCategoryAnalysis() {
     }
 
 
-    container.innerHTML =
-        "";
+    container.innerHTML = "";
 
 
     const preferredColumns = [
@@ -1286,12 +1260,8 @@ function renderCategoryAnalysis() {
             frequency
         )
         .sort(
-            (
-                a,
-                b
-            ) =>
-                b[1] -
-                a[1]
+            (a, b) =>
+                b[1] - a[1]
         )
         .slice(
             0,
@@ -1306,9 +1276,7 @@ function renderCategoryAnalysis() {
 
 
     entries.forEach(
-        (
-            [name, count]
-        ) => {
+        ([name, count]) => {
 
             const row =
                 document.createElement(
@@ -1359,12 +1327,10 @@ function renderCategoryAnalysis() {
 
 
             fill.style.width =
-                maximum > 0
-                    ? `${(
-                        count /
-                        maximum
-                    ) * 100}%`
-                    : "0%";
+                `${(
+                    count /
+                    maximum
+                ) * 100}%`;
 
 
             const number =
@@ -1450,8 +1416,7 @@ function renderRelationshipAnalysis() {
     }
 
 
-    container.innerHTML =
-        "";
+    container.innerHTML = "";
 
 
     const visits =
@@ -1469,10 +1434,7 @@ function renderRelationshipAnalysis() {
     const averageVisits =
         visits.length
             ? visits.reduce(
-                (
-                    sum,
-                    value
-                ) =>
+                (sum, value) =>
                     sum + value,
                 0
             ) / visits.length
@@ -1482,10 +1444,7 @@ function renderRelationshipAnalysis() {
     const averageAge =
         ages.length
             ? ages.reduce(
-                (
-                    sum,
-                    value
-                ) =>
+                (sum, value) =>
                     sum + value,
                 0
             ) / ages.length
@@ -1531,7 +1490,7 @@ function renderRelationshipAnalysis() {
                 "Average Age",
 
             text:
-                "Average patient age calculated from the available age values."
+                "Average patient age calculated from the age values available in the dataset."
         },
 
         {
@@ -1566,15 +1525,21 @@ function renderRelationshipAnalysis() {
             element.innerHTML = `
 
                 <span class="relationship-number">
-                    ${escapeHTML(item.number)}
+                    ${escapeHTML(
+                        item.number
+                    )}
                 </span>
 
                 <h4>
-                    ${escapeHTML(item.title)}
+                    ${escapeHTML(
+                        item.title
+                    )}
                 </h4>
 
                 <p>
-                    ${escapeHTML(item.text)}
+                    ${escapeHTML(
+                        item.text
+                    )}
                 </p>
 
             `;
@@ -1795,7 +1760,11 @@ function createEmptyMessage(
             font-size:11px;
             line-height:1.6;
         ">
-            ${escapeHTML(message)}
+
+            ${escapeHTML(
+                message
+            )}
+
         </div>
 
     `;
@@ -1835,22 +1804,27 @@ function setText(
 function escapeHTML(value) {
 
     return String(value)
+
         .replace(
             /&/g,
             "&amp;"
         )
+
         .replace(
             /</g,
             "&lt;"
         )
+
         .replace(
             />/g,
             "&gt;"
         )
+
         .replace(
             /"/g,
             "&quot;"
         )
+
         .replace(
             /'/g,
             "&#039;"
@@ -1908,7 +1882,7 @@ function initializeAI() {
     ) {
 
         console.warn(
-            "Analysis AI elements not found."
+            "AI robot elements not found on analysis page."
         );
 
         return;
@@ -1929,8 +1903,7 @@ function initializeAI() {
             if (input) {
 
                 setTimeout(
-                    () =>
-                        input.focus(),
+                    () => input.focus(),
                     200
                 );
 
@@ -1954,6 +1927,24 @@ function initializeAI() {
     );
 
 
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Escape"
+            ) {
+
+                chat.classList.remove(
+                    "active"
+                );
+
+            }
+
+        }
+    );
+
+
     const quickQuestions =
         document.querySelectorAll(
             ".ai-question"
@@ -1970,6 +1961,13 @@ function initializeAI() {
                     const question =
                         button.dataset.question ||
                         button.textContent.trim();
+
+
+                    if (!body) {
+
+                        return;
+
+                    }
 
 
                     addUserMessage(
@@ -1992,8 +1990,7 @@ function initializeAI() {
 
     if (
         form &&
-        input &&
-        body
+        input
     ) {
 
         form.addEventListener(
@@ -2014,43 +2011,28 @@ function initializeAI() {
                 }
 
 
-                addUserMessage(
-                    question,
-                    body
-                );
+                if (body) {
+
+                    addUserMessage(
+                        question,
+                        body
+                    );
 
 
-                input.value =
-                    "";
+                    input.value = "";
 
 
-                answerAI(
-                    question,
-                    body
-                );
+                    answerAI(
+                        question,
+                        body
+                    );
+
+                }
 
             }
         );
 
     }
-
-
-    document.addEventListener(
-        "keydown",
-        event => {
-
-            if (
-                event.key === "Escape"
-            ) {
-
-                chat.classList.remove(
-                    "active"
-                );
-
-            }
-
-        }
-    );
 
 }
 
@@ -2264,33 +2246,6 @@ function generateAIAnswer(
 
 
     if (
-        q.includes("column")
-    ) {
-
-        const columns =
-            healthcareData.length
-                ? Object.keys(
-                    healthcareData[0]
-                ).length
-                : 0;
-
-
-        return `
-
-            <p>
-                The healthcare dataset contains
-                <strong>
-                    ${columns}
-                </strong>
-                columns.
-            </p>
-
-        `;
-
-    }
-
-
-    if (
         q.includes("average") &&
         q.includes("visit")
     ) {
@@ -2301,7 +2256,7 @@ function generateAIAnswer(
 
                 <p>
                     A doctor-visit column could not be detected
-                    in the healthcare CSV.
+                    in the CSV.
                 </p>
 
             `;
@@ -2311,10 +2266,7 @@ function generateAIAnswer(
 
         const average =
             visits.reduce(
-                (
-                    sum,
-                    value
-                ) =>
+                (sum, value) =>
                     sum + value,
                 0
             ) / visits.length;
@@ -2347,7 +2299,7 @@ function generateAIAnswer(
 
                 <p>
                     An age column could not be detected
-                    in the healthcare CSV.
+                    in the CSV.
                 </p>
 
             `;
@@ -2357,10 +2309,7 @@ function generateAIAnswer(
 
         const average =
             ages.reduce(
-                (
-                    sum,
-                    value
-                ) =>
+                (sum, value) =>
                     sum + value,
                 0
             ) / ages.length;
@@ -2385,61 +2334,15 @@ function generateAIAnswer(
 
 
     if (
-        q.includes("gender")
-    ) {
-
-        if (!columnMap.gender) {
-
-            return `
-                <p>
-                    A gender column was not detected.
-                </p>
-            `;
-
-        }
-
-
-        const frequency =
-            getFrequency(
-                columnMap.gender
-            );
-
-
-        const result =
-            Object.entries(
-                frequency
-            )
-            .map(
-                ([name, count]) =>
-                    `${name}: ${count}`
-            )
-            .join(", ");
-
-
-        return `
-
-            <p>
-                Gender distribution:
-                <strong>
-                    ${escapeHTML(result)}
-                </strong>
-            </p>
-
-        `;
-
-    }
-
-
-    if (
         q.includes("visit")
     ) {
 
         return `
 
             <p>
-                The Analysis page uses the doctor-visit
-                values from the healthcare CSV to calculate
-                visit frequency, total visits and average visits.
+                The analysis page uses doctor-visit values
+                from the healthcare CSV to calculate
+                visit frequency and average visits.
             </p>
 
         `;
@@ -2450,16 +2353,14 @@ function generateAIAnswer(
     return `
 
         <p>
-            I can help you understand the healthcare dataset,
-            doctor visits, patient age, categories and analysis metrics.
+            I can help you understand the healthcare
+            dataset, doctor visits, patient age,
+            categories and analysis metrics.
         </p>
 
         <p>
-            Try asking about:
-            <strong>
-                records, columns, average visits,
-                average age or gender.
-            </strong>
+            Try asking about total records,
+            average visits or average age.
         </p>
 
     `;
@@ -2493,52 +2394,3 @@ function scrollChat(
     });
 
 }
-
-
-/* =========================================================
-   CLICK OUTSIDE CHAT
-   ========================================================= */
-
-document.addEventListener(
-    "click",
-    event => {
-
-        const chat =
-            document.getElementById(
-                "aiChatWindow"
-            );
-
-
-        const robot =
-            document.getElementById(
-                "aiRobotButton"
-            );
-
-
-        if (
-            !chat ||
-            !robot
-        ) {
-
-            return;
-
-        }
-
-
-        if (
-            !chat.contains(
-                event.target
-            ) &&
-            !robot.contains(
-                event.target
-            )
-        ) {
-
-            chat.classList.remove(
-                "active"
-            );
-
-        }
-
-    }
-);
