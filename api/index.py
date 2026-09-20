@@ -1,3 +1,11 @@
+import os
+import sys
+
+# Make the api directory available for local and Vercel imports
+API_DIR = os.path.dirname(os.path.abspath(__file__))
+
+if API_DIR not in sys.path:
+    sys.path.insert(0, API_DIR)
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
