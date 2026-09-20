@@ -23,8 +23,12 @@ let datasetLoaded = false;
    CSV FILE PATH
    ========================================================= */
 
-const CSV_PATH =
-    "../../data/healthcare_doctor_visits.csv";
+/* =========================================================
+   BACKEND API
+   ========================================================= */
+
+const API_BASE_URL =
+    "https://healthcare-analytics-doctor-visits.vercel.app/api";
 
 
 /* =========================================================
@@ -145,64 +149,71 @@ function initializeExploreButton() {
     );
 
 }
-
-
 /* =========================================================
-   DATASET INITIALIZATION
+   DATASET INITIALIZATION FROM BACKEND API
    ========================================================= */
 
 async function initializeDataset() {
 
     updateStatus(
         "loading",
-        "Loading healthcare dataset..."
+        "Loading healthcare dataset from backend..."
     );
-
 
     try {
 
         const response =
-            await fetch(CSV_PATH);
-
+            await fetch(
+                `${API_BASE_URL}/dataset`
+            );
 
         if (!response.ok) {
 
             throw new Error(
-                `Unable to load CSV (${response.status})`
+                `Backend API returned ${response.status}`
             );
 
         }
 
+        const result =
+            await response.json();
 
-        const csvText =
-            await response.text();
-
-
-        const parsed =
-            parseCSV(csvText);
-
+        /*
+         * Expected backend response:
+         *
+         * {
+         *   "data": [
+         *      {...},
+         *      {...}
+         *   ]
+         * }
+         */
 
         if (
-            !parsed.headers.length ||
-            !parsed.rows.length
+            !result ||
+            !Array.isArray(result.data) ||
+            result.data.length === 0
         ) {
 
             throw new Error(
-                "The dataset appears to be empty."
+                "Backend returned an empty dataset."
             );
 
         }
 
+        dataset =
+            result.data;
 
         columns =
-            parsed.headers;
-
-        dataset =
-            parsed.rows;
+            Object.keys(dataset[0]);
 
         datasetLoaded =
             true;
 
+
+        /* ===============================
+           ANALYZE DATASET
+           =============================== */
 
         classifyColumns();
 
@@ -216,35 +227,44 @@ async function initializeDataset() {
 
         renderQualityMetrics();
 
+
+        /* ===============================
+           SUCCESS STATUS
+           =============================== */
+
         updateStatus(
             "loaded",
-            "Healthcare dataset loaded successfully"
+            "Healthcare dataset loaded successfully from backend"
+        );
+
+        console.log(
+            "Healthcare dataset loaded:",
+            dataset
         );
 
     }
+
     catch (error) {
 
         console.error(
-            "Dataset loading error:",
+            "Backend dataset loading error:",
             error
         );
-
 
         datasetLoaded =
             false;
 
-
         updateStatus(
             "error",
-            "Unable to load healthcare dataset"
+            "Unable to load healthcare dataset from backend"
         );
-
 
         showDatasetError(error);
 
     }
 
 }
+
 
 
 /* =========================================================
