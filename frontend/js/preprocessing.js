@@ -22,14 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 /* =========================================================
-   BACKEND API
-   ========================================================= */
-
-const API_BASE_URL =
-    "https://healthcare-analytics-doctor-visits.vercel.app/api";
-
-
-/* =========================================================
    DATASET
    ========================================================= */
 
@@ -94,7 +86,7 @@ function initializeNavigation() {
 
 
 /* =========================================================
-   INITIALIZE DATASET FROM VERCEL BACKEND
+   INITIALIZE DATASET
    ========================================================= */
 
 async function initializeDataset() {
@@ -134,27 +126,6 @@ async function initializeDataset() {
             "Preprocessing API response:",
             result
         );
-
-
-        /* =====================================================
-           IMPORTANT
-
-           Your current Vercel API returns dataset information:
-
-           {
-               "success": true,
-               "data": {
-                   "rows": 5190,
-                   "columns": 12,
-                   "column_names": [...]
-               }
-           }
-
-           It does NOT return all CSV records.
-
-           Therefore we use the backend statistics for the
-           dataset-level information available from this endpoint.
-           ===================================================== */
 
 
         if (
@@ -198,6 +169,13 @@ async function initializeDataset() {
                 : [];
 
 
+        /*
+         * The current Vercel API returns dataset
+         * information rather than the complete CSV rows.
+         *
+         * We therefore store the row count separately.
+         */
+
         healthcareDataset =
             new Array(rows);
 
@@ -209,10 +187,6 @@ async function initializeDataset() {
         datasetLoaded =
             true;
 
-
-        /* =====================================================
-           UPDATE PAGE
-           ===================================================== */
 
         updateDatasetMetrics(
             rows,
@@ -238,7 +212,9 @@ async function initializeDataset() {
         );
 
 
-        if (columnNames.length > 0) {
+        if (
+            columnNames.length > 0
+        ) {
 
             addLog(
                 `Columns: ${columnNames.join(", ")}`,
@@ -319,11 +295,11 @@ function updateDatasetMetrics(
 
 
     /*
-     * The /api/dataset endpoint currently provides
-     * dataset metadata, not the complete CSV rows.
+     * The current /api/dataset endpoint provides
+     * metadata only.
      *
-     * Therefore these values cannot be calculated
-     * accurately on the browser from this endpoint.
+     * Real missing-value and duplicate-row counts
+     * require the actual dataset rows from the backend.
      */
 
     animateNumber(
@@ -877,7 +853,7 @@ function initializeAIChat() {
 
 
     /* =====================================================
-       OPEN
+       OPEN CHAT
        ===================================================== */
 
     robotButton.addEventListener(
@@ -891,7 +867,9 @@ function initializeAIChat() {
 
             setTimeout(() => {
 
-                if (chatInput) {
+                if (
+                    chatInput
+                ) {
 
                     chatInput.focus();
 
@@ -904,7 +882,7 @@ function initializeAIChat() {
 
 
     /* =====================================================
-       CLOSE
+       CLOSE CHAT
        ===================================================== */
 
     closeButton.addEventListener(
@@ -920,7 +898,7 @@ function initializeAIChat() {
 
 
     /* =====================================================
-       ESCAPE
+       ESCAPE KEY
        ===================================================== */
 
     document.addEventListener(
@@ -942,7 +920,7 @@ function initializeAIChat() {
 
 
     /* =====================================================
-       FORM
+       CHAT FORM
        ===================================================== */
 
     if (
@@ -956,8 +934,12 @@ function initializeAIChat() {
                 event.preventDefault();
 
 
-                if (!chatInput) {
+                if (
+                    !chatInput
+                ) {
+
                     return;
+
                 }
 
 
@@ -965,8 +947,12 @@ function initializeAIChat() {
                     chatInput.value.trim();
 
 
-                if (!message) {
+                if (
+                    !message
+                ) {
+
                     return;
+
                 }
 
 
@@ -1005,8 +991,12 @@ function initializeAIChat() {
                         button.dataset.question;
 
 
-                    if (!question) {
+                    if (
+                        !question
+                    ) {
+
                         return;
+
                     }
 
 
@@ -1078,8 +1068,12 @@ function addUserMessage(
         );
 
 
-    if (!chatBody) {
+    if (
+        !chatBody
+    ) {
+
         return;
+
     }
 
 
@@ -1136,8 +1130,12 @@ function addAIMessage(
         );
 
 
-    if (!chatBody) {
+    if (
+        !chatBody
+    ) {
+
         return;
+
     }
 
 
@@ -1222,8 +1220,12 @@ function scrollChatToBottom() {
         );
 
 
-    if (!chatBody) {
+    if (
+        !chatBody
+    ) {
+
         return;
+
     }
 
 
@@ -1273,8 +1275,8 @@ function getAIResponse(
 
         return (
             "Missing-value analysis identifies fields where information " +
-            "is empty or unavailable. The preprocessing workflow should " +
-            "review these values before analytical processing."
+            "is empty or unavailable. These values should be reviewed " +
+            "before analytical processing."
         );
 
     }
