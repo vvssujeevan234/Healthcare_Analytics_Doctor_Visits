@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -17,25 +19,42 @@
         Data Understanding | Healthcare Analytics
     </title>
 
-    <!-- Google Font -->
+
+    <!-- =====================================================
+         GOOGLE FONT
+         ===================================================== -->
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet"
     >
 
-    <!-- Data Understanding CSS -->
+
+    <!-- =====================================================
+         DATA UNDERSTANDING CSS
+         ===================================================== -->
+
     <link
         rel="stylesheet"
         href="../css/data-understanding.css"
     >
+
 </head>
+
 
 <body>
 
+
 <div class="data-page">
+
 
     <!-- =====================================================
          BACKGROUND
@@ -52,9 +71,11 @@
         <div class="page-background-overlay"></div>
 
         <div class="background-glow glow-one"></div>
+
         <div class="background-glow glow-two"></div>
 
     </div>
+
 
 
     <!-- =====================================================
@@ -64,6 +85,7 @@
     <header class="site-header">
 
         <div class="header-inner">
+
 
             <!-- BRAND -->
 
@@ -91,6 +113,7 @@
                 </div>
 
             </a>
+
 
 
             <!-- DESKTOP NAVIGATION -->
@@ -131,20 +154,25 @@
             </nav>
 
 
+
             <!-- MOBILE MENU BUTTON -->
 
             <button
                 class="menu-toggle"
                 id="menuToggle"
+                type="button"
                 aria-label="Open navigation"
                 aria-expanded="false"
             >
+
                 <span></span>
                 <span></span>
                 <span></span>
+
             </button>
 
         </div>
+
 
 
         <!-- MOBILE NAVIGATION -->
@@ -190,17 +218,24 @@
     </header>
 
 
+
     <!-- =====================================================
-         HERO
+         MAIN CONTENT
          ===================================================== -->
 
     <main>
+
+
+        <!-- =================================================
+             HERO
+             ================================================= -->
 
         <section class="data-hero">
 
             <div class="hero-container">
 
                 <div class="hero-content">
+
 
                     <div class="hero-label">
 
@@ -215,9 +250,11 @@
                     </div>
 
 
+
                     <h1>
 
                         Understand
+
                         <span>
                             Your Healthcare Data
                         </span>
@@ -225,23 +262,29 @@
                     </h1>
 
 
+
                     <p class="hero-description">
 
-                        Explore the structure, characteristics and
-                        quality of the healthcare doctor visits dataset.
-                        Understand patients, doctor visits, demographic
-                        attributes and healthcare-related variables
-                        before performing deeper analysis.
+                        Explore the structure, characteristics
+                        and quality of the healthcare doctor
+                        visits dataset. Understand patients,
+                        doctor visits, demographic attributes
+                        and healthcare-related variables before
+                        performing deeper analysis.
 
                     </p>
 
 
+
                     <div class="hero-actions">
+
 
                         <button
                             class="primary-button"
                             id="exploreDatasetButton"
+                            type="button"
                         >
+
                             Explore Dataset
 
                             <span>
@@ -251,12 +294,16 @@
                         </button>
 
 
+
                         <a
                             href="preprocessing.html"
                             class="secondary-button"
                         >
+
                             Continue to Preprocessing
+
                         </a>
+
 
                     </div>
 
@@ -265,6 +312,7 @@
             </div>
 
         </section>
+
 
 
         <!-- =================================================
@@ -283,7 +331,9 @@
                     ></span>
 
                     <span id="dataStatusText">
+
                         Loading healthcare dataset...
+
                     </span>
 
                 </div>
@@ -291,6 +341,7 @@
             </div>
 
         </section>
+
 
 
         <!-- =================================================
@@ -303,6 +354,7 @@
         >
 
             <div class="content-container">
+
 
                 <div class="section-heading">
 
@@ -319,16 +371,20 @@
                     </div>
 
                     <p>
+
                         A quick structural overview of the
                         healthcare doctor visits dataset.
+
                     </p>
 
                 </div>
 
 
+
                 <div class="metric-grid">
 
-                    <!-- ROWS -->
+
+                    <!-- TOTAL RECORDS -->
 
                     <article class="metric-card">
 
@@ -355,7 +411,8 @@
                     </article>
 
 
-                    <!-- COLUMNS -->
+
+                    <!-- TOTAL FEATURES -->
 
                     <article class="metric-card">
 
@@ -380,6 +437,7 @@
                         </div>
 
                     </article>
+
 
 
                     <!-- NUMERICAL -->
@@ -407,6 +465,7 @@
                         </div>
 
                     </article>
+
 
 
                     <!-- CATEGORICAL -->
@@ -442,6 +501,7 @@
         </section>
 
 
+
         <!-- =================================================
              DATA STRUCTURE
              ================================================= -->
@@ -449,6 +509,7 @@
         <section class="structure-section">
 
             <div class="content-container">
+
 
                 <div class="section-heading">
 
@@ -465,16 +526,20 @@
                     </div>
 
                     <p>
+
                         Understand how variables are distributed
                         between numerical and categorical groups.
+
                     </p>
 
                 </div>
 
 
+
                 <div class="structure-grid">
 
-                    <!-- NUMERICAL CARD -->
+
+                    <!-- NUMERICAL FEATURES -->
 
                     <article class="structure-card">
 
@@ -493,12 +558,15 @@
                             </div>
 
                             <div class="card-count">
+
                                 <span id="numericCountBadge">
                                     0
                                 </span>
+
                             </div>
 
                         </div>
+
 
 
                         <div
@@ -507,7 +575,9 @@
                         >
 
                             <div class="loading-item">
+
                                 Reading dataset...
+
                             </div>
 
                         </div>
@@ -515,7 +585,8 @@
                     </article>
 
 
-                    <!-- CATEGORICAL CARD -->
+
+                    <!-- CATEGORICAL FEATURES -->
 
                     <article class="structure-card">
 
@@ -534,12 +605,15 @@
                             </div>
 
                             <div class="card-count">
+
                                 <span id="categoricalCountBadge">
                                     0
                                 </span>
+
                             </div>
 
                         </div>
+
 
 
                         <div
@@ -548,7 +622,9 @@
                         >
 
                             <div class="loading-item">
+
                                 Reading dataset...
+
                             </div>
 
                         </div>
@@ -562,6 +638,7 @@
         </section>
 
 
+
         <!-- =================================================
              DATA QUALITY
              ================================================= -->
@@ -569,6 +646,7 @@
         <section class="quality-section">
 
             <div class="content-container">
+
 
                 <div class="section-heading">
 
@@ -585,14 +663,18 @@
                     </div>
 
                     <p>
+
                         Basic checks performed directly on the
                         loaded CSV dataset.
+
                     </p>
 
                 </div>
 
 
+
                 <div class="quality-grid">
+
 
                     <!-- MISSING -->
 
@@ -613,13 +695,16 @@
                             </strong>
 
                             <p>
+
                                 Total missing cells detected
                                 across the dataset.
+
                             </p>
 
                         </div>
 
                     </article>
+
 
 
                     <!-- DUPLICATES -->
@@ -641,13 +726,16 @@
                             </strong>
 
                             <p>
+
                                 Repeated complete records
                                 found in the dataset.
+
                             </p>
 
                         </div>
 
                     </article>
+
 
 
                     <!-- UNIQUE -->
@@ -669,13 +757,16 @@
                             </strong>
 
                             <p>
+
                                 Unique-value count across
                                 detected categorical features.
+
                             </p>
 
                         </div>
 
                     </article>
+
 
 
                     <!-- STATUS -->
@@ -697,7 +788,9 @@
                             </strong>
 
                             <p id="qualityDescription">
+
                                 Performing initial dataset checks.
+
                             </p>
 
                         </div>
@@ -711,6 +804,7 @@
         </section>
 
 
+
         <!-- =================================================
              DATA PREVIEW
              ================================================= -->
@@ -718,6 +812,7 @@
         <section class="preview-section">
 
             <div class="content-container">
+
 
                 <div class="section-heading">
 
@@ -734,14 +829,18 @@
                     </div>
 
                     <p>
+
                         A preview of the first records from the
                         healthcare doctor visits dataset.
+
                     </p>
 
                 </div>
 
 
+
                 <div class="preview-card">
+
 
                     <div class="preview-header">
 
@@ -764,6 +863,7 @@
                     </div>
 
 
+
                     <div class="table-wrapper">
 
                         <table id="dataPreviewTable">
@@ -779,10 +879,13 @@
                     </div>
 
 
+
                     <div class="table-footer">
 
                         <span id="previewInfo">
+
                             Loading records...
+
                         </span>
 
                         <span>
@@ -798,13 +901,15 @@
         </section>
 
 
+
         <!-- =================================================
-             FEATURE DETAILS
+             FEATURE EXPLORATION
              ================================================= -->
 
         <section class="features-section">
 
             <div class="content-container">
+
 
                 <div class="section-heading">
 
@@ -821,30 +926,39 @@
                     </div>
 
                     <p>
+
                         Select a feature to inspect its basic
                         values and characteristics.
+
                     </p>
 
                 </div>
 
 
+
                 <div class="feature-explorer">
+
 
                     <div class="feature-selector">
 
                         <label for="featureSelect">
+
                             Select Feature
+
                         </label>
 
                         <select id="featureSelect">
 
                             <option value="">
+
                                 Select a dataset feature
+
                             </option>
 
                         </select>
 
                     </div>
+
 
 
                     <div
@@ -863,9 +977,11 @@
                             </h3>
 
                             <p>
+
                                 Choose a variable from the
                                 dropdown to view its type,
                                 unique values and sample data.
+
                             </p>
 
                         </div>
@@ -879,8 +995,9 @@
         </section>
 
 
+
         <!-- =================================================
-             DATA UNDERSTANDING QUESTIONS
+             QUESTIONS
              ================================================= -->
 
         <section class="questions-section">
@@ -888,6 +1005,7 @@
             <div class="content-container">
 
                 <div class="questions-box">
+
 
                     <div class="questions-heading">
 
@@ -900,15 +1018,19 @@
                         </h2>
 
                         <p>
+
                             These questions provide a foundation
                             for the preprocessing, analysis and
                             insights stages of the project.
+
                         </p>
 
                     </div>
 
 
+
                     <div class="question-grid">
+
 
                         <div class="question-item">
 
@@ -917,11 +1039,14 @@
                             </span>
 
                             <p>
+
                                 How many healthcare records are
                                 present in the dataset?
+
                             </p>
 
                         </div>
+
 
 
                         <div class="question-item">
@@ -931,11 +1056,14 @@
                             </span>
 
                             <p>
+
                                 What variables describe patient
                                 and doctor visit characteristics?
+
                             </p>
 
                         </div>
+
 
 
                         <div class="question-item">
@@ -945,11 +1073,14 @@
                             </span>
 
                             <p>
+
                                 Which features are numerical and
                                 which are categorical?
+
                             </p>
 
                         </div>
+
 
 
                         <div class="question-item">
@@ -959,11 +1090,14 @@
                             </span>
 
                             <p>
+
                                 Are there missing or duplicated
                                 observations?
+
                             </p>
 
                         </div>
+
 
 
                         <div class="question-item">
@@ -973,11 +1107,14 @@
                             </span>
 
                             <p>
+
                                 Which categorical variables have
                                 the greatest variety?
+
                             </p>
 
                         </div>
+
 
 
                         <div class="question-item">
@@ -987,8 +1124,10 @@
                             </span>
 
                             <p>
+
                                 Which variables should be
                                 investigated during preprocessing?
+
                             </p>
 
                         </div>
@@ -1002,8 +1141,9 @@
         </section>
 
 
+
         <!-- =================================================
-             NEXT STEP
+             NEXT STAGE
              ================================================= -->
 
         <section class="next-section">
@@ -1011,6 +1151,7 @@
             <div class="content-container">
 
                 <div class="next-card">
+
 
                     <div>
 
@@ -1023,19 +1164,23 @@
                         </h2>
 
                         <p>
+
                             After understanding the dataset,
                             continue to preprocessing to inspect
                             missing values, duplicates, data
                             types and transformation requirements.
+
                         </p>
 
                     </div>
+
 
 
                     <a
                         href="preprocessing.html"
                         class="primary-button"
                     >
+
                         Open Preprocessing
 
                         <span>
@@ -1053,17 +1198,22 @@
     </main>
 
 
+
     <!-- =====================================================
          AI CHATBOT
+         IMPORTANT:
+         IDs MATCH robot.js
          ===================================================== -->
 
     <div id="healthcare-ai-widget">
+
 
         <!-- ROBOT BUTTON -->
 
         <button
             class="ai-robot-button"
-            id="aiRobotButton"
+            id="aiRobot"
+            type="button"
             aria-label="Open Healthcare AI Assistant"
             title="Healthcare AI Assistant"
         >
@@ -1080,14 +1230,16 @@
         </button>
 
 
+
         <!-- CHAT WINDOW -->
 
         <div
             class="ai-chat-window"
-            id="aiChatWindow"
+            id="aiChat"
         >
 
-            <!-- HEADER -->
+
+            <!-- CHAT HEADER -->
 
             <div class="ai-chat-header">
 
@@ -1116,47 +1268,62 @@
                 </div>
 
 
+
                 <button
                     class="ai-close-button"
-                    id="aiCloseButton"
+                    id="aiClose"
+                    type="button"
                     aria-label="Close chatbot"
                 >
+
                     ×
+
                 </button>
 
             </div>
 
 
-            <!-- BODY -->
+
+            <!-- CHAT BODY -->
 
             <div
                 class="ai-chat-body"
                 id="aiChatBody"
             >
 
-                <div class="ai-message">
 
-                    <div class="ai-avatar-small">
+                <!-- INITIAL AI MESSAGE -->
+
+                <div class="ai-message bot">
+
+                    <div class="message-icon">
                         AI
                     </div>
 
-                    <div class="ai-message-content">
+                    <div class="message-content">
 
                         <p>
+
                             Hello! I'm your Healthcare Data
                             Assistant.
+
                         </p>
 
                         <p>
+
                             I can help you understand the
                             structure and characteristics of
                             this dataset.
+
                         </p>
 
                     </div>
 
                 </div>
 
+
+
+                <!-- QUICK QUESTIONS -->
 
                 <div class="ai-quick-section">
 
@@ -1164,39 +1331,63 @@
                         QUICK QUESTIONS
                     </h4>
 
+
                     <button
-                        class="ai-question"
+                        type="button"
+                        class="question-btn"
                         data-question="How many records are in the dataset?"
                     >
+
                         How many records are present?
+
                     </button>
 
+
+
                     <button
-                        class="ai-question"
+                        type="button"
+                        class="question-btn"
                         data-question="What are the numerical features?"
                     >
+
                         What are the numerical features?
+
                     </button>
 
+
+
                     <button
-                        class="ai-question"
+                        type="button"
+                        class="question-btn"
                         data-question="What are the categorical features?"
                     >
+
                         What are the categorical features?
+
                     </button>
 
+
+
                     <button
-                        class="ai-question"
+                        type="button"
+                        class="question-btn"
                         data-question="Are there missing values?"
                     >
+
                         Are there missing values?
+
                     </button>
 
+
+
                     <button
-                        class="ai-question"
+                        type="button"
+                        class="question-btn"
                         data-question="What should I do after data understanding?"
                     >
+
                         What comes after data understanding?
+
                     </button>
 
                 </div>
@@ -1204,23 +1395,28 @@
             </div>
 
 
-            <!-- INPUT -->
+
+            <!-- CHAT INPUT -->
 
             <div class="ai-chat-input-area">
 
                 <input
                     type="text"
-                    id="aiChatInput"
+                    id="aiQuestion"
                     placeholder="Ask about the dataset..."
                     autocomplete="off"
                 >
 
+
                 <button
                     class="ai-send-button"
-                    id="aiSendButton"
+                    id="aiSend"
+                    type="button"
                     aria-label="Send message"
                 >
+
                     ↑
+
                 </button>
 
             </div>
@@ -1230,13 +1426,18 @@
     </div>
 
 
-    <!-- JAVASCRIPT -->
 
-<script src="../js/data-understanding.js"></script>
-<script src="../js/robot.js"></script>
-    
+    <!-- =====================================================
+         JAVASCRIPT
+         ===================================================== -->
+
+    <script src="../js/data-understanding.js"></script>
+
+    <script src="../js/robot.js"></script>
+
 
 </div>
 
 </body>
+
 </html>
