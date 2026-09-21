@@ -2415,3 +2415,42 @@ tbody tr:last-child td {
         height: 65px;
     }
 }
+/* ============================================================
+   QUESTION ANSWERS
+   ============================================================ */
+
+.question-item {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.question-item:hover {
+    transform: translateY(-2px);
+}
+
+.question-answer {
+    display: none;
+    margin-top: 14px;
+    padding: 14px 16px;
+    border-top: 1px solid rgba(100, 240, 225, 0.15);
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.6;
+}
+
+.question-answer strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #61e8da;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.question-answer p {
+    margin: 0;
+    font-size: 13px;
+}
+
+.question-item.question-open .question-answer {
+    display: block;
+}

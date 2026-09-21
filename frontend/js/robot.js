@@ -1,463 +1,493 @@
 /* =========================================================
-   HEALTHCARE ANALYTICS AI ASSISTANT
-   Common Robot for ALL Pages
+   HEALTHCARE ANALYTICS
+   AI ROBOT CHATBOT
    ========================================================= */
 
-document.addEventListener("DOMContentLoaded", function () {
+(function () {
 
-    /* ---------------------------------------------------------
-       PREVENT DUPLICATE ROBOT
-    --------------------------------------------------------- */
+    "use strict";
 
-    if (document.getElementById("healthcare-ai-widget")) {
-        return;
+
+    /* =====================================================
+       START
+       ===================================================== */
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        initializeRobot();
+
+    });
+
+
+    /* =====================================================
+       INITIALIZE ROBOT
+       ===================================================== */
+
+    function initializeRobot() {
+
+        const robotButton = document.getElementById("aiRobot");
+        const chatWindow = document.getElementById("aiChat");
+        const closeButton = document.getElementById("aiClose");
+        const chatInput = document.getElementById("aiQuestion");
+        const sendButton = document.getElementById("aiSend");
+        const chatBody = document.getElementById("aiChatBody");
+
+        if (!robotButton || !chatWindow) {
+
+            console.error(
+                "AI Robot: chatbot elements were not found."
+            );
+
+            return;
+        }
+
+
+        /* =================================================
+           OPEN / CLOSE CHAT
+           ================================================= */
+
+        robotButton.addEventListener("click", function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            chatWindow.classList.toggle("active");
+
+            if (chatWindow.classList.contains("active")) {
+
+                if (chatInput) {
+
+                    setTimeout(function () {
+
+                        chatInput.focus();
+
+                    }, 200);
+
+                }
+
+            }
+
+        });
+
+
+        /* =================================================
+           CLOSE BUTTON
+           ================================================= */
+
+        if (closeButton) {
+
+            closeButton.addEventListener("click", function (event) {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                chatWindow.classList.remove("active");
+
+            });
+
+        }
+
+
+        /* =================================================
+           ESCAPE KEY
+           ================================================= */
+
+        document.addEventListener("keydown", function (event) {
+
+            if (event.key === "Escape") {
+
+                chatWindow.classList.remove("active");
+
+            }
+
+        });
+
+
+        /* =================================================
+           SEND BUTTON
+           ================================================= */
+
+        if (sendButton && chatInput) {
+
+            sendButton.addEventListener("click", function (event) {
+
+                event.preventDefault();
+
+                sendUserQuestion();
+
+            });
+
+        }
+
+
+        /* =================================================
+           ENTER KEY
+           ================================================= */
+
+        if (chatInput) {
+
+            chatInput.addEventListener("keydown", function (event) {
+
+                if (event.key === "Enter") {
+
+                    event.preventDefault();
+
+                    sendUserQuestion();
+
+                }
+
+            });
+
+        }
+
+
+        /* =================================================
+           QUICK QUESTION BUTTONS
+           ================================================= */
+
+        const questionButtons =
+            document.querySelectorAll(".question-btn");
+
+
+        questionButtons.forEach(function (button) {
+
+            button.addEventListener("click", function (event) {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+
+                const question =
+                    button.getAttribute("data-question");
+
+
+                if (!question) {
+
+                    return;
+
+                }
+
+
+                /*
+                 * Put question into input
+                 */
+
+                if (chatInput) {
+
+                    chatInput.value = question;
+
+                }
+
+
+                /*
+                 * Show user's question
+                 */
+
+                addUserMessage(question);
+
+
+                /*
+                 * Clear input
+                 */
+
+                if (chatInput) {
+
+                    chatInput.value = "";
+
+                }
+
+
+                /*
+                 * Generate answer
+                 */
+
+                showTyping();
+
+
+                setTimeout(function () {
+
+                    removeTyping();
+
+                    const answer =
+                        getAIResponse(question);
+
+                    addAIMessage(answer);
+
+                }, 500);
+
+            });
+
+        });
+
+
+        /* =================================================
+           OUTSIDE CLICK
+           ================================================= */
+
+        document.addEventListener("click", function (event) {
+
+            if (!chatWindow.contains(event.target) &&
+                !robotButton.contains(event.target)) {
+
+                chatWindow.classList.remove("active");
+
+            }
+
+        });
+
+
+        /*
+         * Prevent clicks inside chatbot from closing it
+         */
+
+        chatWindow.addEventListener("click", function (event) {
+
+            event.stopPropagation();
+
+        });
+
+
+        console.log(
+            "Healthcare AI Robot initialized successfully."
+        );
+
     }
 
 
-    /* ---------------------------------------------------------
-       DETERMINE IMAGE PATH
-       Works on:
-       frontend/index.html
-       frontend/pages/*.html
-    --------------------------------------------------------- */
+    /* =====================================================
+       SEND USER QUESTION
+       ===================================================== */
 
-    const isInsidePages =
-        window.location.pathname.includes("/pages/");
+    function sendUserQuestion() {
 
-    const robotImage = isInsidePages
-        ? "../assets/images/ai-robot.png"
-        : "assets/images/ai-robot.png";
+        const input =
+            document.getElementById("aiQuestion");
 
 
-    /* ---------------------------------------------------------
-       CREATE WIDGET
-    --------------------------------------------------------- */
+        if (!input) {
 
-    const widget = document.createElement("div");
+            return;
 
-    widget.id = "healthcare-ai-widget";
+        }
 
 
-    /* ---------------------------------------------------------
-       CHATBOT HTML
-    --------------------------------------------------------- */
+        const question =
+            input.value.trim();
 
-    widget.innerHTML = `
 
-        <!-- ================================
-             AI CHAT WINDOW
-        ================================= -->
+        if (!question) {
 
-        <div
-            class="ai-chat-window"
-            id="aiChatWindow"
-            aria-hidden="true"
-        >
+            return;
 
-            <!-- HEADER -->
+        }
 
-            <div class="ai-chat-header">
 
-                <div class="ai-header-left">
+        /*
+         * Show user question
+         */
 
-                    <div class="ai-header-icon">
-                        AI
-                    </div>
+        addUserMessage(question);
 
-                    <div>
 
-                        <h3>
-                            Healthcare AI Assistant
-                        </h3>
+        /*
+         * Clear input
+         */
 
-                        <span>
-                            <span class="ai-online-dot"></span>
-                            Online
-                        </span>
+        input.value = "";
 
-                    </div>
 
-                </div>
+        /*
+         * Show typing indicator
+         */
 
+        showTyping();
 
-                <!-- CLOSE -->
 
-                <button
-                    class="ai-close-button"
-                    id="aiCloseButton"
-                    type="button"
-                    aria-label="Close AI Assistant"
-                    title="Close"
-                >
-                    ×
-                </button>
-
-            </div>
-
-
-            <!-- CHAT BODY -->
-
-            <div
-                class="ai-chat-body"
-                id="aiChatBody"
-            >
-
-                <!-- INTRO -->
-
-                <div class="ai-message ai-message-bot">
-
-                    <div class="ai-avatar-small">
-                        AI
-                    </div>
-
-                    <div class="ai-message-content">
-
-                        <p>
-                            Hello! I'm your
-                            <strong>
-                                Healthcare Analytics AI Assistant.
-                            </strong>
-                        </p>
-
-                        <p>
-                            Ask me about the dataset,
-                            analysis, visualizations,
-                            insights or project.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <!-- QUICK QUESTIONS -->
-
-                <div class="ai-quick-section">
-
-                    <h4>
-                        TRY ASKING
-                    </h4>
-
-
-                    <button class="ai-question" type="button">
-                        What is this project about?
-                    </button>
-
-
-                    <button class="ai-question" type="button">
-                        What does the dataset contain?
-                    </button>
-
-
-                    <button class="ai-question" type="button">
-                        What libraries are used?
-                    </button>
-
-
-                    <button class="ai-question" type="button">
-                        Explain gender analysis
-                    </button>
-
-
-                    <button class="ai-question" type="button">
-                        Explain age vs visits
-                    </button>
-
-
-                    <button class="ai-question" type="button">
-                        Explain illness analysis
-                    </button>
-
-
-                    <button class="ai-question" type="button">
-                        Explain correlation heatmap
-                    </button>
-
-
-                    <button class="ai-question" type="button">
-                        Explain chronic conditions
-                    </button>
-
-
-                    <button class="ai-question" type="button">
-                        Explain health status analysis
-                    </button>
-
-
-                    <button class="ai-question" type="button">
-                        Explain income vs doctor visits
-                    </button>
-
-
-                    <button class="ai-question" type="button">
-                        What are the main insights?
-                    </button>
-
-
-                    <button class="ai-question" type="button">
-                        What is the conclusion?
-                    </button>
-
-                </div>
-
-            </div>
-
-
-            <!-- INPUT -->
-
-            <div class="ai-chat-input-area">
-
-                <input
-                    type="text"
-                    id="aiUserInput"
-                    placeholder="Ask about the project..."
-                    autocomplete="off"
-                >
-
-
-                <button
-                    id="aiSendButton"
-                    class="ai-send-button"
-                    type="button"
-                    aria-label="Send message"
-                    title="Send"
-                >
-                    ➤
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <!-- ================================
-             FLOATING ROBOT
-        ================================= -->
-
-        <button
-            class="ai-robot-button"
-            id="aiRobotButton"
-            type="button"
-            aria-label="Open Healthcare AI Assistant"
-            title="Ask Healthcare AI"
-        >
-
-            <img
-                src="${robotImage}"
-                alt="Healthcare AI Assistant"
-            >
-
-            <span class="ai-robot-badge">
-                AI
-            </span>
-
-        </button>
-
-    `;
-
-
-    /* ---------------------------------------------------------
-       ADD WIDGET TO PAGE
-    --------------------------------------------------------- */
-
-    document.body.appendChild(widget);
-
-
-    /* ---------------------------------------------------------
-       GET ELEMENTS
-    --------------------------------------------------------- */
-
-    const robotButton =
-        document.getElementById("aiRobotButton");
-
-    const chatWindow =
-        document.getElementById("aiChatWindow");
-
-    const closeButton =
-        document.getElementById("aiCloseButton");
-
-    const sendButton =
-        document.getElementById("aiSendButton");
-
-    const userInput =
-        document.getElementById("aiUserInput");
-
-    const chatBody =
-        document.getElementById("aiChatBody");
-
-
-    /* ---------------------------------------------------------
-       OPEN CHAT
-    --------------------------------------------------------- */
-
-    robotButton.addEventListener("click", function () {
-
-        chatWindow.classList.add("active");
-
-        chatWindow.setAttribute(
-            "aria-hidden",
-            "false"
-        );
+        /*
+         * Generate AI response
+         */
 
         setTimeout(function () {
 
-            userInput.focus();
-
-        }, 250);
-
-    });
+            removeTyping();
 
 
-    /* ---------------------------------------------------------
-       CLOSE CHAT
-    --------------------------------------------------------- */
-
-    closeButton.addEventListener("click", function () {
-
-        chatWindow.classList.remove("active");
-
-        chatWindow.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-
-        robotButton.focus();
-
-    });
+            const answer =
+                getAIResponse(question);
 
 
-    /* ---------------------------------------------------------
-       ESCAPE KEY
-    --------------------------------------------------------- */
-
-    document.addEventListener("keydown", function (event) {
-
-        if (event.key === "Escape") {
-
-            chatWindow.classList.remove("active");
-
-            chatWindow.setAttribute(
-                "aria-hidden",
-                "true"
-            );
-
-        }
-
-    });
+            addAIMessage(answer);
 
 
-    /* ---------------------------------------------------------
-       USER MESSAGE
-    --------------------------------------------------------- */
+        }, 500);
+
+    }
+
+
+    /* =====================================================
+       ADD USER MESSAGE
+       ===================================================== */
 
     function addUserMessage(message) {
 
+        const chatBody =
+            document.getElementById("aiChatBody");
+
+
+        if (!chatBody) {
+
+            return;
+
+        }
+
+
         const messageElement =
             document.createElement("div");
 
+
         messageElement.className =
-            "ai-message ai-message-user";
+            "ai-message user";
+
 
         messageElement.innerHTML = `
 
-            <div class="ai-user-message-content">
+            <div class="message-content user-message-content">
 
-                ${escapeHTML(message)}
+                <p>
+                    ${escapeHTML(message)}
+                </p>
 
             </div>
 
         `;
 
+
         chatBody.appendChild(messageElement);
 
-        scrollChatToBottom();
+
+        scrollChat();
 
     }
 
 
-    /* ---------------------------------------------------------
-       BOT MESSAGE
-    --------------------------------------------------------- */
+    /* =====================================================
+       ADD AI MESSAGE
+       ===================================================== */
 
-    function addBotMessage(message) {
+    function addAIMessage(message) {
+
+        const chatBody =
+            document.getElementById("aiChatBody");
+
+
+        if (!chatBody) {
+
+            return;
+
+        }
+
 
         const messageElement =
             document.createElement("div");
 
+
         messageElement.className =
-            "ai-message ai-message-bot";
+            "ai-message bot";
+
 
         messageElement.innerHTML = `
 
-            <div class="ai-avatar-small">
+            <div class="message-icon">
                 AI
             </div>
 
-            <div class="ai-message-content">
+            <div class="message-content">
 
-                ${message}
+                <p>
+                    ${escapeHTML(message)}
+                </p>
 
             </div>
 
         `;
 
+
         chatBody.appendChild(messageElement);
 
-        scrollChatToBottom();
+
+        scrollChat();
 
     }
 
 
-    /* ---------------------------------------------------------
+    /* =====================================================
        TYPING INDICATOR
-    --------------------------------------------------------- */
+       ===================================================== */
 
     function showTyping() {
 
-        if (document.getElementById("aiTyping")) {
+        const chatBody =
+            document.getElementById("aiChatBody");
+
+
+        if (!chatBody) {
+
             return;
+
         }
+
+
+        removeTyping();
+
 
         const typing =
             document.createElement("div");
 
+
         typing.id =
-            "aiTyping";
+            "aiTypingIndicator";
+
 
         typing.className =
-            "ai-message ai-message-bot";
+            "ai-message bot";
+
 
         typing.innerHTML = `
 
-            <div class="ai-avatar-small">
+            <div class="message-icon">
                 AI
             </div>
 
-            <div class="ai-typing">
+            <div class="message-content">
 
-                <span></span>
-                <span></span>
-                <span></span>
+                <p>
+                    Thinking...
+                </p>
 
             </div>
 
         `;
 
+
         chatBody.appendChild(typing);
 
-        scrollChatToBottom();
+
+        scrollChat();
 
     }
 
 
-    /* ---------------------------------------------------------
+    /* =====================================================
        REMOVE TYPING
-    --------------------------------------------------------- */
+       ===================================================== */
 
     function removeTyping() {
 
         const typing =
-            document.getElementById("aiTyping");
+            document.getElementById(
+                "aiTypingIndicator"
+            );
+
 
         if (typing) {
 
@@ -468,656 +498,447 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* =========================================================
-       HEALTHCARE PROJECT KNOWLEDGE BASE
-       ========================================================= */
+    /* =====================================================
+       SCROLL CHAT
+       ===================================================== */
 
-    function getAIResponse(question) {
+    function scrollChat() {
 
-        const q =
-            question.toLowerCase().trim();
+        const chatBody =
+            document.getElementById("aiChatBody");
 
 
-        /* -----------------------------------------------------
-           PROJECT
-        ----------------------------------------------------- */
+        if (!chatBody) {
 
-        if (
-            q.includes("what is this project") ||
-            q.includes("project about") ||
-            q.includes("purpose")
-        ) {
-
-            return `
-
-                <strong>
-                    Healthcare Analytics for Doctor Visits
-                </strong>
-
-                is a data analytics project that studies
-                patient information and doctor visit patterns.
-
-                <br><br>
-
-                The project uses
-                <strong>
-                    Python, Pandas, NumPy, Matplotlib
-                    and Seaborn
-                </strong>
-                to explore relationships between patient
-                characteristics and recorded doctor visits.
-
-            `;
-
-        }
-
-
-        /* -----------------------------------------------------
-           DATASET
-        ----------------------------------------------------- */
-
-        if (
-            q.includes("dataset") ||
-            q.includes("data contain") ||
-            q.includes("columns")
-        ) {
-
-            return `
-
-                The healthcare dataset contains
-                patient-related information used to
-                analyze doctor visits.
-
-                <br><br>
-
-                Important variables include:
-
-                <br><br>
-
-                • Gender<br>
-                • Age<br>
-                • Doctor Visits<br>
-                • Illness<br>
-                • Chronic Conditions<br>
-                • Health Status<br>
-                • Income
-
-                <br><br>
-
-                These variables are explored using
-                statistical summaries and visualizations.
-
-            `;
-
-        }
-
-
-        /* -----------------------------------------------------
-           TECHNOLOGY
-        ----------------------------------------------------- */
-
-        if (
-            q.includes("libraries") ||
-            q.includes("technology") ||
-            q.includes("tools")
-        ) {
-
-            return `
-
-                The project uses:
-
-                <br><br>
-
-                • Python<br>
-                • Jupyter Notebook<br>
-                • Pandas<br>
-                • NumPy<br>
-                • Matplotlib<br>
-                • Seaborn
-
-                <br><br>
-
-                Pandas and NumPy are used for
-                data processing.
-
-                <br>
-
-                Matplotlib and Seaborn are used
-                for visualization.
-
-            `;
-
-        }
-
-
-        /* -----------------------------------------------------
-           GENDER
-        ----------------------------------------------------- */
-
-        if (
-            q.includes("gender")
-        ) {
-
-            return `
-
-                Gender analysis examines the
-                distribution of patients across
-                gender categories.
-
-                <br><br>
-
-                It also compares recorded doctor
-                visits between gender groups.
-
-                <br><br>
-
-                Count plots, grouped statistics,
-                bar charts and box plots can be
-                used to understand the pattern.
-
-            `;
-
-        }
-
-
-        /* -----------------------------------------------------
-           AGE
-        ----------------------------------------------------- */
-
-        if (
-            q.includes("age vs") ||
-            q.includes("age and visits") ||
-            q.includes("age")
-        ) {
-
-            return `
-
-                Age analysis studies whether
-                doctor visit patterns vary
-                across different age groups.
-
-                <br><br>
-
-                A scatter plot can compare
-                <strong>age</strong> with
-                <strong>number of doctor visits</strong>.
-
-                <br><br>
-
-                Age-group analysis can also
-                compare average visits between
-                different age categories.
-
-            `;
-
-        }
-
-
-        /* -----------------------------------------------------
-           ILLNESS
-        ----------------------------------------------------- */
-
-        if (
-            q.includes("illness")
-        ) {
-
-            return `
-
-                Illness analysis examines the
-                relationship between illness level
-                and recorded doctor visits.
-
-                <br><br>
-
-                Average visits can be calculated
-                for different illness levels and
-                visualized using a line chart.
-
-            `;
-
-        }
-
-
-        /* -----------------------------------------------------
-           CORRELATION
-        ----------------------------------------------------- */
-
-        if (
-            q.includes("correlation") ||
-            q.includes("heatmap")
-        ) {
-
-            return `
-
-                The correlation heatmap displays
-                relationships between numerical
-                healthcare variables.
-
-                <br><br>
-
-                Values closer to
-                <strong>+1</strong>
-                indicate a positive linear relationship.
-
-                <br><br>
-
-                Values closer to
-                <strong>-1</strong>
-                indicate a negative linear relationship.
-
-                <br><br>
-
-                Values near
-                <strong>0</strong>
-                indicate a weaker linear relationship.
-
-            `;
-
-        }
-
-
-        /* -----------------------------------------------------
-           CHRONIC CONDITIONS
-        ----------------------------------------------------- */
-
-        if (
-            q.includes("chronic")
-        ) {
-
-            return `
-
-                Chronic-condition analysis examines
-                how the number of chronic conditions
-                relates to average doctor visits.
-
-                <br><br>
-
-                A bar chart can compare average
-                recorded visits for different numbers
-                of chronic conditions.
-
-            `;
-
-        }
-
-
-        /* -----------------------------------------------------
-           HEALTH STATUS
-        ----------------------------------------------------- */
-
-        if (
-            q.includes("health status") ||
-            q.includes("health analysis")
-        ) {
-
-            return `
-
-                Health-status analysis compares
-                average doctor visits across
-                different health-status categories.
-
-                <br><br>
-
-                A bar chart makes it easier to
-                compare recorded average visits
-                between health groups.
-
-            `;
-
-        }
-
-
-        /* -----------------------------------------------------
-           INCOME
-        ----------------------------------------------------- */
-
-        if (
-            q.includes("income")
-        ) {
-
-            return `
-
-                Income analysis investigates the
-                relationship between patient income
-                and recorded doctor visits.
-
-                <br><br>
-
-                A scatter plot can be used to
-                observe whether changes in income
-                are associated with changes in
-                recorded visits.
-
-            `;
-
-        }
-
-
-        /* -----------------------------------------------------
-           VISITS
-        ----------------------------------------------------- */
-
-        if (
-            q.includes("doctor visits") ||
-            q.includes("visits distribution") ||
-            q.includes("number of visits")
-        ) {
-
-            return `
-
-                Doctor-visits distribution shows
-                how frequently different numbers
-                of visits occur in the dataset.
-
-                <br><br>
-
-                A histogram can be used to visualize
-                the frequency of recorded doctor visits.
-
-            `;
-
-        }
-
-
-        /* -----------------------------------------------------
-           MAIN INSIGHTS
-        ----------------------------------------------------- */
-
-        if (
-            q.includes("main insights") ||
-            q.includes("insights")
-        ) {
-
-            return `
-
-                The analysis covers several areas:
-
-                <br><br>
-
-                • Patient demographic distribution<br>
-                • Age and doctor-visit patterns<br>
-                • Gender and visit patterns<br>
-                • Illness and visit relationships<br>
-                • Chronic-condition patterns<br>
-                • Health-status comparisons<br>
-                • Income and visit relationships<br>
-                • Correlations between numerical variables
-
-                <br><br>
-
-                These areas help organize the
-                healthcare dataset into meaningful
-                analytical patterns.
-
-            `;
-
-        }
-
-
-        /* -----------------------------------------------------
-           CONCLUSION
-        ----------------------------------------------------- */
-
-        if (
-            q.includes("conclusion") ||
-            q.includes("summary")
-        ) {
-
-            return `
-
-                The project demonstrates how
-                healthcare data can be explored
-                using Python-based data analytics.
-
-                <br><br>
-
-                Statistical analysis and
-                visualizations make patient and
-                doctor-visit patterns easier
-                to understand.
-
-                <br><br>
-
-                The resulting analysis can support
-                further healthcare data exploration
-                and reporting.
-
-            `;
-
-        }
-
-
-        /* -----------------------------------------------------
-           JUPYTER / NOTEBOOK
-        ----------------------------------------------------- */
-
-        if (
-            q.includes("jupyter") ||
-            q.includes("notebook") ||
-            q.includes("code")
-        ) {
-
-            return `
-
-                The analysis is developed in a
-                <strong>Jupyter Notebook</strong>.
-
-                <br><br>
-
-                The notebook performs:
-
-                <br>
-
-                • Data loading<br>
-                • Data understanding<br>
-                • Statistical analysis<br>
-                • Visualization<br>
-                • Interpretation
-
-                <br><br>
-
-                The focus is healthcare doctor-visit
-                data analysis.
-
-            `;
-
-        }
-
-
-        /* -----------------------------------------------------
-           PREPROCESSING
-        ----------------------------------------------------- */
-
-        if (
-            q.includes("preprocessing") ||
-            q.includes("clean")
-        ) {
-
-            return `
-
-                Data preprocessing includes:
-
-                <br><br>
-
-                • Understanding the dataset<br>
-                • Checking dataset structure<br>
-                • Examining statistical information<br>
-                • Checking missing values<br>
-                • Preparing data for visualization<br>
-                • Preparing data for analysis
-
-            `;
-
-        }
-
-
-        /* -----------------------------------------------------
-           DEFAULT RESPONSE
-        ----------------------------------------------------- */
-
-        return `
-
-            I can help you with the
-            <strong>
-                Healthcare Analytics for Doctor Visits
-            </strong>
-            project.
-
-            <br><br>
-
-            Try asking:
-
-            <br><br>
-
-            • What is this project about?<br>
-            • What does the dataset contain?<br>
-            • What libraries are used?<br>
-            • Explain gender analysis<br>
-            • Explain age vs visits<br>
-            • Explain illness analysis<br>
-            • Explain correlation heatmap<br>
-            • Explain chronic conditions<br>
-            • Explain health status<br>
-            • Explain income vs doctor visits<br>
-            • What are the main insights?<br>
-            • What is the conclusion?
-
-        `;
-
-    }
-
-
-    /* =========================================================
-       SEND MESSAGE
-       ========================================================= */
-
-    function sendMessage() {
-
-        const message =
-            userInput.value.trim();
-
-
-        if (!message) {
             return;
+
         }
-
-
-        addUserMessage(message);
-
-        userInput.value = "";
-
-        showTyping();
 
 
         setTimeout(function () {
 
-            removeTyping();
+            chatBody.scrollTo({
 
-            const response =
-                getAIResponse(message);
+                top:
+                    chatBody.scrollHeight,
 
-            addBotMessage(response);
+                behavior:
+                    "smooth"
 
-        }, 600);
+            });
+
+        }, 50);
 
     }
 
 
-    /* ---------------------------------------------------------
-       SEND BUTTON
-    --------------------------------------------------------- */
+    /* =====================================================
+       AI RESPONSE ENGINE
+       ===================================================== */
 
-    sendButton.addEventListener(
-        "click",
-        sendMessage
-    );
+    function getAIResponse(question) {
+
+        const text =
+            question
+                .toLowerCase()
+                .trim();
 
 
-    /* ---------------------------------------------------------
-       ENTER KEY
-    --------------------------------------------------------- */
+        /* =================================================
+           PROJECT
+           ================================================= */
 
-    userInput.addEventListener(
-        "keydown",
-        function (event) {
+        if (
+            text.includes("project") &&
+            (
+                text.includes("about") ||
+                text.includes("what is")
+            )
+        ) {
 
-            if (event.key === "Enter") {
-
-                event.preventDefault();
-
-                sendMessage();
-
-            }
+            return (
+                "This project is Healthcare Analytics for Doctor Visits. " +
+                "It analyzes healthcare doctor-visit data to understand " +
+                "patient characteristics, visit patterns and healthcare utilization."
+            );
 
         }
-    );
 
 
-    /* ---------------------------------------------------------
-       QUICK QUESTIONS
-    --------------------------------------------------------- */
+        /* =================================================
+           DATASET
+           ================================================= */
 
-    const questions =
-        widget.querySelectorAll(".ai-question");
+        if (
+            text.includes("dataset") &&
+            (
+                text.includes("contain") ||
+                text.includes("about") ||
+                text.includes("what")
+            )
+        ) {
+
+            return (
+                "The dataset contains healthcare-related doctor visit " +
+                "records with patient characteristics and variables used " +
+                "to investigate doctor visit patterns."
+            );
+
+        }
 
 
-    questions.forEach(function (button) {
+        /* =================================================
+           RECORDS
+           ================================================= */
 
-        button.addEventListener(
-            "click",
-            function () {
+        if (
+            text.includes("record") ||
+            text.includes("rows") ||
+            text.includes("observations") ||
+            text.includes("patients")
+        ) {
 
-                const question =
-                    button.textContent.trim();
+            if (
+                window.healthcareDatasetInfo &&
+                window.healthcareDatasetInfo.rows !== undefined
+            ) {
 
-
-                addUserMessage(question);
-
-                showTyping();
-
-
-                setTimeout(function () {
-
-                    removeTyping();
-
-                    const response =
-                        getAIResponse(question);
-
-                    addBotMessage(response);
-
-                }, 500);
+                return (
+                    "The dataset contains " +
+                    window.healthcareDatasetInfo.rows +
+                    " records."
+                );
 
             }
+
+
+            return (
+                "The dataset record count is displayed on the " +
+                "Data Understanding page."
+            );
+
+        }
+
+
+        /* =================================================
+           COLUMNS
+           ================================================= */
+
+        if (
+            text.includes("column") ||
+            text.includes("feature") ||
+            text.includes("variable")
+        ) {
+
+            if (
+                window.healthcareDatasetInfo &&
+                window.healthcareDatasetInfo.columns !== undefined
+            ) {
+
+                return (
+                    "The dataset contains " +
+                    window.healthcareDatasetInfo.columns +
+                    " columns."
+                );
+
+            }
+
+
+            return (
+                "The dataset features and variables are displayed " +
+                "on the Data Understanding page."
+            );
+
+        }
+
+
+        /* =================================================
+           LIBRARIES
+           ================================================= */
+
+        if (
+            text.includes("library") ||
+            text.includes("libraries") ||
+            text.includes("technology") ||
+            text.includes("tools")
+        ) {
+
+            return (
+                "The project uses Python with Jupyter Notebook " +
+                "and data-analysis libraries including Pandas, " +
+                "NumPy, Matplotlib and Seaborn."
+            );
+
+        }
+
+
+        /* =================================================
+           GENDER ANALYSIS
+           ================================================= */
+
+        if (
+            text.includes("gender")
+        ) {
+
+            return (
+                "Gender analysis compares doctor visit patterns " +
+                "between gender groups. The project uses gender-based " +
+                "counts, average visits, median visits and visualizations " +
+                "to understand differences between groups."
+            );
+
+        }
+
+
+        /* =================================================
+           AGE VS VISITS
+           ================================================= */
+
+        if (
+            (
+                text.includes("age") &&
+                text.includes("visit")
+            ) ||
+            text.includes("age versus") ||
+            text.includes("age vs")
+        ) {
+
+            return (
+                "The age-versus-visits analysis uses a scatter plot " +
+                "to examine the relationship between patient age and " +
+                "doctor visit frequency, with gender used to distinguish groups."
+            );
+
+        }
+
+
+        /* =================================================
+           ILLNESS ANALYSIS
+           ================================================= */
+
+        if (
+            text.includes("illness") ||
+            text.includes("disease")
+        ) {
+
+            return (
+                "The illness analysis compares doctor visits across " +
+                "different illness categories. Mean visits are used " +
+                "to identify differences in healthcare utilization."
+            );
+
+        }
+
+
+        /* =================================================
+           CORRELATION HEATMAP
+           ================================================= */
+
+        if (
+            text.includes("correlation") ||
+            text.includes("heatmap")
+        ) {
+
+            return (
+                "The correlation heatmap shows relationships between " +
+                "numeric variables in the dataset. It helps identify " +
+                "positive, negative or weak linear relationships."
+            );
+
+        }
+
+
+        /* =================================================
+           CHRONIC CONDITIONS
+           ================================================= */
+
+        if (
+            text.includes("chronic")
+        ) {
+
+            return (
+                "The chronic-condition analysis compares average doctor " +
+                "visits for patients with different chronic-condition statuses."
+            );
+
+        }
+
+
+        /* =================================================
+           HEALTH STATUS
+           ================================================= */
+
+        if (
+            text.includes("health status") ||
+            text.includes("health condition")
+        ) {
+
+            return (
+                "Health-status analysis compares average doctor visits " +
+                "across different health-status groups."
+            );
+
+        }
+
+
+        /* =================================================
+           INCOME
+           ================================================= */
+
+        if (
+            text.includes("income")
+        ) {
+
+            return (
+                "Income can be examined against doctor visits to explore " +
+                "whether visit frequency varies across different income levels."
+            );
+
+        }
+
+
+        /* =================================================
+           VISITS
+           ================================================= */
+
+        if (
+            text.includes("visit")
+        ) {
+
+            return (
+                "Doctor visits are the main outcome explored in the project. " +
+                "The analysis examines visit frequency by gender, age, illness, " +
+                "chronic conditions, health status and income."
+            );
+
+        }
+
+
+        /* =================================================
+           PREPROCESSING
+           ================================================= */
+
+        if (
+            text.includes("preprocess") ||
+            text.includes("clean") ||
+            text.includes("missing") ||
+            text.includes("duplicate")
+        ) {
+
+            return (
+                "The preprocessing stage checks missing values, duplicate " +
+                "records, data types and variables that may require transformation " +
+                "before analysis."
+            );
+
+        }
+
+
+        /* =================================================
+           VISUALIZATION
+           ================================================= */
+
+        if (
+            text.includes("visualization") ||
+            text.includes("chart") ||
+            text.includes("plot")
+        ) {
+
+            return (
+                "The project uses visualizations such as count plots, " +
+                "histograms, box plots, scatter plots and correlation heatmaps " +
+                "to explore healthcare visit patterns."
+            );
+
+        }
+
+
+        /* =================================================
+           CONCLUSION
+           ================================================= */
+
+        if (
+            text.includes("conclusion") ||
+            text.includes("result")
+        ) {
+
+            return (
+                "The project provides a structured analysis of healthcare " +
+                "doctor visits by examining demographic, health and socioeconomic " +
+                "variables and presenting the findings through statistical analysis " +
+                "and visualizations."
+            );
+
+        }
+
+
+        /* =================================================
+           DATA UNDERSTANDING
+           ================================================= */
+
+        if (
+            text.includes("understanding") ||
+            text.includes("structure")
+        ) {
+
+            return (
+                "Data understanding examines the dataset structure, number " +
+                "of records, variables, data types, categorical and numerical " +
+                "features, missing values and duplicate observations."
+            );
+
+        }
+
+
+        /* =================================================
+           HELP
+           ================================================= */
+
+        if (
+            text.includes("help") ||
+            text.includes("what can you")
+        ) {
+
+            return (
+                "You can ask me about the project, dataset, records, columns, " +
+                "libraries, gender analysis, age versus visits, illness analysis, " +
+                "correlation heatmap, preprocessing, visualizations or conclusion."
+            );
+
+        }
+
+
+        /* =================================================
+           DEFAULT
+           ================================================= */
+
+        return (
+            "I can answer questions about the Healthcare Analytics for " +
+            "Doctor Visits project. Try asking about the dataset, gender, " +
+            "age versus visits, illness, correlation, libraries, preprocessing " +
+            "or the project conclusion."
         );
-
-    });
-
-
-    /* ---------------------------------------------------------
-       SCROLL CHAT
-    --------------------------------------------------------- */
-
-    function scrollChatToBottom() {
-
-        chatBody.scrollTop =
-            chatBody.scrollHeight;
 
     }
 
 
-    /* ---------------------------------------------------------
-       SECURITY
-    --------------------------------------------------------- */
+    /* =====================================================
+       ESCAPE HTML
+       ===================================================== */
 
-    function escapeHTML(text) {
+    function escapeHTML(value) {
 
         const div =
             document.createElement("div");
 
-        div.textContent = text;
+
+        div.textContent =
+            value;
+
 
         return div.innerHTML;
 
     }
 
-});
+
+})();

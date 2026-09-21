@@ -44,7 +44,6 @@ def get_dataset_path():
 
     return str(DATA_FILE)
 
-
 def get_dataset_info():
 
     df = load_dataset()
@@ -53,5 +52,6 @@ def get_dataset_info():
         "rows": int(len(df)),
         "columns": int(len(df.columns)),
         "column_names": df.columns.tolist(),
-        "path": str(DATA_FILE)
+        "path": str(DATA_FILE),
+        "records": df.to_dict(orient="records")
     }
