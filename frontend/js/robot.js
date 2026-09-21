@@ -1,287 +1,372 @@
-/* =========================================================
+/* ============================================================
    HEALTHCARE ANALYTICS
    AI ROBOT CHATBOT
    File: frontend/js/robot.js
-   ========================================================= */
+   ============================================================ */
 
 (function () {
 
     "use strict";
 
-    /* =====================================================
+
+    /* ============================================================
        START
-       ===================================================== */
+       ============================================================ */
 
     document.addEventListener("DOMContentLoaded", function () {
+
         initializeRobot();
+
     });
 
 
-    /* =====================================================
+    /* ============================================================
        INITIALIZE ROBOT
-       ===================================================== */
+       ============================================================ */
 
     function initializeRobot() {
 
-        /*
-         * IMPORTANT:
-         * These IDs MUST match data-understanding.html
-         */
-
         const robotButton =
-            document.getElementById("aiRobotButton");
+            document.getElementById("aiRobot");
 
         const chatWindow =
-            document.getElementById("aiChatWindow");
+            document.getElementById("aiChat");
 
         const closeButton =
-            document.getElementById("aiCloseButton");
+            document.getElementById("aiClose");
 
         const chatInput =
-            document.getElementById("aiChatInput");
+            document.getElementById("aiQuestion");
 
         const sendButton =
-            document.getElementById("aiSendButton");
+            document.getElementById("aiSend");
 
         const chatBody =
             document.getElementById("aiChatBody");
 
 
-        /* =================================================
-           CHECK ELEMENTS
-           ================================================= */
+        /* ========================================================
+           CHECK REQUIRED ELEMENTS
+           ======================================================== */
 
         if (!robotButton) {
-            console.error("AI Robot: #aiRobotButton not found.");
+
+            console.error(
+                "AI Robot: #aiRobot was not found."
+            );
+
             return;
+
         }
+
 
         if (!chatWindow) {
-            console.error("AI Robot: #aiChatWindow not found.");
+
+            console.error(
+                "AI Robot: #aiChat was not found."
+            );
+
             return;
+
         }
+
 
         if (!chatBody) {
-            console.error("AI Robot: #aiChatBody not found.");
+
+            console.error(
+                "AI Robot: #aiChatBody was not found."
+            );
+
             return;
+
         }
 
+
+        /* ========================================================
+           OPEN / CLOSE CHAT
+           ======================================================== */
+
+        robotButton.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                chatWindow.classList.toggle("active");
+
+
+                if (
+                    chatWindow.classList.contains("active")
+                ) {
+
+                    if (chatInput) {
+
+                        setTimeout(
+                            function () {
+
+                                chatInput.focus();
+
+                            },
+                            200
+                        );
+
+                    }
+
+                    scrollChat();
+
+                }
+
+            }
+        );
+
+
+        /* ========================================================
+           CLOSE BUTTON
+           ======================================================== */
+
+        if (closeButton) {
+
+            closeButton.addEventListener(
+                "click",
+                function (event) {
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    chatWindow.classList.remove("active");
+
+                }
+            );
+
+        }
+
+
+        /* ========================================================
+           ESCAPE KEY
+           ======================================================== */
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (event.key === "Escape") {
+
+                    chatWindow.classList.remove(
+                        "active"
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* ========================================================
+           SEND BUTTON
+           ======================================================== */
+
+        if (sendButton && chatInput) {
+
+            sendButton.addEventListener(
+                "click",
+                function (event) {
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    sendUserQuestion();
+
+                }
+            );
+
+        }
+
+
+        /* ========================================================
+           ENTER KEY
+           ======================================================== */
+
+        if (chatInput) {
+
+            chatInput.addEventListener(
+                "keydown",
+                function (event) {
+
+                    if (event.key === "Enter") {
+
+                        event.preventDefault();
+
+                        sendUserQuestion();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* ========================================================
+           QUICK QUESTION BUTTONS
+           ======================================================== */
+
+        const questionButtons =
+            document.querySelectorAll(
+                ".question-btn"
+            );
+
+
+        questionButtons.forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    function (event) {
+
+                        event.preventDefault();
+                        event.stopPropagation();
+
+
+                        const question =
+                            button.getAttribute(
+                                "data-question"
+                            );
+
+
+                        if (!question) {
+
+                            return;
+
+                        }
+
+
+                        /* Put question into input */
+
+                        if (chatInput) {
+
+                            chatInput.value =
+                                question;
+
+                        }
+
+
+                        /* Show user question */
+
+                        addUserMessage(
+                            question
+                        );
+
+
+                        /* Clear input */
+
+                        if (chatInput) {
+
+                            chatInput.value = "";
+
+                        }
+
+
+                        /* Show typing */
+
+                        showTyping();
+
+
+                        /* Generate answer */
+
+                        setTimeout(
+                            function () {
+
+                                removeTyping();
+
+                                const answer =
+                                    getAIResponse(
+                                        question
+                                    );
+
+                                addAIMessage(
+                                    answer
+                                );
+
+                            },
+                            500
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+        /* ========================================================
+           OUTSIDE CLICK
+           ======================================================== */
+
+        document.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    !chatWindow.contains(
+                        event.target
+                    ) &&
+                    !robotButton.contains(
+                        event.target
+                    )
+                ) {
+
+                    chatWindow.classList.remove(
+                        "active"
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* ========================================================
+           PREVENT CHAT FROM CLOSING
+           ======================================================== */
+
+        chatWindow.addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
+
+            }
+        );
+
+
+        /* ========================================================
+           INITIALIZED
+           ======================================================== */
 
         console.log(
             "Healthcare AI Robot initialized successfully."
         );
 
-
-        /* =================================================
-           OPEN CHAT
-           ================================================= */
-
-        robotButton.addEventListener("click", function (event) {
-
-            event.preventDefault();
-            event.stopPropagation();
-
-            chatWindow.classList.toggle("active");
-
-            if (chatWindow.classList.contains("active")) {
-
-                setTimeout(function () {
-
-                    if (chatInput) {
-                        chatInput.focus();
-                    }
-
-                    scrollChat();
-
-                }, 200);
-
-            }
-
-        });
-
-
-        /* =================================================
-           CLOSE CHAT
-           ================================================= */
-
-        if (closeButton) {
-
-            closeButton.addEventListener("click", function (event) {
-
-                event.preventDefault();
-                event.stopPropagation();
-
-                chatWindow.classList.remove("active");
-
-            });
-
-        }
-
-
-        /* =================================================
-           ESCAPE KEY
-           ================================================= */
-
-        document.addEventListener("keydown", function (event) {
-
-            if (event.key === "Escape") {
-
-                chatWindow.classList.remove("active");
-
-            }
-
-        });
-
-
-        /* =================================================
-           SEND BUTTON
-           ================================================= */
-
-        if (sendButton) {
-
-            sendButton.addEventListener("click", function (event) {
-
-                event.preventDefault();
-                event.stopPropagation();
-
-                sendUserQuestion();
-
-            });
-
-        }
-
-
-        /* =================================================
-           ENTER KEY
-           ================================================= */
-
-        if (chatInput) {
-
-            chatInput.addEventListener("keydown", function (event) {
-
-                if (event.key === "Enter") {
-
-                    event.preventDefault();
-
-                    sendUserQuestion();
-
-                }
-
-            });
-
-        }
-
-
-        /* =================================================
-           QUICK QUESTIONS
-           
-           HTML uses:
-           .ai-question
-           ================================================= */
-
-        const questionButtons =
-            document.querySelectorAll(".ai-question");
-
-
-        questionButtons.forEach(function (button) {
-
-            button.addEventListener("click", function (event) {
-
-                event.preventDefault();
-                event.stopPropagation();
-
-
-                const question =
-                    button.getAttribute("data-question");
-
-
-                if (!question) {
-                    return;
-                }
-
-
-                /*
-                 * Show user question
-                 */
-
-                addUserMessage(question);
-
-
-                /*
-                 * Clear input
-                 */
-
-                if (chatInput) {
-                    chatInput.value = "";
-                }
-
-
-                /*
-                 * Generate answer
-                 */
-
-                showTyping();
-
-
-                setTimeout(function () {
-
-                    removeTyping();
-
-                    const answer =
-                        getAIResponse(question);
-
-                    addAIMessage(answer);
-
-                }, 600);
-
-            });
-
-        });
-
-
-        /* =================================================
-           OUTSIDE CLICK
-           ================================================= */
-
-        document.addEventListener("click", function (event) {
-
-            if (
-                !chatWindow.contains(event.target) &&
-                !robotButton.contains(event.target)
-            ) {
-
-                chatWindow.classList.remove("active");
-
-            }
-
-        });
-
-
-        /* =================================================
-           PREVENT CHAT FROM CLOSING
-           ================================================= */
-
-        chatWindow.addEventListener("click", function (event) {
-
-            event.stopPropagation();
-
-        });
-
     }
 
 
-    /* =====================================================
+    /* ============================================================
        SEND USER QUESTION
-       ===================================================== */
+       ============================================================ */
 
     function sendUserQuestion() {
 
         const input =
-            document.getElementById("aiChatInput");
+            document.getElementById(
+                "aiQuestion"
+            );
 
 
         if (!input) {
+
             return;
+
         }
 
 
@@ -290,66 +375,77 @@
 
 
         if (!question) {
+
             return;
+
         }
 
 
-        /*
-         * Show user question
-         */
+        /* Show user message */
 
-        addUserMessage(question);
+        addUserMessage(
+            question
+        );
 
 
-        /*
-         * Clear input
-         */
+        /* Clear input */
 
         input.value = "";
 
 
-        /*
-         * Show typing
-         */
+        /* Show typing */
 
         showTyping();
 
 
-        /*
-         * AI response
-         */
+        /* Generate response */
 
-        setTimeout(function () {
+        setTimeout(
+            function () {
 
-            removeTyping();
+                removeTyping();
 
-            const answer =
-                getAIResponse(question);
 
-            addAIMessage(answer);
+                const answer =
+                    getAIResponse(
+                        question
+                    );
 
-        }, 600);
+
+                addAIMessage(
+                    answer
+                );
+
+            },
+            500
+        );
 
     }
 
 
-    /* =====================================================
+    /* ============================================================
        ADD USER MESSAGE
-       ===================================================== */
+       ============================================================ */
 
     function addUserMessage(message) {
 
         const chatBody =
-            document.getElementById("aiChatBody");
+            document.getElementById(
+                "aiChatBody"
+            );
 
 
         if (!chatBody) {
+
             return;
+
         }
 
 
         const messageElement =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         messageElement.className =
@@ -358,7 +454,7 @@
 
         messageElement.innerHTML = `
 
-            <div class="ai-message-content user-message-content">
+            <div class="message-content user-message-content">
 
                 <p>
                     ${escapeHTML(message)}
@@ -369,7 +465,9 @@
         `;
 
 
-        chatBody.appendChild(messageElement);
+        chatBody.appendChild(
+            messageElement
+        );
 
 
         scrollChat();
@@ -377,23 +475,29 @@
     }
 
 
-    /* =====================================================
+    /* ============================================================
        ADD AI MESSAGE
-       ===================================================== */
+       ============================================================ */
 
     function addAIMessage(message) {
 
         const chatBody =
-            document.getElementById("aiChatBody");
+            document.getElementById(
+                "aiChatBody"
+            );
 
 
         if (!chatBody) {
+
             return;
+
         }
 
 
         const messageElement =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         messageElement.className =
@@ -402,11 +506,11 @@
 
         messageElement.innerHTML = `
 
-            <div class="ai-avatar-small">
+            <div class="message-icon">
                 AI
             </div>
 
-            <div class="ai-message-content">
+            <div class="message-content">
 
                 <p>
                     ${escapeHTML(message)}
@@ -417,7 +521,9 @@
         `;
 
 
-        chatBody.appendChild(messageElement);
+        chatBody.appendChild(
+            messageElement
+        );
 
 
         scrollChat();
@@ -425,18 +531,22 @@
     }
 
 
-    /* =====================================================
+    /* ============================================================
        TYPING INDICATOR
-       ===================================================== */
+       ============================================================ */
 
     function showTyping() {
 
         const chatBody =
-            document.getElementById("aiChatBody");
+            document.getElementById(
+                "aiChatBody"
+            );
 
 
         if (!chatBody) {
+
             return;
+
         }
 
 
@@ -444,7 +554,9 @@
 
 
         const typing =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         typing.id =
@@ -457,11 +569,11 @@
 
         typing.innerHTML = `
 
-            <div class="ai-avatar-small">
+            <div class="message-icon">
                 AI
             </div>
 
-            <div class="ai-message-content">
+            <div class="message-content">
 
                 <p>
                     Thinking...
@@ -472,7 +584,9 @@
         `;
 
 
-        chatBody.appendChild(typing);
+        chatBody.appendChild(
+            typing
+        );
 
 
         scrollChat();
@@ -480,9 +594,9 @@
     }
 
 
-    /* =====================================================
+    /* ============================================================
        REMOVE TYPING
-       ===================================================== */
+       ============================================================ */
 
     function removeTyping() {
 
@@ -501,41 +615,48 @@
     }
 
 
-    /* =====================================================
+    /* ============================================================
        SCROLL CHAT
-       ===================================================== */
+       ============================================================ */
 
     function scrollChat() {
 
         const chatBody =
-            document.getElementById("aiChatBody");
+            document.getElementById(
+                "aiChatBody"
+            );
 
 
         if (!chatBody) {
+
             return;
+
         }
 
 
-        setTimeout(function () {
+        setTimeout(
+            function () {
 
-            chatBody.scrollTo({
+                chatBody.scrollTo({
 
-                top:
-                    chatBody.scrollHeight,
+                    top:
+                        chatBody.scrollHeight,
 
-                behavior:
-                    "smooth"
+                    behavior:
+                        "smooth"
 
-            });
+                });
 
-        }, 50);
+            },
+            50
+        );
 
     }
 
 
-    /* =====================================================
+    /* ============================================================
        AI RESPONSE ENGINE
-       ===================================================== */
+       ============================================================ */
 
     function getAIResponse(question) {
 
@@ -545,9 +666,9 @@
                 .trim();
 
 
-        /* =================================================
+        /* ========================================================
            PROJECT
-           ================================================= */
+           ======================================================== */
 
         if (
             text.includes("project") &&
@@ -566,9 +687,9 @@
         }
 
 
-        /* =================================================
+        /* ========================================================
            DATASET
-           ================================================= */
+           ======================================================== */
 
         if (
             text.includes("dataset") &&
@@ -581,16 +702,16 @@
 
             return (
                 "The dataset contains healthcare-related doctor visit " +
-                "records with patient characteristics and variables " +
-                "used to investigate doctor visit patterns."
+                "records with patient characteristics and variables used " +
+                "to investigate doctor visit patterns."
             );
 
         }
 
 
-        /* =================================================
+        /* ========================================================
            RECORDS
-           ================================================= */
+           ======================================================== */
 
         if (
             text.includes("record") ||
@@ -614,16 +735,16 @@
 
 
             return (
-                "The dataset record count is displayed " +
-                "on the Data Understanding page."
+                "The dataset record count is displayed on the " +
+                "Data Understanding page."
             );
 
         }
 
 
-        /* =================================================
+        /* ========================================================
            COLUMNS
-           ================================================= */
+           ======================================================== */
 
         if (
             text.includes("column") ||
@@ -646,111 +767,16 @@
 
 
             return (
-                "The dataset features and variables are " +
-                "displayed on the Data Understanding page."
+                "The dataset features and variables are displayed " +
+                "on the Data Understanding page."
             );
 
         }
 
 
-        /* =================================================
-           NUMERICAL
-           ================================================= */
-
-        if (
-            text.includes("numerical") ||
-            text.includes("numeric")
-        ) {
-
-            if (
-                window.healthcareDatasetInfo &&
-                window.healthcareDatasetInfo.numeric !== undefined
-            ) {
-
-                return (
-                    "The dataset contains " +
-                    window.healthcareDatasetInfo.numeric +
-                    " numerical features."
-                );
-
-            }
-
-
-            return (
-                "Numerical features are quantitative variables " +
-                "used for measurements and statistical analysis."
-            );
-
-        }
-
-
-        /* =================================================
-           CATEGORICAL
-           ================================================= */
-
-        if (
-            text.includes("categorical")
-        ) {
-
-            if (
-                window.healthcareDatasetInfo &&
-                window.healthcareDatasetInfo.categorical !== undefined
-            ) {
-
-                return (
-                    "The dataset contains " +
-                    window.healthcareDatasetInfo.categorical +
-                    " categorical features."
-                );
-
-            }
-
-
-            return (
-                "Categorical features describe groups or categories " +
-                "such as gender, illness or health-related status."
-            );
-
-        }
-
-
-        /* =================================================
-           MISSING VALUES
-           ================================================= */
-
-        if (
-            text.includes("missing") ||
-            text.includes("null")
-        ) {
-
-            return (
-                "Missing values are checked during the data " +
-                "understanding and preprocessing stages. " +
-                "The Data Quality section shows the detected count."
-            );
-
-        }
-
-
-        /* =================================================
-           DUPLICATES
-           ================================================= */
-
-        if (
-            text.includes("duplicate")
-        ) {
-
-            return (
-                "Duplicate rows are checked as part of the initial " +
-                "data-quality assessment before deeper analysis."
-            );
-
-        }
-
-
-        /* =================================================
-           LIBRARIES
-           ================================================= */
+        /* ========================================================
+           LIBRARIES / TECHNOLOGY
+           ======================================================== */
 
         if (
             text.includes("library") ||
@@ -768,9 +794,9 @@
         }
 
 
-        /* =================================================
-           GENDER
-           ================================================= */
+        /* ========================================================
+           GENDER ANALYSIS
+           ======================================================== */
 
         if (
             text.includes("gender")
@@ -778,16 +804,17 @@
 
             return (
                 "Gender analysis compares doctor visit patterns " +
-                "between gender groups using counts, average visits, " +
-                "median visits and visualizations."
+                "between gender groups. The project uses gender-based " +
+                "counts, average visits, median visits and visualizations " +
+                "to understand differences between groups."
             );
 
         }
 
 
-        /* =================================================
+        /* ========================================================
            AGE VS VISITS
-           ================================================= */
+           ======================================================== */
 
         if (
             (
@@ -800,16 +827,16 @@
 
             return (
                 "The age-versus-visits analysis uses a scatter plot " +
-                "to examine the relationship between patient age " +
-                "and doctor visit frequency."
+                "to examine the relationship between patient age and " +
+                "doctor visit frequency, with gender used to distinguish groups."
             );
 
         }
 
 
-        /* =================================================
-           ILLNESS
-           ================================================= */
+        /* ========================================================
+           ILLNESS ANALYSIS
+           ======================================================== */
 
         if (
             text.includes("illness") ||
@@ -818,15 +845,16 @@
 
             return (
                 "The illness analysis compares doctor visits across " +
-                "different illness categories using mean visit values."
+                "different illness categories. Mean visits are used " +
+                "to identify differences in healthcare utilization."
             );
 
         }
 
 
-        /* =================================================
-           CORRELATION
-           ================================================= */
+        /* ========================================================
+           CORRELATION HEATMAP
+           ======================================================== */
 
         if (
             text.includes("correlation") ||
@@ -835,32 +863,32 @@
 
             return (
                 "The correlation heatmap shows relationships between " +
-                "numeric variables and helps identify positive, " +
-                "negative or weak linear relationships."
+                "numeric variables in the dataset. It helps identify " +
+                "positive, negative or weak linear relationships."
             );
 
         }
 
 
-        /* =================================================
-           CHRONIC
-           ================================================= */
+        /* ========================================================
+           CHRONIC CONDITIONS
+           ======================================================== */
 
         if (
             text.includes("chronic")
         ) {
 
             return (
-                "The chronic-condition analysis compares average " +
-                "doctor visits for different chronic-condition statuses."
+                "The chronic-condition analysis compares average doctor " +
+                "visits for patients with different chronic-condition statuses."
             );
 
         }
 
 
-        /* =================================================
+        /* ========================================================
            HEALTH STATUS
-           ================================================= */
+           ======================================================== */
 
         if (
             text.includes("health status") ||
@@ -875,9 +903,9 @@
         }
 
 
-        /* =================================================
+        /* ========================================================
            INCOME
-           ================================================= */
+           ======================================================== */
 
         if (
             text.includes("income")
@@ -885,22 +913,22 @@
 
             return (
                 "Income can be examined against doctor visits to explore " +
-                "whether visit frequency varies across income levels."
+                "whether visit frequency varies across different income levels."
             );
 
         }
 
 
-        /* =================================================
+        /* ========================================================
            VISITS
-           ================================================= */
+           ======================================================== */
 
         if (
             text.includes("visit")
         ) {
 
             return (
-                "Doctor visits are the main outcome explored in this project. " +
+                "Doctor visits are the main outcome explored in the project. " +
                 "The analysis examines visit frequency by gender, age, illness, " +
                 "chronic conditions, health status and income."
             );
@@ -908,27 +936,29 @@
         }
 
 
-        /* =================================================
+        /* ========================================================
            PREPROCESSING
-           ================================================= */
+           ======================================================== */
 
         if (
             text.includes("preprocess") ||
             text.includes("clean") ||
+            text.includes("missing") ||
             text.includes("duplicate")
         ) {
 
             return (
                 "The preprocessing stage checks missing values, duplicate " +
-                "records, data types and variables that may require transformation."
+                "records, data types and variables that may require transformation " +
+                "before analysis."
             );
 
         }
 
 
-        /* =================================================
+        /* ========================================================
            VISUALIZATION
-           ================================================= */
+           ======================================================== */
 
         if (
             text.includes("visualization") ||
@@ -937,17 +967,17 @@
         ) {
 
             return (
-                "The project uses count plots, histograms, box plots, " +
-                "scatter plots and correlation heatmaps to explore " +
-                "healthcare visit patterns."
+                "The project uses visualizations such as count plots, " +
+                "histograms, box plots, scatter plots and correlation heatmaps " +
+                "to explore healthcare visit patterns."
             );
 
         }
 
 
-        /* =================================================
+        /* ========================================================
            CONCLUSION
-           ================================================= */
+           ======================================================== */
 
         if (
             text.includes("conclusion") ||
@@ -956,16 +986,17 @@
 
             return (
                 "The project provides a structured analysis of healthcare " +
-                "doctor visits by examining demographic, health and " +
-                "socioeconomic variables."
+                "doctor visits by examining demographic, health and socioeconomic " +
+                "variables and presenting the findings through statistical analysis " +
+                "and visualizations."
             );
 
         }
 
 
-        /* =================================================
+        /* ========================================================
            DATA UNDERSTANDING
-           ================================================= */
+           ======================================================== */
 
         if (
             text.includes("understanding") ||
@@ -973,17 +1004,17 @@
         ) {
 
             return (
-                "Data understanding examines the dataset structure, " +
-                "records, variables, numerical and categorical features, " +
-                "missing values and duplicate observations."
+                "Data understanding examines the dataset structure, number " +
+                "of records, variables, data types, categorical and numerical " +
+                "features, missing values and duplicate observations."
             );
 
         }
 
 
-        /* =================================================
+        /* ========================================================
            HELP
-           ================================================= */
+           ======================================================== */
 
         if (
             text.includes("help") ||
@@ -991,40 +1022,43 @@
         ) {
 
             return (
-                "You can ask me about the project, dataset, records, " +
-                "columns, numerical features, categorical features, " +
-                "gender, age, illness, correlation, preprocessing " +
-                "or visualizations."
+                "You can ask me about the project, dataset, records, columns, " +
+                "libraries, gender analysis, age versus visits, illness analysis, " +
+                "correlation heatmap, preprocessing, visualizations or conclusion."
             );
 
         }
 
 
-        /* =================================================
+        /* ========================================================
            DEFAULT
-           ================================================= */
+           ======================================================== */
 
         return (
-            "I can answer questions about the Healthcare Analytics " +
-            "for Doctor Visits project. Try asking about the dataset, " +
-            "records, columns, gender, age, illness, correlation, " +
-            "preprocessing or visualizations."
+            "I can answer questions about the Healthcare Analytics for " +
+            "Doctor Visits project. Try asking about the dataset, gender, " +
+            "age versus visits, illness, correlation, libraries, preprocessing " +
+            "or the project conclusion."
         );
 
     }
 
 
-    /* =====================================================
+    /* ============================================================
        ESCAPE HTML
-       ===================================================== */
+       ============================================================ */
 
     function escapeHTML(value) {
 
         const div =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         div.textContent =
             value;
+
 
         return div.innerHTML;
 
