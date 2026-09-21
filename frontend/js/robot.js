@@ -1,21 +1,19 @@
 /* =========================================================
    HEALTHCARE ANALYTICS
    AI ROBOT CHATBOT
+   File: frontend/js/robot.js
    ========================================================= */
 
 (function () {
 
     "use strict";
 
-
     /* =====================================================
        START
        ===================================================== */
 
     document.addEventListener("DOMContentLoaded", function () {
-
         initializeRobot();
-
     });
 
 
@@ -25,25 +23,57 @@
 
     function initializeRobot() {
 
-        const robotButton = document.getElementById("aiRobot");
-        const chatWindow = document.getElementById("aiChat");
-        const closeButton = document.getElementById("aiClose");
-        const chatInput = document.getElementById("aiQuestion");
-        const sendButton = document.getElementById("aiSend");
-        const chatBody = document.getElementById("aiChatBody");
+        /*
+         * IMPORTANT:
+         * These IDs MUST match data-understanding.html
+         */
 
-        if (!robotButton || !chatWindow) {
+        const robotButton =
+            document.getElementById("aiRobotButton");
 
-            console.error(
-                "AI Robot: chatbot elements were not found."
-            );
+        const chatWindow =
+            document.getElementById("aiChatWindow");
 
+        const closeButton =
+            document.getElementById("aiCloseButton");
+
+        const chatInput =
+            document.getElementById("aiChatInput");
+
+        const sendButton =
+            document.getElementById("aiSendButton");
+
+        const chatBody =
+            document.getElementById("aiChatBody");
+
+
+        /* =================================================
+           CHECK ELEMENTS
+           ================================================= */
+
+        if (!robotButton) {
+            console.error("AI Robot: #aiRobotButton not found.");
+            return;
+        }
+
+        if (!chatWindow) {
+            console.error("AI Robot: #aiChatWindow not found.");
+            return;
+        }
+
+        if (!chatBody) {
+            console.error("AI Robot: #aiChatBody not found.");
             return;
         }
 
 
+        console.log(
+            "Healthcare AI Robot initialized successfully."
+        );
+
+
         /* =================================================
-           OPEN / CLOSE CHAT
+           OPEN CHAT
            ================================================= */
 
         robotButton.addEventListener("click", function (event) {
@@ -55,15 +85,15 @@
 
             if (chatWindow.classList.contains("active")) {
 
-                if (chatInput) {
+                setTimeout(function () {
 
-                    setTimeout(function () {
-
+                    if (chatInput) {
                         chatInput.focus();
+                    }
 
-                    }, 200);
+                    scrollChat();
 
-                }
+                }, 200);
 
             }
 
@@ -71,7 +101,7 @@
 
 
         /* =================================================
-           CLOSE BUTTON
+           CLOSE CHAT
            ================================================= */
 
         if (closeButton) {
@@ -107,11 +137,12 @@
            SEND BUTTON
            ================================================= */
 
-        if (sendButton && chatInput) {
+        if (sendButton) {
 
             sendButton.addEventListener("click", function (event) {
 
                 event.preventDefault();
+                event.stopPropagation();
 
                 sendUserQuestion();
 
@@ -142,11 +173,14 @@
 
 
         /* =================================================
-           QUICK QUESTION BUTTONS
+           QUICK QUESTIONS
+           
+           HTML uses:
+           .ai-question
            ================================================= */
 
         const questionButtons =
-            document.querySelectorAll(".question-btn");
+            document.querySelectorAll(".ai-question");
 
 
         questionButtons.forEach(function (button) {
@@ -162,25 +196,12 @@
 
 
                 if (!question) {
-
                     return;
-
                 }
 
 
                 /*
-                 * Put question into input
-                 */
-
-                if (chatInput) {
-
-                    chatInput.value = question;
-
-                }
-
-
-                /*
-                 * Show user's question
+                 * Show user question
                  */
 
                 addUserMessage(question);
@@ -191,9 +212,7 @@
                  */
 
                 if (chatInput) {
-
                     chatInput.value = "";
-
                 }
 
 
@@ -213,7 +232,7 @@
 
                     addAIMessage(answer);
 
-                }, 500);
+                }, 600);
 
             });
 
@@ -226,8 +245,10 @@
 
         document.addEventListener("click", function (event) {
 
-            if (!chatWindow.contains(event.target) &&
-                !robotButton.contains(event.target)) {
+            if (
+                !chatWindow.contains(event.target) &&
+                !robotButton.contains(event.target)
+            ) {
 
                 chatWindow.classList.remove("active");
 
@@ -236,20 +257,15 @@
         });
 
 
-        /*
-         * Prevent clicks inside chatbot from closing it
-         */
+        /* =================================================
+           PREVENT CHAT FROM CLOSING
+           ================================================= */
 
         chatWindow.addEventListener("click", function (event) {
 
             event.stopPropagation();
 
         });
-
-
-        console.log(
-            "Healthcare AI Robot initialized successfully."
-        );
 
     }
 
@@ -261,13 +277,11 @@
     function sendUserQuestion() {
 
         const input =
-            document.getElementById("aiQuestion");
+            document.getElementById("aiChatInput");
 
 
         if (!input) {
-
             return;
-
         }
 
 
@@ -276,9 +290,7 @@
 
 
         if (!question) {
-
             return;
-
         }
 
 
@@ -297,29 +309,26 @@
 
 
         /*
-         * Show typing indicator
+         * Show typing
          */
 
         showTyping();
 
 
         /*
-         * Generate AI response
+         * AI response
          */
 
         setTimeout(function () {
 
             removeTyping();
 
-
             const answer =
                 getAIResponse(question);
 
-
             addAIMessage(answer);
 
-
-        }, 500);
+        }, 600);
 
     }
 
@@ -335,9 +344,7 @@
 
 
         if (!chatBody) {
-
             return;
-
         }
 
 
@@ -351,7 +358,7 @@
 
         messageElement.innerHTML = `
 
-            <div class="message-content user-message-content">
+            <div class="ai-message-content user-message-content">
 
                 <p>
                     ${escapeHTML(message)}
@@ -381,9 +388,7 @@
 
 
         if (!chatBody) {
-
             return;
-
         }
 
 
@@ -397,11 +402,11 @@
 
         messageElement.innerHTML = `
 
-            <div class="message-icon">
+            <div class="ai-avatar-small">
                 AI
             </div>
 
-            <div class="message-content">
+            <div class="ai-message-content">
 
                 <p>
                     ${escapeHTML(message)}
@@ -431,9 +436,7 @@
 
 
         if (!chatBody) {
-
             return;
-
         }
 
 
@@ -454,11 +457,11 @@
 
         typing.innerHTML = `
 
-            <div class="message-icon">
+            <div class="ai-avatar-small">
                 AI
             </div>
 
-            <div class="message-content">
+            <div class="ai-message-content">
 
                 <p>
                     Thinking...
@@ -509,9 +512,7 @@
 
 
         if (!chatBody) {
-
             return;
-
         }
 
 
@@ -580,8 +581,8 @@
 
             return (
                 "The dataset contains healthcare-related doctor visit " +
-                "records with patient characteristics and variables used " +
-                "to investigate doctor visit patterns."
+                "records with patient characteristics and variables " +
+                "used to investigate doctor visit patterns."
             );
 
         }
@@ -613,8 +614,8 @@
 
 
             return (
-                "The dataset record count is displayed on the " +
-                "Data Understanding page."
+                "The dataset record count is displayed " +
+                "on the Data Understanding page."
             );
 
         }
@@ -645,8 +646,103 @@
 
 
             return (
-                "The dataset features and variables are displayed " +
-                "on the Data Understanding page."
+                "The dataset features and variables are " +
+                "displayed on the Data Understanding page."
+            );
+
+        }
+
+
+        /* =================================================
+           NUMERICAL
+           ================================================= */
+
+        if (
+            text.includes("numerical") ||
+            text.includes("numeric")
+        ) {
+
+            if (
+                window.healthcareDatasetInfo &&
+                window.healthcareDatasetInfo.numeric !== undefined
+            ) {
+
+                return (
+                    "The dataset contains " +
+                    window.healthcareDatasetInfo.numeric +
+                    " numerical features."
+                );
+
+            }
+
+
+            return (
+                "Numerical features are quantitative variables " +
+                "used for measurements and statistical analysis."
+            );
+
+        }
+
+
+        /* =================================================
+           CATEGORICAL
+           ================================================= */
+
+        if (
+            text.includes("categorical")
+        ) {
+
+            if (
+                window.healthcareDatasetInfo &&
+                window.healthcareDatasetInfo.categorical !== undefined
+            ) {
+
+                return (
+                    "The dataset contains " +
+                    window.healthcareDatasetInfo.categorical +
+                    " categorical features."
+                );
+
+            }
+
+
+            return (
+                "Categorical features describe groups or categories " +
+                "such as gender, illness or health-related status."
+            );
+
+        }
+
+
+        /* =================================================
+           MISSING VALUES
+           ================================================= */
+
+        if (
+            text.includes("missing") ||
+            text.includes("null")
+        ) {
+
+            return (
+                "Missing values are checked during the data " +
+                "understanding and preprocessing stages. " +
+                "The Data Quality section shows the detected count."
+            );
+
+        }
+
+
+        /* =================================================
+           DUPLICATES
+           ================================================= */
+
+        if (
+            text.includes("duplicate")
+        ) {
+
+            return (
+                "Duplicate rows are checked as part of the initial " +
+                "data-quality assessment before deeper analysis."
             );
 
         }
@@ -673,7 +769,7 @@
 
 
         /* =================================================
-           GENDER ANALYSIS
+           GENDER
            ================================================= */
 
         if (
@@ -682,9 +778,8 @@
 
             return (
                 "Gender analysis compares doctor visit patterns " +
-                "between gender groups. The project uses gender-based " +
-                "counts, average visits, median visits and visualizations " +
-                "to understand differences between groups."
+                "between gender groups using counts, average visits, " +
+                "median visits and visualizations."
             );
 
         }
@@ -705,15 +800,15 @@
 
             return (
                 "The age-versus-visits analysis uses a scatter plot " +
-                "to examine the relationship between patient age and " +
-                "doctor visit frequency, with gender used to distinguish groups."
+                "to examine the relationship between patient age " +
+                "and doctor visit frequency."
             );
 
         }
 
 
         /* =================================================
-           ILLNESS ANALYSIS
+           ILLNESS
            ================================================= */
 
         if (
@@ -723,15 +818,14 @@
 
             return (
                 "The illness analysis compares doctor visits across " +
-                "different illness categories. Mean visits are used " +
-                "to identify differences in healthcare utilization."
+                "different illness categories using mean visit values."
             );
 
         }
 
 
         /* =================================================
-           CORRELATION HEATMAP
+           CORRELATION
            ================================================= */
 
         if (
@@ -741,15 +835,15 @@
 
             return (
                 "The correlation heatmap shows relationships between " +
-                "numeric variables in the dataset. It helps identify " +
-                "positive, negative or weak linear relationships."
+                "numeric variables and helps identify positive, " +
+                "negative or weak linear relationships."
             );
 
         }
 
 
         /* =================================================
-           CHRONIC CONDITIONS
+           CHRONIC
            ================================================= */
 
         if (
@@ -757,8 +851,8 @@
         ) {
 
             return (
-                "The chronic-condition analysis compares average doctor " +
-                "visits for patients with different chronic-condition statuses."
+                "The chronic-condition analysis compares average " +
+                "doctor visits for different chronic-condition statuses."
             );
 
         }
@@ -791,7 +885,7 @@
 
             return (
                 "Income can be examined against doctor visits to explore " +
-                "whether visit frequency varies across different income levels."
+                "whether visit frequency varies across income levels."
             );
 
         }
@@ -806,7 +900,7 @@
         ) {
 
             return (
-                "Doctor visits are the main outcome explored in the project. " +
+                "Doctor visits are the main outcome explored in this project. " +
                 "The analysis examines visit frequency by gender, age, illness, " +
                 "chronic conditions, health status and income."
             );
@@ -821,14 +915,12 @@
         if (
             text.includes("preprocess") ||
             text.includes("clean") ||
-            text.includes("missing") ||
             text.includes("duplicate")
         ) {
 
             return (
                 "The preprocessing stage checks missing values, duplicate " +
-                "records, data types and variables that may require transformation " +
-                "before analysis."
+                "records, data types and variables that may require transformation."
             );
 
         }
@@ -845,9 +937,9 @@
         ) {
 
             return (
-                "The project uses visualizations such as count plots, " +
-                "histograms, box plots, scatter plots and correlation heatmaps " +
-                "to explore healthcare visit patterns."
+                "The project uses count plots, histograms, box plots, " +
+                "scatter plots and correlation heatmaps to explore " +
+                "healthcare visit patterns."
             );
 
         }
@@ -864,9 +956,8 @@
 
             return (
                 "The project provides a structured analysis of healthcare " +
-                "doctor visits by examining demographic, health and socioeconomic " +
-                "variables and presenting the findings through statistical analysis " +
-                "and visualizations."
+                "doctor visits by examining demographic, health and " +
+                "socioeconomic variables."
             );
 
         }
@@ -882,9 +973,9 @@
         ) {
 
             return (
-                "Data understanding examines the dataset structure, number " +
-                "of records, variables, data types, categorical and numerical " +
-                "features, missing values and duplicate observations."
+                "Data understanding examines the dataset structure, " +
+                "records, variables, numerical and categorical features, " +
+                "missing values and duplicate observations."
             );
 
         }
@@ -900,9 +991,10 @@
         ) {
 
             return (
-                "You can ask me about the project, dataset, records, columns, " +
-                "libraries, gender analysis, age versus visits, illness analysis, " +
-                "correlation heatmap, preprocessing, visualizations or conclusion."
+                "You can ask me about the project, dataset, records, " +
+                "columns, numerical features, categorical features, " +
+                "gender, age, illness, correlation, preprocessing " +
+                "or visualizations."
             );
 
         }
@@ -913,10 +1005,10 @@
            ================================================= */
 
         return (
-            "I can answer questions about the Healthcare Analytics for " +
-            "Doctor Visits project. Try asking about the dataset, gender, " +
-            "age versus visits, illness, correlation, libraries, preprocessing " +
-            "or the project conclusion."
+            "I can answer questions about the Healthcare Analytics " +
+            "for Doctor Visits project. Try asking about the dataset, " +
+            "records, columns, gender, age, illness, correlation, " +
+            "preprocessing or visualizations."
         );
 
     }
@@ -931,10 +1023,8 @@
         const div =
             document.createElement("div");
 
-
         div.textContent =
             value;
-
 
         return div.innerHTML;
 
